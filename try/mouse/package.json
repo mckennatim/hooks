@@ -1,0 +1,16 @@
+{
+  "name": "try1",
+  "version": "1.0.0",
+  "description": "try1 hooks",
+  "main": "webpack.config.js",
+  "scripts": {
+    "dev": "node ../../node_modules/webpack/bin/webpack -w --config webpack.config.js",
+    "prod": "node ../../node_modules/webpack/bin/webpack -w --config webpack.production.config.js",
+    "te": "node test/tests"
+  },
+  "author": "Timothy S. McKenna <mckenna.tim@gmail.com> (http://mckennatim.github.io/mckennatim/)",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint-plugin-react-hooks": "^1.1.0-alpha.1"
+  }
+}

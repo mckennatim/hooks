@@ -1,0 +1,46 @@
+{
+	"extends" : [
+		"eslint:recommended",
+		"plugin:react/recommended"
+	],
+  "parser": "babel-eslint",
+	"parserOptions": {
+		"ecmaVersion": 8,
+		"ecmaFeatures": {
+      "experimentalObjectRestSpread": true,
+      "jsx": true
+	  },
+	  "sourceType": "module"
+	},
+	"env": {
+		"es6": true,
+		"node": true
+	},
+  "globals": {
+    "document": true,
+    "localStorage": true,
+    "window": true,
+    "location": true,
+    "fetch": true
+  },	
+	"rules": {
+    "no-tabs": 1,
+    "no-mixed-spaces-and-tabs": 1,
+		"import/named": 2,
+		"no-console": "off",
+		"no-unused-vars": [1, {"vars": "local"}],
+    "no-case-declarations": "off",
+    "no-useless-escape": "off",
+		"no-class-assign": "off",
+		"react/jsx-uses-react": 2,
+		"react/jsx-uses-vars": 2,
+		"react/prop-types":0,
+		"react/react-in-jsx-scope": 2,
+		"react-hooks/rules-of-hooks": 2
+	},
+	"plugins": [
+		"import",
+		"react",
+		"react-hooks"
+	]
+}

@@ -1,0 +1,4 @@
+--compilers js:../node_modules/babel-register
+test/*.spec.js
+-R spec
+--ui bdd
