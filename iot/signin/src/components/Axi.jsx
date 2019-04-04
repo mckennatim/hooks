@@ -1,21 +1,13 @@
-import React, {Fragment, useState, useEffect} from 'react'
+import React, { Fragment, useState, useEffect } from 'react';
 import{fetchData} from '../services/fetches'
-
-const Splash = (props) =>{
-  console.log('props: ', props)
-  console.log('in splash')
+  
+function App() {
   const [data, setData] = useState({ hits: [] });
   const [query, setQuery] = useState('redux');
 
   useEffect(() => {
-    let didCancel=false
-    if(!didCancel){
-      fetchData(query).then((data)=>setData(data))
-    }
-    return ()=>{
-      didCancel=true
-    }
-  }, [query]);
+    fetchData().then((data)=>setData(data))
+  }, []);
 
   return (
     <Fragment>
@@ -35,4 +27,4 @@ const Splash = (props) =>{
   );
 }
 
-export{Splash}
+export {App};

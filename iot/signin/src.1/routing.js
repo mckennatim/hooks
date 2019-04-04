@@ -8,8 +8,8 @@ var routes = [
   {path: 'about', page: 'About'},
   {path: 'fromauth', page: 'FromAuth'},
   {path: 'locs', page: 'Locs'},
-  {path: 'apps/:loc', page: 'LocApps'},
-  {path: '*', page: 'Locs'},
+  {path: 'apps', page: 'Apps'},
+  {path: '*', page: 'GoAuth'},
 ]
 const makeRouter = (routes)=>{
   const onrt = routes.reduce((acc,rt)=>{
@@ -20,7 +20,7 @@ const makeRouter = (routes)=>{
 }
 
 const rts = makeRouter(routes)
-// console.log('rts: ', rts)
+console.log('rts: ', rts)
 var router
 
 const routing = ()=>{

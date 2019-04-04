@@ -1,19 +1,16 @@
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/scan';
-import 'rxjs/add/operator/startWith';
-import {rootReducer} from './reducers';
+import { Subject, from } from 'rxjs'
+import {scan, flatMap, startWith } from 'rxjs/operators'// eslint-disable-line no-unused-vars
 import { isObservable } from './utilities/ofuncs';
-
+import {rootReducer} from './reducers';
 const action$ = new Subject();
 
 const createStore = (initState) =>
   action$
-    .flatMap((action) => isObservable(action) ? action : Observable.from([action]))
-    .startWith(initState)
-    .scan(rootReducer);
+    .pipe(
+      flatMap((action) => isObservable(action) ? action : from([action])),
+      startWith(initState),
+      scan(rootReducer)
+    )
 
 const actionCreator = (func) => (...args) => {
   const action = func.call(null, ...args);

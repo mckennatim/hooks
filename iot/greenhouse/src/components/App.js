@@ -1,10 +1,10 @@
 import React from 'react'
 // import {responsivePage} from '../showRWD'
-// import {Splash} from './Splash.jsx'
+import {Splash} from './Splash.jsx'
 // const compoi = {Splash}
 import * as compoi from './index'
-// console.log('compoi: ', compoi['Splash'])
-// console.log('Splash: ', Splash)
+console.log('compoi: ', compoi['Splash'])
+console.log('Splash: ', Splash)
 
 class App extends React.Component{
   constructor(props) {
@@ -41,16 +41,16 @@ class App extends React.Component{
     const panesPerType = compoi.panes[browserTypeIdx]
     const pageList = compoi.multi.filter((amul)=>(amul.pri==pageName))
     if(pageList.length==0){ //if there is no multi array for the page
-      const singleElement = React.createElement(compoi[pageName], {key:1, cambio:props.cambio, responsive: props.responsive}, null)
+      const singleElement = React.createElement(compoi[pageName], {key:1}, null)
       elArr.push(singleElement)
     }else{
       const multiList= pageList[0].mul.filter((mu,i)=>(i+2)==panesPerType)
       if (multiList.length==0){ // if the multilist is empty
-        const singleElement = React.createElement(compoi[pageName] , {key:1, cambio:props.cambio, responsive: props.responsive}, null)
+        const singleElement = React.createElement(compoi[pageName], {key:1}, null)
         elArr.push(singleElement)
       }else{//use the array matching the panesPerType size and add all its names to the element arrray
         const elList = multiList[0].map((pgStr,i)=>{
-          const pg = React.createElement(compoi[pageName], {key:i, cambio:props.cammbio, responsive: props.responsive}, null)
+          const pg = React.createElement(compoi[pageName], {key:i}, null)
           return pg
         })
         elArr = elList

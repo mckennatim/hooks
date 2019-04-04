@@ -1,7 +1,7 @@
 {
-  "name": "admind",
+  "name": "try1",
   "version": "1.0.0",
-  "description": "reroo jobs admin",
+  "description": "try1 hooks",
   "main": "webpack.config.js",
   "scripts": {
     "dev": "node ../../node_modules/webpack/bin/webpack -w --config webpack.config.js",

@@ -1,10 +1,10 @@
 import React from 'react'
 // import {responsivePage} from '../showRWD'
-// import {Splash} from './Splash.jsx'
+import {Splash} from './Splash.jsx'
 // const compoi = {Splash}
 import * as compoi from './index'
-// console.log('compoi: ', compoi['Splash'])
-// console.log('Splash: ', Splash)
+console.log('compoi: ', compoi['Splash'])
+console.log('Splash: ', Splash)
 
 class App extends React.Component{
   constructor(props) {

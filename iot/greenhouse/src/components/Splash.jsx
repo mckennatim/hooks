@@ -1,21 +1,17 @@
 import React, {Fragment, useState, useEffect} from 'react'
 import{fetchData} from '../services/fetches'
 
-const Splash = (props) =>{
-  console.log('props: ', props)
-  console.log('in splash')
+const Splash = () =>{
   const [data, setData] = useState({ hits: [] });
   const [query, setQuery] = useState('redux');
 
   useEffect(() => {
-    let didCancel=false
-    if(!didCancel){
-      fetchData(query).then((data)=>setData(data))
+    fetchData(query).then((data)=>setData(data))
+    const fun = (d)=>{
+      console.log('d: ',d )
     }
-    return ()=>{
-      didCancel=true
-    }
-  }, [query]);
+    return fun
+    }, [query]);
 
   return (
     <Fragment>

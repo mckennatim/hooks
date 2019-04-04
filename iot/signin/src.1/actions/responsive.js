@@ -14,7 +14,7 @@ const setDeviceType = actionCreator((payload) => {
 });
 
 const switchPage = actionCreator((payload) => {
-  // console.log('payload: ', payload)
+  console.log('payload: ', payload)
   return {
     type: 'PAGE_SWITCHED',
     payload

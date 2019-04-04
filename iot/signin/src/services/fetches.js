@@ -1,74 +1,40 @@
-import {ls, cfg} from '../utilities/getCfg'
-import {geta} from '../utilities/wfuncs'
+import axios from 'axios';
+import {cfg} from '../utilities/getCfg'
 
-const fetchLocs=(mobj)=>{
-  if(geta('mobj.token', mobj)){
-    let url= cfg.url.api+'/reg/coids'
-    let options= {headers: {'Authorization': 'Bearer '+ mobj.token}}
-    return(
-      fetch(url, options)
-        .then((response)=>response.json())
-        .then((json)=>{
-          console.log('json: ', json)
-          if(json.message){
-            return {qmessage: json.message}
-          }else{
-            return json
-          }
-        })
-        .catch((e)=>{
-          return {qmessage: e.message}
-        })
-      )         
-  }else{
-    let p2 =Promise.resolve({qmessage:'you dont exist! '})
-    return p2
-  }
-}
+// console.log('getCfg: ', cfg)
 
-const fetchApps=()=>{
-  var lsh = ls.getItem();
-  if(geta('lsh.token', lsh)){
-    let url= cfg.url.api+'/reg/apps'
-    let options= {headers: {'Authorization': 'Bearer '+ lsh['token']}}
-    return(
-      fetch(url, options)
-        .then((response)=>response.json())
-        .then((json)=>json)
-        .catch((e)=>{
-          return {qmessage: e.message}
-        })
-      )         
-  }else{
-    let p2 =Promise.resolve({qmessage:'you dont exist! Try re-registering '})
-    return p2
-  }
-}
+const fetchData = async (qry) => {
+  const result = await axios(
+    'http://hn.algolia.com/api/v1/search?query='+qry,
+  );
+  return result.data;
+};
 
-const fetchALUtoken=(token, co)=>{
-  if(token){
-    let url= cfg.url.api+'/reg/ctoken/'+co.coid+'/'+co.role
-    console.log('url: ', url)
-    let options= {headers: {'Authorization': 'Bearer '+ token}}
-    return(
-      fetch(url, options)
-        .then((response)=>response.json())
-        .then((json)=>{
-          if(json.message){
-            return {qmessage: json.message}
-          }else{
-            return json
-          }
-        })
-        .catch((e)=>{
-          return {qmessage: e.message}
-        })
-      )         
-  }else{
-    let p2 =Promise.resolve({qmessage:'you dont exist! '})
-    return p2
-  }
-}
+const fetchLocs = async (token) => {
+  const url = `${cfg.url.api}/reg/locs`
+  console.log('url: ', url)
+  const result = await axios.get(url,{
+    headers: {'Authorization': 'Bearer '+ token}
+  });
+  return result.data;
+};
 
+const fetchLocApps = async (token, locid) => {
+  const url = `${cfg.url.api}/reg/apps/${locid}`
+  console.log('url: ', url)
+  const result = await axios.get(url,{
+    headers: {'Authorization': 'Bearer '+ token}
+  });
+  return result.data;
+};
 
-export{fetchALUtoken, fetchApps, fetchLocs}
+const fetchToken = async (token, locid, appid, role) => {
+  const url = `${cfg.url.api}/reg/la/${locid}/${appid}/${role}`
+  console.log('url: ', url)
+  const result = await axios.get(url,{
+    headers: {'Authorization': 'Bearer '+ token}
+  });
+  return result.data;
+};
+
+export {fetchData, fetchLocs, fetchLocApps, fetchToken}

@@ -8,7 +8,7 @@ const initState = {
   },
   cambio: {
     infocus: true,
-    page: {name: 'Splash', params: null}
+    page: {name: 'GoAuth', params: null}
   },
   help:{
     allhelp:[]

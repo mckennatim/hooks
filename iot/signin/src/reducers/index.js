@@ -1,7 +1,5 @@
 import{responsive}from './responsive'
 import{cambio}from './cambio'
-import{newco}from './shareduce'
-import{help} from './helpred'
 
 function test(state, action) {
   switch (action.type) {
@@ -39,7 +37,7 @@ function combineReducers(reducersObject) {
   }, state);
 }
 
-var reducersObj={responsive, test, cambio, newco, help}
+var reducersObj={responsive, test, cambio}
 const rootReducer = combineReducers(reducersObj)
 export {rootReducer}
 
