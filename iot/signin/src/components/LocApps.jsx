@@ -28,7 +28,8 @@ const LocApps = (props)=>{
       console.log('tok: ', tok)
       const apptok = storageLocal(tok.app)
       apptok.setItem(tok.tdata)
-      const href = makeHref(window.location.hostname, tok.app, '')
+      const whereto = role==="installer"||role==="builder" ? role : tok.app
+      const href = makeHref(window.location.hostname, whereto, `#AppLoc?${tok.app}`)
       console.log('href: ', href)
       window.location.assign(href)
     })

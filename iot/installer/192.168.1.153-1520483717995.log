@@ -1,0 +1,19 @@
+getCfg.js:75 sttz  11:34pm  stm  23:34  mins  1414  sminarr  (2) [23, 34]
+getCfg.js:79 emin  1474  eminarr  (2) [24, 34]
+getCfg.js:80 zmin  1440  zminarr  (2) [24, 0]
+getCfg.js:84 [[0,0,55,53],[20,12,78,76],[22,50,56,52],[23,50,64,61],[23,59,55,53]]
+getCfg.js:91 before:  (4) [0, 0, 55, 53]  bmin  0
+getCfg.js:92 after:  (4) [20, 12, 78, 76]  amin  1212
+getCfg.js:105 [[0,0,55,53]]
+getCfg.js:91 before:  (4) [20, 12, 78, 76]  bmin  1212
+getCfg.js:92 after:  (4) [22, 50, 56, 52]  amin  1370
+getCfg.js:105 [[0,0,55,53],[20,12,78,76]]
+getCfg.js:91 before:  (4) [22, 50, 56, 52]  bmin  1370
+getCfg.js:92 after:  (4) [23, 50, 64, 61]  amin  1430
+getCfg.js:105 [[0,0,55,53],[20,12,78,76],[22,50,56,52],[23,34,69,67]]
+getCfg.js:91 before:  (4) [23, 50, 64, 61]  bmin  1430
+getCfg.js:92 after:  (4) [23, 59, 55, 53]  amin  1439
+getCfg.js:105 [[0,0,55,53],[20,12,78,76],[22,50,56,52],[23,34,69,67],[23,50,64,61]]
+getCfg.js:118 [[0,0,55,53],[20,12,78,76],[22,50,56,52],[23,34,69,67],[23,50,64,61]]
+SensorRelay.js:71 [[0,0,55,53],[20,12,78,76],[22,50,56,52],[23,50,64,61]]
+SensorRelay.js:78 setBoost on  prg  for  1:0

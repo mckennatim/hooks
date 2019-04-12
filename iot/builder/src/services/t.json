@@ -1,0 +1,1 @@
+{ "software_version": "2.0", "hardware_version": "wemos", "sr": [ { "srid":0, "hayrelay":0, "haysensor":{ "senses":"temp", "model":"DHT22" } }, { "srid":1, "hayrelay":0, "haysensor":{ "senses":"humid", "model":"DHT22" } }, { "srid":2, "hayrelay":{ "controlled":0, "defsched":[[0,0,1]] }, "haysensor":0 } ] }

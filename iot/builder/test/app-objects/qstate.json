@@ -1,0 +1,171 @@
+{
+  "devs": {
+    "CYURD003": [
+      {
+        "sr": 0,
+        "label": "kid"
+      },
+      {
+        "sr": 1,
+        "label": "lr"
+      }
+    ],
+    "CYURD001": [
+      {
+        "sr": 0,
+        "label": "music"
+      },
+      {
+        "sr": 1,
+        "label": "peri"
+      }
+    ]
+  },
+  "qdata": {
+    "kid": {
+      "id": "kid",
+      "name": "Kid's Suite",
+      "img": "kid.jpg",
+      "spec": {
+        "type": "temp",
+        "diff": 2
+      },
+      "sr": {
+        "temp": 62,
+        "relay": 0,
+        "setpt": 50,
+        "id": 0,
+        "dev": "CYURD003"
+      },
+      "sched": [
+        [
+          0,
+          0,
+          51,
+          49
+        ]
+      ],
+      "timeleft": 0,
+      "ts": "2018-03-16T15:31:17.966Z"
+    },
+    "lr": {
+      "id": "lr",
+      "name": "Living Room",
+      "img": "lr.jpg",
+      "spec": {
+        "type": "temp",
+        "diff": 2
+      },
+      "sr": {
+        "temp": 57,
+        "relay": 0,
+        "setpt": 54,
+        "id": 1,
+        "dev": "CYURD003"
+      },
+      "sched": [
+        [
+          0,
+          0,
+          55,
+          53
+        ],
+        [
+          20,
+          12,
+          78,
+          76
+        ],
+        [
+          22,
+          50,
+          56,
+          52
+        ],
+        [
+          23,
+          50,
+          64,
+          61
+        ]
+      ],
+      "timeleft": 0,
+      "ts": "2018-03-16T15:31:18.014Z"
+    },
+    "music": {
+      "id": "music",
+      "name": "Music Room",
+      "img": "music.jpg",
+      "spec": {
+        "type": "temp",
+        "diff": 2
+      },
+      "sr": {
+        "temp": 64,
+        "relay": 0,
+        "setpt": 54,
+        "id": 0,
+        "dev": "CYURD001"
+      },
+      "sched": [
+        [
+          0,
+          0,
+          55,
+          53
+        ],
+        [
+          17,
+          12,
+          78,
+          76
+        ],
+        [
+          20,
+          50,
+          56,
+          52
+        ],
+        [
+          22,
+          50,
+          64,
+          61
+        ]
+      ],
+      "timeleft": 0,
+      "ts": "2018-03-16T15:31:17.742Z"
+    },
+    "peri": {
+      "id": "peri",
+      "name": "Peri's Study",
+      "img": "peri.jpg",
+      "spec": {
+        "type": "temp",
+        "diff": 2
+      },
+      "sr": {
+        "temp": 64,
+        "relay": 1,
+        "setpt": 76,
+        "id": 1,
+        "dev": "CYURD001"
+      },
+      "sched": [
+        [
+          0,
+          0,
+          77,
+          75
+        ]
+      ],
+      "timeleft": 0,
+      "ts": "2018-03-16T15:31:17.850Z"
+    }
+  },
+  "tz": "America/New_York",
+  "readystate": {
+    "ready": true,
+    "message": "connected"
+  }
+}

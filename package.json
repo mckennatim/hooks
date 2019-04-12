@@ -14,15 +14,22 @@
     "axios": "^0.18.0",
     "babel-eslint": "^10.0.1",
     "css-loader": "^2.1.0",
+    "moment-timezone": "^0.5.23",
+    "muicss": "^0.9.41",
     "navigo": "^7.1.2",
+    "paho.mqtt.js": "^2.0.5",
     "path": "^0.12.7",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-json-view": "^1.19.1",
     "rxjs": "^6.4.0",
-    "rxjs-hooks": "^0.3.3"
+    "rxjs-compat": "^6.4.0",
+    "rxjs-hooks": "^0.3.3",
+    "underscore": "^1.9.1"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
     "@babel/preset-env": "^7.4.2",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.5",

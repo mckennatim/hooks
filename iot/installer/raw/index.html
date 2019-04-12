@@ -1,0 +1,89 @@
+<!--
+Gets ssid's into list. Fill out a form that is used to setup a device and register it on the server's database. Device will have 
+	char ssid[40];
+	char ssidpwd[24];
+	char devid[9];
+	char devpwd[24];
+	char ip[16];
+	char port[5]; 
+Database will have the 
+	devid, 
+	timezone, 
+	owner's(emaiL), 
+	admin[],
+	users[],
+	viewers[] 
+Posting a record will setup the device and then write to the database.
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>config</title>
+	<link rel="stylesheet" href="">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/3.5.2/superagent.min.js"></script>
+</head>
+<body>
+
+<h3>Configure esp8266 device</h3>
+<p>First change your WIFI to <strong>espAPsb</strong>. Then submit the device info</p>
+	<div>
+		<strong>device setup data</strong>
+		<hr>
+		<form id="devform" action="">
+			device id: <input name="devid" type="text" id="devid" value="CYURDO"><br>
+			device password: <input name="dpwd" type="text" id="devpwd" size=6 value="jjjjjj"><br><br>
+			ssid: <select name="ssid" id="ssids"></select><br>
+			ssid password: <input name="pwd" type="text" id="ssidpwd" value="jjjjjjjj"><br><br>
+			server ip: <input name="ip" type="text" id="serverip" value="192.168.0.26" ><br>
+			server port <input type="text" name="port" id="port" value="8332"><br>
+		</form>
+			<button onclick="send2device()">Configure Device</button>
+		<br>
+		<strong>device registration data record</strong>
+		<hr>
+	</div>	
+<script>
+	var optionList = document.getElementById('ssids').options
+	const espAPsbIP = 'http://192.168.4.1'
+
+	superagent
+		.get(espAPsbIP)
+		.end(function(err, res){
+			var ssids = JSON.parse(res.text).ssids
+   		console.log(ssids)
+   		const options=ssids.map(x=>{
+   			console.log(x.ssid)
+   			return {text: x.ssid, value: x.ssid}
+   		})
+   		options[0].selected=true
+   		options.forEach( (option) => optionList.add( new Option(option.text, option.value, option.selected ) ));
+  	});
+
+	function send2device(){
+		console.log("sending to device")
+		var elements = document.getElementById("devform").elements;
+		var qstr = `/config?`
+    var obj ={};
+    for(var i = 0 ; i < elements.length ; i++){
+        var item = elements.item(i);
+        obj[item.name] = item.value;
+        qstr+=`${item.name}=${item.value}?`
+
+    }
+    const qry= qstr.slice(0,-1)
+    const url= espAPsbIP+qry
+    const uurl="http://192.168.4.1/config?ssid=street_no_vale2&pwd=jjjjjjjj&devid=CYURD008&ip=10.0.1.104&port=3332"
+    console.log(uurl)
+    superagent
+			.get(url)
+			.end(function(err, res){
+				console.log(res)
+  	});    
+	}	
+
+ </script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+{
+  "CYURD004": [
+    {
+      "sr": 0,
+      "label": "temp-gh"
+    },
+    {
+      "sr": 1,
+      "label": "hum-gh"
+    },
+    {
+      "sr": 2,
+      "label": "light-gh"
+    }
+  ],
+  "CYURD006": [
+    {
+      "sr": 0,
+      "label": "temp-out"
+    }
+  ]
+}
+
+
+[
+  {
+    "id": "temp-gh",
+    "name": "Greenhouse Temperature",
+    "img": "temp-gh.jpg"
+  },
+  {
+    "id": "hum-gh",
+    "name": "Greenhouse Humidity",
+    "img": "hum-gh.jpg"
+  },
+  {
+    "id": "light-gh",
+    "name": "Greenhouse Lights",
+    "img": "light-gh.jpg"
+  },
+  {
+    "id": "temp-out",
+    "name": "Outside Temperature",
+    "img": "temp-out.jpg"
+  }
+]

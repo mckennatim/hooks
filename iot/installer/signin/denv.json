@@ -1,0 +1,13 @@
+{
+  "https":{
+    "superapp": "iot",
+    "appid": "signin",
+    "url": {
+      "soauth": "https://services.sitebuilt.net/soauth",
+      "api": "https://services.sitebuilt.net/iotex/api"
+    },
+    "cbPath": "#locs"
+  },
+  "local": {
+  }
+}

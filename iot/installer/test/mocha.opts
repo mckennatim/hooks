@@ -1,0 +1,6 @@
+--require ../../node_modules/babel-core/register
+--require mock-local-storage
+test/*.spec.js
+-R spec
+--ui bdd
+-r ../../node_modules/mocha-clean
