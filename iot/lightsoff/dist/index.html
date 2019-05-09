@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1, maximum-scale=1">	
+	<title>lightsoff</title>
+	<script src="../mqttws31.js"></script>
+	<script src="../utility.js"></script>
+	<script src="./app.js"></script>
+ <style type="text/css" media="screen">
+		#temp1, #temp2 {
+			font-size: 2em;
+		}	
+		span {
+			font-size: 1.2em;
+		}	
+   .button {
+        background-color: #000000;
+        color: #FFFFFF;
+        padding: 10px;
+        border-radius: 10px;
+        -moz-border-radius: 10px;
+        -webkit-border-radius: 10px;
+        margin:10px
+    }
+    
+    .small-btn {
+        width: 50px;
+        height: 25px;
+    }
+    
+    .medium-btn {
+        width: 70px;
+        height: 30px;
+    }
+    
+    .big-btn {
+        width: 90px;
+        height: 40px;
+    }	
+</style>	
+</head>
+<body>
+	<h1>quick and dirty</h1>
+	<span id="message"></span><br>
+	<h2>outside temp: <span id="outside"></span> </h2>
+	<h2>greenhouse temp: <span id="greentemp"></span> </h2>
+	<h2>greenhouse humidity: <span id="greenhumid"></span> </h2>
+	<h3>lights on for <span id="greenTleft">0</span> minutes</h3>
+
+	<button id="kill" onclick="kill()" class="button big-btn" >turn off</button>
+	<span id="lstate">  0  </span>
+	<button id="turnon" onclick="turnon()" class="button big-btn">turn on</button>
+
+	<br>
+	<input type="text" id="prarr" value="[0,0,1],[7,0,0],[19,0,1]" size="30"><br>
+
+	<button class="button big-btn" id="button" onclick="aprg()">a prg</button>
+	<br>
+
+</body>
+</html>

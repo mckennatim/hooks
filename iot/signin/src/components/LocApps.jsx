@@ -26,10 +26,20 @@ const LocApps = (props)=>{
   const gotoApp =(appid, role)=>()=>{
     fetchToken(ls.getKey('token'), locid, appid, role).then((tok)=>{
       console.log('tok: ', tok)
+      console.log('locid: ', locid)
+      console.log('role: ', role)
       const apptok = storageLocal(tok.app)
       apptok.setItem(tok.tdata)
-      const whereto = role==="installer"||role==="builder" ? role : tok.app
-      const href = makeHref(window.location.hostname, whereto, `#AppLoc?${tok.app}`)
+      var whereto 
+      var qry =''// = role==="installer"||role==="builder" ? role : tok.app
+      if (role==="installer"||role==="builder"){
+        console.log('whereto, qry: ', whereto, qry)
+        whereto=role
+        qry = `?${tok.app}`
+      } else{
+        whereto=tok.app
+      }
+      const href = makeHref(window.location.hostname, whereto,qry)//, `?${locid}`)
       console.log('href: ', href)
       window.location.assign(href)
     })
