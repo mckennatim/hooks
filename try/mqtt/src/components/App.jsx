@@ -2,68 +2,66 @@ import React, {useContext, useEffect, useState} from 'react'// eslint-disable-li
 // var Paho = require('paho.mqtt.js')
 import {cfg, ls} from '../utilities/getCfg'
 //import { Context} from "../../nod/src/context";
-import {ClientSocket, Context, connect, monitorFocus} from '../../nod/src/index'
+import {ClientSocket, Context, monitorFocus, processRawMessage, useDevSpecs} from '../../nod/src/index'
 // import { useRawMessage } from '../../nod/src/useRawMessage';
 // import {connect,monitorFocus} from '../services/mq'
 const lsh = ls.getItem()
 
-const devs = ['CYURD004', 'CYURD006']
+//const devs = ['CYURD004', 'CYURD006']
 
-const setupSocket=(client, publish, cb)=>{
+const setupSocket=(client, devs, publish, subscribe, req, cb)=>{
+  console.log('devs: ', devs)
+  const thedevs = Object.keys(devs)
+  const topics  = ['srstate', 'sched', 'flags', 'timr'] 
+  console.log('thedevs: ', thedevs)
   publish(client, 'presence', 'doodle do de de')
-  subscribe(client, devs)
-  req(client, devs, publish )
+  subscribe(client, thedevs, topics)
+  req(client, thedevs, publish, topics )
   cb()
 }
 
-function req(client, devs, publish){
+function req(client, devs, publish, topics){
   devs.map((dev)=>{
-    publish(client, `${dev}/req`,'{"id":2,"req":"flags"}')
-    publish(client, `${dev}/req`,'{"id":0,"req":"srstates"}')
-    publish(client, `${dev}/req`,'{"id":1,"req":"progs"}')
+    topics.map((top, idx)=>publish(client, `${dev}/req`,`{"id":${idx},"req":"${top}"}`))
   })
 }
 
-function subscribe(client, devs){
+function subscribe(client, devs, toparr){
   function subFailure(message){
     console.log('subscribe failure',message)
   }
   devs.map((dev)=>{
-    client.subscribe(`${dev}/srstate` , {onFailure: subFailure}) 
-    // client.subscribe(`${dev}/devtime` , {onFailure: subFailure}) 
-    // client.subscribe(`${dev}/timr` , {onFailure: subFailure}) 
-    // client.subscribe(`${dev}/sched` , {onFailure: subFailure}) 
-    // client.subscribe(`${dev}/flags` , {onFailure: subFailure}) 
+    toparr.map((top)=>client.subscribe(`${dev}/${top}` , {onFailure: subFailure}) )
   })
 }
 
 const Twitter = () => {
+  const [client, publish] = useContext(Context);
+  client.onMessageArrived= onMessageArrived
+
   const [amessage, setMessage]=useState('nada')
+  const [state, dispatch] = useReducer(dataFetchReducer, {})
+
+  const {devs, zones, binfo}= useDevSpecs(ls, cfg, client, (client, devs)=>{
+    setupSocket(client, devs, publish, subscribe, req, ()=>console.log('in callback'))
+  })
   
-  function processRawMessage(mess){
-    var narr = mess.destinationName.split('/')
-    const dev = narr[0]
-    const topic = narr[1]
-    var pls = mess.payloadString
-    console.log(topic+ pls)
-    const payload= JSON.parse(pls)
-    const message = {dev:dev, topic:topic, payload:payload}
+  function onMessageArrived(mess){
+    const message = processRawMessage(mess)
     setMessage(JSON.stringify(message))
   }
 
-  const [client, publish] = useContext(Context);
-  client.onMessageArrived= processRawMessage
-  useEffect(()=>{
-    connect(client, lsh, ()=>setupSocket(client, publish, ()=>console.log('in callback')) )
-    return ()=>client.disconnect() 
-  },[])
-
-  monitorFocus(window, client, lsh, ()=>setupSocket(client, publish, ()=>console.log('in monitor callback')))
+  monitorFocus(window, client, lsh, ()=>{
+    setupSocket(client, devs, publish, subscribe, req, ()=>console.log('in monitor callback'))
+  })
 
   return (
     <div>
       <h1>hello Twiiter </h1>
-      {amessage}
+      {amessage} <br/>
+      <pre>{JSON.stringify(devs, null, 2)}</pre><br/>
+      <pre>{JSON.stringify(zones, null, 4)}</pre> <br/>
+      <pre>{JSON.stringify(binfo, null, 4)}</pre>
     </div>
   );
 };

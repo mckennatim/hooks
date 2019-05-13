@@ -2,6 +2,8 @@
 # hooks
 
 ## log
+### 02 try-mqtt-useDevSpecs
+brought in useDevsSpecs which fetches from db and connects once.
 ### 01-try-mqtt
 Got to the point where device data diplays in app. mqtt/
 
