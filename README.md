@@ -2,7 +2,23 @@
 # hooks
 
 ## log
-### 02 try-mqtt-useDevSpecs
+### 03try-mqtt-subscribed
+Most everything works with the code handling mqtt residing in what should become an npm library. 
+`
+    import {ClientSocket, 
+      Context, 
+      monitorFocus, 
+      processRawMessage, 
+      useDevSpecs,  
+      processMessage, 
+      getZinfo, 
+      subscribe, 
+      req} from '../../nod/src/index'
+`
+
+Besides the component you are using you need to `sertupSocket` and a `messageReducer` that updates the stae based upon which zones you need for that component
+
+### 02try-mqtt-useDevSpecs
 brought in useDevsSpecs which fetches from db and connects once.
 ### 01-try-mqtt
 Got to the point where device data diplays in app. mqtt/

@@ -1,8 +1,8 @@
 import ProviderLib from "./provider";
-import { useSocket as useSocketLib } from "./useSocket";
+import { processMessage as processMessageLib } from "./processMessage";
 import { useDevSpecs as useDevSpecsLib} from './useDevSpecs'
 import {Context}from './context'
-import {connect, monitorFocus} from './mq'
+import {connect, monitorFocus, subscribe, req} from './mq'
 
 const processRawMessage= (mess)=>{
   var narr = mess.destinationName.split('/')
@@ -15,8 +15,10 @@ const processRawMessage= (mess)=>{
   return message
 }
 
+const getZinfo=(label,zones)=>zones.find((zone)=>zone.id==label)
+
 
 export const ClientSocket = ProviderLib;
-export const useSocket = useSocketLib;
+export const processMessage = processMessageLib;
 export const useDevSpecs = useDevSpecsLib
-export {Context, connect, monitorFocus, processRawMessage}
+export {Context, connect, monitorFocus, processRawMessage, getZinfo, subscribe, req}

@@ -33,4 +33,19 @@ const monitorFocus=(window, client, lsh, cb)=>{
   }
 }
 
-export{connect, monitorFocus}
+function req(client, devs, publish, topics){
+  devs.map((dev)=>{
+    topics.map((top, idx)=>publish(client, `${dev}/req`,`{"id":${idx},"req":"${top}"}`))
+  })
+}
+
+function subscribe(client, devs, toparr){
+  function subFailure(message){
+    console.log('subscribe failure',message)
+  }
+  devs.map((dev)=>{
+    toparr.map((top)=>client.subscribe(`${dev}/${top}` , {onFailure: subFailure}) )
+  })
+}
+
+export{connect, monitorFocus, subscribe, req}

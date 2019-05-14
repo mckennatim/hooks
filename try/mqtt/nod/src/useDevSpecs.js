@@ -53,6 +53,3 @@ export function useDevSpecs(ls,cfg, client,cb ){
 }
 
 
-// function subFailure(message){
-//   console.log('subscribe failure',message)
-// }
