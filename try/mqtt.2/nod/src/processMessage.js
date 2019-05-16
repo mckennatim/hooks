@@ -1,23 +1,3 @@
-
-const messageReducer = (state, action)=>{
-  const keys =Object.keys(state)
-  const newstate = keys.reduce((newdata, label)=>{
-    if(action.type==label){
-      const tmp ={}
-      tmp[label] ={...newdata[label]} //
-      Object.keys(state[label]).map((d)=>{
-        if(action.payload[d]){
-          tmp[label][d] = action.payload[d]
-        }
-      })
-      newdata[label]=tmp[label]
-    }
-    return newdata
-  },{...state})
-  return newstate
-}
-
-
 const findLabel=(message, devs)=>{
   const dev = Object.keys(devs).find(key => key === message.dev)
   let i=undefined
@@ -31,7 +11,7 @@ const findLabel=(message, devs)=>{
   return i
 }
 
-const processMessage = (message, devs, zones, bigstate)=>{
+const processMessage = (message, devs, zones, messageReducer, bigstate)=>{
   let devinf=undefined
   const action={}
   //action.payload={darr:undefined, pro:undefined, timeleft: undefined}

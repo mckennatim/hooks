@@ -21,85 +21,83 @@ const setupSocket=(client, devs, publish, subscribe, req, cb)=>{
   cb()
 }
 
-// const init = {
-//   "temp_out":{darr:[0,0,0,0]}, 
-//   "temp_gh":{darr:[0,0,0,0]}, 
-//   "hum_gh":{darr:[0,0,0,0]}, 
-//   "light_gh":{pro:[[]], timeleft:0, darr:[0]}
-// }
+const init = {
+  "temp_out":{darr:[0,0,0,0]}, 
+  "temp_gh":{darr:[0,0,0,0]}, 
+  "hum_gh":{darr:[0,0,0,0]}, 
+  "light_gh":{pro:[[]], timeleft:0, darr:[0]}
+}
 
-// const messageReducer = (state, action)=>{
-//   const keys =Object.keys(state)
-//   const newstate = keys.reduce((newdata, label)=>{
-//     if(action.type==label){
-//       const tmp ={}
-//       tmp[label] ={...newdata[label]} //
-//       Object.keys(state[label]).map((d)=>{
-//         if(action.payload[d]){
-//           tmp[label][d] = action.payload[d]
-//         }
-//       })
-//       newdata[label]=tmp[label]
-//     }
-//     return newdata
-//   },{...state})
-//   return newstate
-// }
+const tmessageReducer = (state, action)=>{
+  const keys =Object.keys(state)
+  const newstate = keys.reduce((newdata, label)=>{
+    if(action.type==label){
+      const tmp ={}
+      tmp[label] ={...newdata[label]} //
+      Object.keys(state[label]).map((d)=>{
+        if(action.payload[d]){
+          tmp[label][d] = action.payload[d]
+        }
+      })
+      newdata[label]=tmp[label]
+    }
+    return newdata
+  },{...state})
+  return newstate
+}
 
-// const action = {}
-// action.type = "light_gh"
-// const state = {...init}
-// init[action.type].timeleft = 4212
-// action.payload = {}
-// action.payload.pro = [[1,2,3], [4,5,6], [7,8,9]]
-// console.log('action: ', action)
-// console.log('state: ', state)
-// const prt = {}
-// prt[action.type]= {...state[action.type]}
-// console.log('prt: ', prt)
-// const updatedstate = messageReducer(prt, action)
-// console.log('updatedstate: ', updatedstate)
+const state = {...init}
+const action = {}
+action.type = "light_gh"
+init[action.type].timeleft = 4212
+action.payload = {}
+action.payload.pro = [[1,2,3], [4,5,6], [7,8,9]]
+console.log('action: ', action)
+console.log('state: ', state)
 
-// const messageReducer = (state, action) => {//{temp_gh: 0, hum_gh: 0, light_gh: ({ison: false, timeleft: 0}), temp_out: 0}
-//   const ns = {}
-//   switch (action.type){
-//     case 'temp_gh': 
-//       const temp_gh = {...state.temp_gh}
-//       if(action.payload.darr){//srstate
-//         temp_gh.darr=action.payload.darr
-//       }
-//       ns.temp_gh=temp_gh
-//       return ns
-//     case 'hum_gh': 
-//       const hum_gh = {...state.hum_gh}
-//       if(action.payload.darr){
-//         hum_gh.darr=action.payload.darr
-//       }
-//       ns.hum_gh=hum_gh
-//       return ns  
-//     case 'light_gh':
-//       const lgh = {...state.light_gh}
-//       if (action.payload.darr){
-//         lgh.darr= action.payload.darr
-//       }
-//       if(action.payload.timeleft){
-//         lgh.timeleft=action.payload.timeleft
-//       }
-//       if(action.payload.pro){
-//         lgh.pro=action.payload.pro
-//       }
-//       ns.light_gh = lgh
-//       return ns
-//     case 'temp_out': 
-//       const temp_out = {...state.temp_out}
-//       if (action.payload.darr){
-//         temp_out.darr = action.payload.darr
-//       }
-//       ns.temp_out=temp_out
-//       return ns
-//     default: return ns  
-//   }
-// }
+const updatedstate = tmessageReducer(state,action)
+console.log('updatedstate: ', updatedstate)
+
+const messageReducer = (state, action) => {//{temp_gh: 0, hum_gh: 0, light_gh: ({ison: false, timeleft: 0}), temp_out: 0}
+  const ns = {}
+  switch (action.type){
+    case 'temp_gh': 
+      const temp_gh = {...state.temp_gh}
+      if(action.payload.darr){//srstate
+        temp_gh.darr=action.payload.darr
+      }
+      ns.temp_gh=temp_gh
+      return ns
+    case 'hum_gh': 
+      const hum_gh = {...state.hum_gh}
+      if(action.payload.darr){
+        hum_gh.darr=action.payload.darr
+      }
+      ns.hum_gh=hum_gh
+      return ns  
+    case 'light_gh':
+      const lgh = {...state.light_gh}
+      if (action.payload.darr){
+        lgh.darr= action.payload.darr
+      }
+      if(action.payload.timeleft){
+        lgh.timeleft=action.payload.timeleft
+      }
+      if(action.payload.pro){
+        lgh.pro=action.payload.pro
+      }
+      ns.light_gh = lgh
+      return ns
+    case 'temp_out': 
+      const temp_out = {...state.temp_out}
+      if (action.payload.darr){
+        temp_out.darr = action.payload.darr
+      }
+      ns.temp_out=temp_out
+      return ns
+    default: return ns  
+  }
+}
 
 const Twitter = () => {
   console.log('Twitterr re-rendering')
@@ -115,36 +113,34 @@ const Twitter = () => {
   const[hum_gh, setHum_gh] = useState({darr:[0,0,0,0]})
   const[light_gh, setLight_gh] = useState({pro:[[]], timeleft:0, darr:[0]})
 
+  const bigstate = {temp_out, temp_gh, hum_gh, light_gh}
   const [prog, setProg] = useState('[[0,0,0]]')
   const [priorprog, setPriorProg] = useState([[0,0,0]])
 
   function onMessageArrived(mess){
     const message = processRawMessage(mess)
-    const ns = processMessage(message, devs, zones, {temp_out, temp_gh, hum_gh, light_gh})
-    if(ns){
-      console.log('ns: ', ns)
-      const key =Object.keys(ns)[0]
-      console.log('key: ', key)
-      switch (key){
-        case 'temp_out':
-          setTemp_out({...ns[key]})
-          break
-        case 'temp_gh':
-          setTemp_gh({...ns[key]})
-          break
-        case 'hum_gh':
-          setHum_gh({...ns[key]})
-          break
-        case 'light_gh':
-          setLight_gh({...ns[key]})
-          console.log('light_gh: ', light_gh)
-          if(JSON.stringify(ns[key].pro)!=priorprog){
-            console.log('UPDATING prog')
-            setProg(JSON.stringify(ns[key].pro))
-            setPriorProg(prog)
-          }
-          break
-      }
+    const ns = processMessage(message, devs, zones, tmessageReducer, bigstate)
+    console.log('ns: ', ns)
+    const key =Object.keys(ns)
+    console.log('key: ', key)
+    switch (key){
+      case 'temp_out':
+        setTemp_out({...ns[key]})
+        break
+      case 'temp_gh':
+        setTemp_gh({...ns[key]})
+        break
+      case 'hum_gh':
+        setHum_gh({...ns[key]})
+        break
+      case 'light_gh':
+        setLight_gh({...ns[key]})
+        if(JSON.stringify(ns[key].pro)!=priorprog){
+          console.log('UPDATING prog')
+          setProg(JSON.stringify(ns[key].pro))
+          setPriorProg(prog)
+        }
+        break
     }
   }
 
