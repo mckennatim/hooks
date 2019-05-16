@@ -2,112 +2,24 @@ import React, {useContext, useState} from 'react'// eslint-disable-line no-unuse
 import {cfg, ls} from '../utilities/getCfg'
 import {ClientSocket, 
   Context, 
-  monitorFocus, 
-  processRawMessage, 
   useDevSpecs,  
   processMessage, 
   getZinfo,
   getDinfo, 
-  subscribe, 
-  req} from '../../nod/src/index'
+  setupSocket,
+  monitorFocus
+} from '../../nod/src/index'
+
 const lsh = ls.getItem()
-
-const setupSocket=(client, devs, publish, subscribe, req, cb)=>{
-  const thedevs = Object.keys(devs)
-  const topics  = ['srstate', 'sched', 'flags', 'timr'] 
-  publish(client, 'presence', 'doodle do de de')
-  subscribe(client, thedevs, topics)
-  req(client, thedevs, publish, topics )
-  cb()
-}
-
-// const init = {
-//   "temp_out":{darr:[0,0,0,0]}, 
-//   "temp_gh":{darr:[0,0,0,0]}, 
-//   "hum_gh":{darr:[0,0,0,0]}, 
-//   "light_gh":{pro:[[]], timeleft:0, darr:[0]}
-// }
-
-// const messageReducer = (state, action)=>{
-//   const keys =Object.keys(state)
-//   const newstate = keys.reduce((newdata, label)=>{
-//     if(action.type==label){
-//       const tmp ={}
-//       tmp[label] ={...newdata[label]} //
-//       Object.keys(state[label]).map((d)=>{
-//         if(action.payload[d]){
-//           tmp[label][d] = action.payload[d]
-//         }
-//       })
-//       newdata[label]=tmp[label]
-//     }
-//     return newdata
-//   },{...state})
-//   return newstate
-// }
-
-// const action = {}
-// action.type = "light_gh"
-// const state = {...init}
-// init[action.type].timeleft = 4212
-// action.payload = {}
-// action.payload.pro = [[1,2,3], [4,5,6], [7,8,9]]
-// console.log('action: ', action)
-// console.log('state: ', state)
-// const prt = {}
-// prt[action.type]= {...state[action.type]}
-// console.log('prt: ', prt)
-// const updatedstate = messageReducer(prt, action)
-// console.log('updatedstate: ', updatedstate)
-
-// const messageReducer = (state, action) => {//{temp_gh: 0, hum_gh: 0, light_gh: ({ison: false, timeleft: 0}), temp_out: 0}
-//   const ns = {}
-//   switch (action.type){
-//     case 'temp_gh': 
-//       const temp_gh = {...state.temp_gh}
-//       if(action.payload.darr){//srstate
-//         temp_gh.darr=action.payload.darr
-//       }
-//       ns.temp_gh=temp_gh
-//       return ns
-//     case 'hum_gh': 
-//       const hum_gh = {...state.hum_gh}
-//       if(action.payload.darr){
-//         hum_gh.darr=action.payload.darr
-//       }
-//       ns.hum_gh=hum_gh
-//       return ns  
-//     case 'light_gh':
-//       const lgh = {...state.light_gh}
-//       if (action.payload.darr){
-//         lgh.darr= action.payload.darr
-//       }
-//       if(action.payload.timeleft){
-//         lgh.timeleft=action.payload.timeleft
-//       }
-//       if(action.payload.pro){
-//         lgh.pro=action.payload.pro
-//       }
-//       ns.light_gh = lgh
-//       return ns
-//     case 'temp_out': 
-//       const temp_out = {...state.temp_out}
-//       if (action.payload.darr){
-//         temp_out.darr = action.payload.darr
-//       }
-//       ns.temp_out=temp_out
-//       return ns
-//     default: return ns  
-//   }
-// }
 
 const Twitter = () => {
   console.log('Twitterr re-rendering')
   const [client, publish] = useContext(Context);
   client.onMessageArrived= onMessageArrived
 
+  const topics  = ['srstate', 'sched', 'flags', 'timr'] 
   const {devs, zones, binfo}= useDevSpecs(ls, cfg, client, (client, devs)=>{
-    setupSocket(client, devs, publish, subscribe, req, ()=>console.log('in callback'))
+    setupSocket(client, devs, publish, topics)
   })
   
   const[temp_out, setTemp_out] = useState({darr:[0,0,0,0]})
@@ -118,13 +30,10 @@ const Twitter = () => {
   const [prog, setProg] = useState('[[0,0,0]]')
   const [priorprog, setPriorProg] = useState([[0,0,0]])
 
-  function onMessageArrived(mess){
-    const message = processRawMessage(mess)
+  function onMessageArrived(message){
     const ns = processMessage(message, devs, zones, {temp_out, temp_gh, hum_gh, light_gh})
     if(ns){
-      console.log('ns: ', ns)
       const key =Object.keys(ns)[0]
-      console.log('key: ', key)
       switch (key){
         case 'temp_out':
           setTemp_out({...ns[key]})
@@ -137,9 +46,7 @@ const Twitter = () => {
           break
         case 'light_gh':
           setLight_gh({...ns[key]})
-          console.log('light_gh: ', light_gh)
           if(JSON.stringify(ns[key].pro)!=priorprog){
-            console.log('UPDATING prog')
             setProg(JSON.stringify(ns[key].pro))
             setPriorProg(prog)
           }
@@ -149,11 +56,11 @@ const Twitter = () => {
   }
 
   monitorFocus(window, client, lsh, ()=>{
-    setupSocket(client, devs, publish, subscribe, req, ()=>console.log('in monitor callback'))
+    setupSocket(client, devs, publish, topics)
   })
   
   const toggleOnOff=()=>{
-    const dinfo = getDinfo('light-gh', devs)
+    const dinfo = getDinfo('light_gh', devs)
     const newt = !light_gh.darr[0]*1
     const topic = `${dinfo.dev}/cmd`
     const payload = `{"id":${dinfo.sr},"sra":[${newt}]}`
@@ -185,7 +92,6 @@ const Twitter = () => {
   }
 
   const renderOnOff=()=>{
-    console.log('light_gh: ', light_gh)
     const btext = light_gh.darr[0] ? 'ON': 'OFF'
     const bkg = light_gh.darr[0] ? {background:'green'} : {background:'red'}
     return(<button style={bkg}onClick={toggleOnOff}>{btext}</button>)

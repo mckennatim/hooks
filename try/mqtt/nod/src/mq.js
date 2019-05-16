@@ -48,4 +48,10 @@ function subscribe(client, devs, toparr){
   })
 }
 
-export{connect, monitorFocus, subscribe, req}
+const setupSocket=(client, devs, publish, topics)=>{
+  const thedevs = Object.keys(devs)
+  subscribe(client, thedevs, topics)
+  req(client, thedevs, publish, topics )
+}
+
+export{connect, monitorFocus, subscribe, req, setupSocket}

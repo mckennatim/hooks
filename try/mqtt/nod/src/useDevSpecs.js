@@ -8,7 +8,6 @@ const geta=(dotstr, obj)=>{
 }
 
 export function useDevSpecs(ls,cfg, client,cb ){
-  // console.log('running usDevSpecs hood')
   var lsh = ls.getItem()
   const [zones ,setZones] = useState({});
   const [binfo ,setBinfo] = useState({});

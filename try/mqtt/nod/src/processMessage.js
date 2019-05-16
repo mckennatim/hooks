@@ -31,7 +31,19 @@ const findLabel=(message, devs)=>{
   return i
 }
 
-const processMessage = (message, devs, zones, bigstate)=>{
+const processRawMessage= (mess)=>{
+  var narr = mess.destinationName.split('/')
+  const dev = narr[0]
+  const topic = narr[1]
+  var pls = mess.payloadString
+  console.log(topic+ pls)
+  const payload= JSON.parse(pls)
+  const message = {dev:dev, topic:topic, payload:payload}
+  return message
+}
+
+const processMessage = (mess, devs, zones, bigstate)=>{
+  const message = processRawMessage(mess)
   let devinf=undefined
   const action={}
   //action.payload={darr:undefined, pro:undefined, timeleft: undefined}
@@ -55,17 +67,10 @@ const processMessage = (message, devs, zones, bigstate)=>{
       action.payload.pro = message.payload.pro
     }
   }
-  
   if(Object.entries(action.payload).length != 0){
-    console.log('WE BE REDUCING')
-    console.log('message.topic: ', message.topic)
-    console.log('action: ', action)
     const prt ={}
-
     prt[action.type]= {...bigstate[action.type]}
-    console.log('prt: ', prt)
     const newstate =  messageReducer(prt, action)
-    console.log('newstate: ', newstate)
     return newstate
   }
 }

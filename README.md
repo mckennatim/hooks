@@ -1,8 +1,12 @@
 
 # hooks
 
+
 ## log
-### 03try-mqtt-subscribed
+### 05-try-mqtt-beta0
+### 04-try-mqtt-messageReducer-mqtt.3
+Now it is in the future npm /nod/proccessMessage.js. Got rid of the switch reducer and put `messageReducer` in the npm. Everything you will filter from the messages is determined by the initial state of fhe useState functions.
+### 03-try-mqtt-subscribed
 Most everything works with the code handling mqtt residing in what should become an npm library. 
 `
     import {ClientSocket, 
