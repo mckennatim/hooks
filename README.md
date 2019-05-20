@@ -3,6 +3,13 @@
 
 
 ## log
+### 06
+
+npm package @mckennatim/mqtt-hooks now being used
+
+A custom package to add Context provider and hooks to react apps that connect to esp8266 and esp32 based sensor/relays/timers. Applications can use any subset of sensors, relays and timers from one or more devices. Talks to both mqtt broker and to server providing application configuration for a particulr location and device owner. Uses apikey provided from authentication and location
+
+
 ### 05-try-mqtt-beta0
 ### 04-try-mqtt-messageReducer-mqtt.3
 Now it is in the future npm /nod/proccessMessage.js. Got rid of the switch reducer and put `messageReducer` in the npm. Everything you will filter from the messages is determined by the initial state of fhe useState functions.

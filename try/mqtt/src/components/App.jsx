@@ -1,14 +1,15 @@
 import React, {useContext, useState} from 'react'// eslint-disable-line no-unused-vars
 import {cfg, ls} from '../utilities/getCfg'
+
 import {ClientSocket, 
-  Context, 
-  useDevSpecs,  
-  processMessage, 
-  getZinfo,
-  getDinfo, 
-  setupSocket,
-  monitorFocus
-} from '../../nod/src/index'
+    Context, 
+    useDevSpecs,  
+    processMessage, 
+    getZinfo,
+    getDinfo, 
+    setupSocket,
+    monitorFocus
+  } from '@mckennatim/mqtt-hooks'
 
 const lsh = ls.getItem()
 
@@ -17,9 +18,14 @@ const Twitter = () => {
   const [client, publish] = useContext(Context);
   client.onMessageArrived= onMessageArrived
 
+  const doOtherShit=()=>{
+    console.log('other shit but not connected doesnt work yet')
+    //publish(client, "presence", "hello form do other shit")
+  }
+
   const topics  = ['srstate', 'sched', 'flags', 'timr'] 
   const {devs, zones, binfo}= useDevSpecs(ls, cfg, client, (client, devs)=>{
-    setupSocket(client, devs, publish, topics)
+    setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
   })
   
   const[temp_out, setTemp_out] = useState({darr:[0,0,0,0]})
@@ -56,7 +62,7 @@ const Twitter = () => {
   }
 
   monitorFocus(window, client, lsh, ()=>{
-    setupSocket(client, devs, publish, topics)
+    setupSocket(client, devs, publish, topics, ()=>doOtherShit())
   })
   
   const toggleOnOff=()=>{
@@ -65,6 +71,7 @@ const Twitter = () => {
     const topic = `${dinfo.dev}/cmd`
     const payload = `{"id":${dinfo.sr},"sra":[${newt}]}`
     console.log('topic + payload: ', topic + payload)
+
     publish(client, topic, payload)
   }
 
@@ -81,6 +88,8 @@ const Twitter = () => {
     console.log('topic + payload: ', topic + payload)
     publish(client, topic, payload)
   }
+
+
 
   const renderProg=()=>{
     return(
