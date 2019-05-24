@@ -9,7 +9,7 @@ const initState = {
   cambio: {
     qconn:false,
     infocus: true,
-    page: {name: 'Control', params: null}
+    page: {name: 'Splash', params: null}
   },
   help:{
     allhelp:[]
@@ -22,8 +22,7 @@ const initialBrowser = () => {
     types: ['watch', 'phone', 'phoneL', 'tablet', 'tabletL', 'laptop', 'monitor'],
     sizes: [300, 500, 600, 800, 900, 1800, 3000],
     browser: '',
-    size: ws,
-    pages:["Control"]
+    size: ws
   }
   var typeIdx
   devInfo.sizes.reduce((t, n, i)=>{

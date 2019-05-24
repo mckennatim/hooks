@@ -3,11 +3,16 @@
 
 
 ## log
-### 06
+## 07-cascada
+
+### authentication process
+signin gets a token  with appid signin from soauth. It uses that preliminary token to get a list of locations then a list of apps at that location
+
+### 06-factor_out_mqtt-hooks
 
 npm package @mckennatim/mqtt-hooks now being used
 
-A custom package to add Context provider and hooks to react apps that connect to esp8266 and esp32 based sensor/relays/timers. Applications can use any subset of sensors, relays and timers from one or more devices. Talks to both mqtt broker and to server providing application configuration for a particulr location and device owner. Uses apikey provided from authentication and location
+A custom package used by https://sitebuilt.net/qr/ to add Context provider and hooks to react apps that connect to esp8266 and esp32 based sensor/relays/timers. Applications can use any subset of sensors, relays and timers from one or more devices. Talks to both mqtt broker and to server providing application configuration for a particulr location and device owner. Uses apikey provided from authentication and location
 
 
 ### 05-try-mqtt-beta0

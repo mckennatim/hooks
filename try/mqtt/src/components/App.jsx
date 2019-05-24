@@ -11,6 +11,16 @@ import {ClientSocket,
     monitorFocus
   } from '@mckennatim/mqtt-hooks'
 
+// import {ClientSocket, 
+//   Context, 
+//   useDevSpecs,  
+//   processMessage, 
+//   getZinfo,
+//   getDinfo, 
+//   setupSocket,
+//   monitorFocus
+// } from '../../nod/src'
+
 const lsh = ls.getItem()
 
 const Twitter = () => {
@@ -37,27 +47,29 @@ const Twitter = () => {
   const [priorprog, setPriorProg] = useState([[0,0,0]])
 
   function onMessageArrived(message){
-    const ns = processMessage(message, devs, zones, {temp_out, temp_gh, hum_gh, light_gh})
-    if(ns){
-      const key =Object.keys(ns)[0]
-      switch (key){
-        case 'temp_out':
-          setTemp_out({...ns[key]})
-          break
-        case 'temp_gh':
-          setTemp_gh({...ns[key]})
-          break
-        case 'hum_gh':
-          setHum_gh({...ns[key]})
-          break
-        case 'light_gh':
-          setLight_gh({...ns[key]})
-          if(JSON.stringify(ns[key].pro)!=priorprog){
-            setProg(JSON.stringify(ns[key].pro))
-            setPriorProg(prog)
-          }
-          break
-      }
+    const nsarr = processMessage(message, devs, zones, {temp_out, temp_gh, hum_gh, light_gh})
+    if(nsarr.length>0){
+      nsarr.map((ns)=>{
+        const key =Object.keys(ns)[0]
+        switch (key){
+          case 'temp_out':
+            setTemp_out({...ns[key]})
+            break
+          case 'temp_gh':
+            setTemp_gh({...ns[key]})
+            break
+          case 'hum_gh':
+            setHum_gh({...ns[key]})
+            break
+          case 'light_gh':
+            setLight_gh({...ns[key]})
+            if(JSON.stringify(ns[key].pro)!=priorprog){
+              setProg(JSON.stringify(ns[key].pro))
+              setPriorProg(prog)
+            }
+            break
+        }
+      })
     }
   }
 

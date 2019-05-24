@@ -1,0 +1,35 @@
+{
+  "CYURD002": [
+    {
+      "sr": 2,
+      "label": "pond"
+    },
+    {
+      "sr": 3,
+      "label": "bridge"
+    },
+    {
+      "sr": 4,
+      "label": "center"
+    }
+  ]
+}
+
+
+[
+  {
+    "id": "pond",
+    "name": "pond",
+    "img": "pond.jpg"
+  },
+  {
+    "id": "bridge",
+    "name": "bridge",
+    "img": "bridge.jpg"
+  },
+  {
+    "id": "center",
+    "name": "center",
+    "img": "center.jpg"
+  }
+]

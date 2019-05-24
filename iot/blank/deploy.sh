@@ -1,2 +1,2 @@
 #!/bin/sh
-scp -r ./jobs root@sitebuilt.net:/home/tryit/public_html/reroo
+scp -r ./greenhouse root@sitebuilt.net:/home/iot/public_html/v3

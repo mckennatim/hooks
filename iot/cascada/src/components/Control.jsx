@@ -1,0 +1,176 @@
+import React, {useContext, useState} from 'react'// eslint-disable-line no-unused-vars
+import {cfg, ls, makeHref} from '../utilities/getCfg'
+import {Pond, Spot} from './index'
+
+// import {
+//     Context, 
+//     useDevSpecs,  
+//     processMessage, 
+//     getZinfo,
+//     getDinfo, 
+//     setupSocket,
+//     monitorFocus
+//   } from '@mckennatim/mqtt-hooks'
+
+import {
+  connect,
+  Context, 
+  useDevSpecs,  
+  processMessage, 
+  getZinfo,
+  getDinfo, 
+  setupSocket,
+  monitorFocus
+} from '../../nod/src'
+// const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+const mytimezone = 'America/Los_Angeles'
+
+
+const lsh = ls.getItem()
+
+
+const Control = () => {
+  const [client, publish] = useContext(Context);
+  client.onMessageArrived= onMessageArrived
+
+  const doOtherShit=(devs, client)=>{
+    const devtime = Object.keys(devs)[0]+'/time'
+    client.subscribe('moment/yourtime')
+    publish(client, devtime, "What time is it at device?")
+    publish(client, 'moment/mytime', mytimezone )
+  }
+
+  const topics  = ['devtime', 'yourtime', 'srstate', 'sched', 'flags', 'timr'] 
+  const {devs, zones, error}= useDevSpecs(ls, cfg, client, (devs)=>
+    connect(client,lsh,(client)=>{
+      if (client.isConnected()){
+        setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
+      }
+    })
+  )
+  const[pond, setPond] = useState({darr:[0], pro:[[]], timeleft:0})
+  const[bridge, setBridge] = useState({darr:[0], pro:[[]], timeleft:0})
+  const[center, setCenter] = useState({darr:[0], pro:[[]], timeleft:0})
+  const[devtime, setDevtime] = useState({dow:0})
+  const[mytime, setMytime] = useState({})
+  //console.log('devtime: ', devtime)
+  console.log('mytime: ', mytime)
+
+  const [prog, setProg] = useState('[[0,0,0]]')
+  const [priorprog, setPriorProg] = useState([[0,0,0]])
+
+  function onMessageArrived(message){
+    const nsarr = processMessage(message, devs, zones, {pond, bridge, center, devtime})
+    if(nsarr.length>0){
+      nsarr.map((ns)=>{
+        const key =Object.keys(ns)[0]
+        switch (key){
+          case 'pond':
+            setPond({...ns[key]})
+            break
+          case 'bridge':
+            setBridge({...ns[key]})
+            break
+          case 'center':
+            setCenter({...ns[key]})
+            break
+          case 'time':
+            setDevtime({...ns[key]})  
+            break
+          case 'mytime':
+            setMytime({...ns[key]})  
+            break
+        }
+      })
+    }
+  }
+
+  monitorFocus(window, client, lsh, ()=>{
+    console.log('in monitorFocus')
+    setupSocket(client, devs, publish, topics, ()=>doOtherShit())
+  })
+  
+  const toggleOnOff=()=>{
+    // const dinfo = getDinfo('light_gh', devs)
+    // const newt = !light_gh.darr[0]*1
+    // const topic = `${dinfo.dev}/cmd`
+    // const payload = `{"id":${dinfo.sr},"sra":[${newt}]}`
+    // console.log('topic + payload: ', topic + payload)
+
+    //publish(client, topic, payload)
+  }
+
+  const changeProg=(e)=>{
+    console.log('e.target.value: ', e.target.value)
+    setProg(e.target.value)
+  }
+
+  const sendChange=()=>{
+    console.log('prog: ', prog)
+    const dinfo = getDinfo('light_gh', devs)
+    const topic = `${dinfo.dev}/prg`
+    const payload = `{"id":${dinfo.sr},"pro":${prog}}`
+    console.log('topic + payload: ', topic + payload)
+    publish(client, topic, payload)
+  }
+  const goSignin =()=>{
+    const href = makeHref(window.location.hostname, 'signin', '')//, `?${locid}`)
+    console.log('href: ', href)
+    window.location.assign(href)
+  }
+
+  const renderProg=()=>{
+    return(
+      <div>
+        <input type="text" size="30" onChange={changeProg} value={prog}/>
+        <button onClick={sendChange}>change prog for today</button>
+      </div>
+    )
+  }
+
+  const renderOnOff=()=>{
+    // const btext = light_gh.darr[0] ? 'ON': 'OFF'
+    // const bkg = light_gh.darr[0] ? {background:'green'} : {background:'red'}
+    // return(<button style={bkg}onClick={toggleOnOff}>{btext}</button>)
+  }
+
+  const rrender=()=>{
+    if (!error){
+      if(zones.length>0){
+        return(
+          <div>
+            <h1>Cascada </h1>
+            <Pond data={pond} zinf={getZinfo('pond',zones)} client={client} publish={publish} />
+            <Spot data={bridge} zinf={getZinfo('bridge',zones)}/>
+            <Spot data={center} zinf={getZinfo('center',zones)}/>
+            {renderOnOff()}
+            {renderProg()}
+          </div>
+        )
+      }else{
+        return <h4>nozones</h4>
+      }
+
+    }else{
+      return(
+        <div>
+          <p>
+            From this app on this machine&#39;s perspective, {error.qmessage} It is probably best to
+          <button onClick={goSignin}>go and (re-)signin</button>
+          </p>
+        </div>
+      )
+    }
+  }
+
+  return (
+    <div>
+      {rrender()}
+    </div>
+  );
+};
+
+export{Control}
+
+
+

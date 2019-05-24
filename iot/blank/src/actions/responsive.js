@@ -14,11 +14,17 @@ const setDeviceType = actionCreator((payload) => {
 });
 
 const switchPage = actionCreator((payload) => {
-  console.log('payload: ', payload)
   return {
     type: 'PAGE_SWITCHED',
     payload
   }
 });
 
-export{setDeviceType,  switchPage, setFocus}
+const setKeyVal = actionCreator((payload) => {
+  return {
+    type: 'SET_KEY_VAL',
+    payload
+  }
+});
+
+export{setDeviceType,  switchPage, setFocus, setKeyVal}

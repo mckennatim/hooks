@@ -1,10 +1,8 @@
 import React from 'react'
-// import {responsivePage} from '../showRWD'
-import {Splash} from './Splash.jsx'
-// const compoi = {Splash}
-import * as compoi from './index'
-console.log('compoi: ', compoi['Splash'])
-console.log('Splash: ', Splash)
+import {responsivePage} from '../showRWD'
+import {ClientSocket} from '@mckennatim/mqtt-hooks'
+// import {ClientSocket} from '../../nod/src'
+import {cfg} from '../utilities/getCfg'
 
 class App extends React.Component{
   constructor(props) {
@@ -28,46 +26,17 @@ class App extends React.Component{
       return rtpg(this.props)
   }
   showPage(){
-    return this.responsivePage(this.props)
+    return responsivePage(this.props)
   }
-
-  responsivePage (props){
-    let elArr = []
-    // const pageName = 'Splash'
-    const {types, browser} = props.responsive
-    const {page} =props.cambio
-    const pageName = page.name
-    const browserTypeIdx = types.indexOf(browser)
-    const panesPerType = compoi.panes[browserTypeIdx]
-    const pageList = compoi.multi.filter((amul)=>(amul.pri==pageName))
-    if(pageList.length==0){ //if there is no multi array for the page
-      const singleElement = React.createElement(compoi[pageName], {key:1}, null)
-      elArr.push(singleElement)
-    }else{
-      const multiList= pageList[0].mul.filter((mu,i)=>(i+2)==panesPerType)
-      if (multiList.length==0){ // if the multilist is empty
-        const singleElement = React.createElement(compoi[pageName], {key:1}, null)
-        elArr.push(singleElement)
-      }else{//use the array matching the panesPerType size and add all its names to the element arrray
-        const elList = multiList[0].map((pgStr,i)=>{
-          const pg = React.createElement(compoi[pageName], {key:i}, null)
-          return pg
-        })
-        elArr = elList
-      }
-    }
-    // elArr.push(React.createElement(compoi[pageName], {key:1}, null))
-    return elArr
-  }
-
 
   render(){
     return(
+      <ClientSocket cfg={cfg}>
       <div>
         <div style={style.container}>
         <div style={style.content}>
           {/* <Splash/> */}
-          {this.responsivePage(this.props)
+          {responsivePage(this.props)
             .map((el)=>el)
           }
           {/* {React.createElement(compoi[pagename], null)} */}
@@ -77,6 +46,7 @@ class App extends React.Component{
          })}  */}
         </div>
       </div>
+      </ClientSocket>
       )
   }
 }

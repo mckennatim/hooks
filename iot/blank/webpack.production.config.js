@@ -4,7 +4,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 require("@babel/polyfill");
-const outdir = 'blank'
+const outdir = 'greenhouse'
 
 module.exports={
   mode:'production',

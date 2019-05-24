@@ -2,14 +2,9 @@ import Navigo from 'navigo';
 import { switchPage} from './actions/responsive';
 
 var routes = [
-  {path: 'goauth', page: 'GoAuth'},
+  {path: 'control', page: 'Control'},
   {path: 'splash', page: 'Splash'},
-  {path: 'aboutdemo', page: 'AboutDemo'},
-  {path: 'about', page: 'About'},
-  {path: 'fromauth', page: 'FromAuth'},
-  {path: 'locs', page: 'Locs'},
-  {path: 'apps', page: 'Apps'},
-  {path: '*', page: 'Splash'},
+  {path: '*', page: 'Control'},
 ]
 const makeRouter = (routes)=>{
   const onrt = routes.reduce((acc,rt)=>{
@@ -20,7 +15,6 @@ const makeRouter = (routes)=>{
 }
 
 const rts = makeRouter(routes)
-console.log('rts: ', rts)
 var router
 
 const routing = ()=>{
