@@ -79,10 +79,10 @@ const processMessage = (mess, devs, zones, bigstate)=>{
     }    
   })
   if(message.topic=='devtime'){
-    newstates[0]={time:message.payload}
+    newstates[0]={jdtime:message.payload}
   }
-  if(message.topic=='yourtime'){
-    newstates[0]={mytime:message.payload}
+  if(message.topic=='jdtime'){
+    newstates[0]={jdtime:message.payload}
   }
   return newstates
 }

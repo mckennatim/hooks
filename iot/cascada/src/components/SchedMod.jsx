@@ -1,5 +1,5 @@
 import React from 'react'
-import {startWhen, endWhen, newInterval, add2sched}from '../../nod/src'
+import {startWhen, endWhen, newInterval, add2sched}from '@mckennatim/mqtt-hooks'
 
 const SchedMod=(props)=>{
   const tzd_tza = (-7- -4)
@@ -8,8 +8,8 @@ const SchedMod=(props)=>{
 
   const btime = (new Date()).toString()
 
-  const delay = '0:0'
-  const dur = '1:05'
+  const delay = '2:0'
+  const dur = '1:25'
   console.log('delay: ', delay)
   console.log('startWhen(tzd_tza, delay): ', startWhen(tzd_tza, delay))
   const starttime = startWhen(tzd_tza, delay)
@@ -20,8 +20,8 @@ const SchedMod=(props)=>{
   const nintvl = newInterval(starttime,[1], endtime, [0])
   console.log('invl: ', JSON.stringify(nintvl))
 
-  // const asched = [[0,0,0], [9,10,1], [9,50,0], [17,20,1], [17,40,0]]
-  const asched = [[0,0,1]]
+  const asched = [[0,0,0], [14,10,1], [14,35,0], [17,20,1], [17,40,0]]
+  // const asched = [[0,0,1]]
   console.log('asched: ', JSON.stringify(asched))
   console.log('add2sched(asched, nintvl, tzd_tza): ', JSON.stringify(add2sched(asched, nintvl, tzd_tza)))
   console.log('props: ', props)

@@ -46,19 +46,24 @@ const newInterval = (starttime, startval, endtime, endval)=>{
 const add2sched = (sched, nintvl, tzd_tza)=>{
   let i = 0
   let [hr, min ]= getNow(tzd_tza)
+  console.log('getNow(tzd_tza): ', getNow(tzd_tza))
   const newsched = sched.reduce((acc, intvl, idx)=>{
     if(i==0){/*before the start of the new interval is processed */
       if(hm2m(intvl)<hm2m(last(acc))){
         acc.push(acc.pop().slice(0,2).concat(intvl.slice(2)))
+          /*takes the first 2 entries of  the sched entry as minutes. If sched entry is less than now at init or last(acc) then it pop/push replaces the value. It keeps doing that (replacing the value) until it reaches a sched entry that is later than the last(acc)  */        
       }else if(hm2m(intvl)>hm2m(last(acc))){
+        /* if the current sched entry is for later than the last(acc) */
         if(hm2m(last(acc)) === hm2m(nintvl[i])){
+          /*check if new entry[0??] time happens to equal last(acc)'s*/
           acc.push(acc.pop().slice(0,2).concat(nintvl[i].slice(2)))
         }else{
+          /*push on to acc the start entry of the new interval  */
           acc.push(nintvl[0])
         }
-        i+=1
+        i+=1 /*the first entry is now inserted, on to the second */
       }
-      if(sched.length==1){i+=1} /*like [[0,0,1]] */ 
+      if(sched.length==1){i+=1} /*if sched like [[0,0,1]] then add the end entry */ 
     }
     if( i==1){/*add end of interval after the start of the interval is added */
       acc.push(nintvl[1])

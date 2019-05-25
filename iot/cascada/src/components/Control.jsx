@@ -1,15 +1,6 @@
 import React, {useContext, useState} from 'react'// eslint-disable-line no-unused-vars
 import {cfg, ls, makeHref} from '../utilities/getCfg'
 import {Pond, Spot} from './index'
-// import {
-//     Context, 
-//     useDevSpecs,  
-//     processMessage, 
-//     getZinfo,
-//     getDinfo, 
-//     setupSocket,
-//     monitorFocus
-//   } from '@mckennatim/mqtt-hooks'
 import {
   connect,
   Context, 
@@ -19,7 +10,7 @@ import {
   getDinfo, 
   setupSocket,
   monitorFocus
-} from '../../nod/src'
+} from '@mckennatim/mqtt-hooks'
 // const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 const mytimezone = 'America/Los_Angeles'
 
@@ -32,13 +23,13 @@ const Control = () => {
   client.onMessageArrived= onMessageArrived
 
   const doOtherShit=(devs, client)=>{
-    const devtime = Object.keys(devs)[0]+'/time'
-    client.subscribe('moment/yourtime')
-    publish(client, devtime, "What time is it at device?")
-    publish(client, 'moment/mytime', mytimezone )
+    // const time = getDinfo('pond', devs).dev+'/time'
+    client.subscribe('moment/jdtime')
+    // publish(client, time, "What time is it at device?")
+    publish(client, 'moment/dtime', mytimezone )
   }
 
-  const topics  = ['devtime', 'yourtime', 'srstate', 'sched', 'flags', 'timr'] 
+  const topics  = ['devtime', 'jdtime', 'srstate', 'sched', 'flags', 'timr'] 
   const {devs, zones, error}= useDevSpecs(ls, cfg, client, (devs)=>
     connect(client,lsh,(client)=>{
       if (client.isConnected()){
@@ -64,7 +55,12 @@ const Control = () => {
         const key =Object.keys(ns)[0]
         switch (key){
           case 'pond':
-            setPond({...ns[key]})
+            const ps = {...ns[key]}
+            /*if relay is off clear timeleft */
+            if(ps.darr[0]==0){
+              ps.timeleft=0
+            }
+            setPond(ps)
             break
           case 'bridge':
             setBridge({...ns[key]})
@@ -72,9 +68,9 @@ const Control = () => {
           case 'center':
             setCenter({...ns[key]})
             break
-          case 'time':
+          case 'jdtime':
             const tza = new Date().toString().split('GMT')[1].split('00')[0]*1
-            const tzd = {...ns[key]}.zone -3
+            const tzd = {...ns[key]}.zone
             setTzd_tza(tzd-tza)
             setDevtime({...ns[key]}) 
             break
@@ -136,12 +132,19 @@ const Control = () => {
 
   const rrender=()=>{
     if (!error){
-      if(zones.length>0){
+      if(zones.length>0 && devs){
         return(
           <div>
             <h1>Cascada </h1>
             tzd_tza={tzd_tza}
-            <Pond data={pond} zinf={getZinfo('pond',zones)} client={client} publish={publish} />
+            {JSON.stringify(devs)}
+            <Pond data={pond} 
+              zinf={getZinfo('pond',zones)} 
+              dinf={getDinfo('pond', devs)}
+              client={client} 
+              publish={publish}
+              tzd_tza={tzd_tza}
+            />
             <Spot data={bridge} zinf={getZinfo('bridge',zones)}/>
             <Spot data={center} zinf={getZinfo('center',zones)}/>
             {renderOnOff()}
