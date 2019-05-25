@@ -1,5 +1,5 @@
 import { useEffect, useState} from "react";
-import {connect } from './index'
+// import {connect } from './index'
 
 const geta=(dotstr, obj)=>{
   return dotstr.split(".")
@@ -38,7 +38,7 @@ export function useDevSpecs(ls,cfg, client,cb ){
           setError(data)
         }else{
           setZones(data.zones)
-          const devkeys = Object.keys(data.devs)
+          Object.keys(data.devs)
           setDevs(data.devs)
           setBinfo(data.binfo)
           cb(data.devs)

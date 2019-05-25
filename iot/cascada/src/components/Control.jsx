@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react'// eslint-disable-line no-unused-vars
 import {cfg, ls, makeHref} from '../utilities/getCfg'
 import {Pond, Spot} from './index'
-
 // import {
 //     Context, 
 //     useDevSpecs,  
@@ -11,7 +10,6 @@ import {Pond, Spot} from './index'
 //     setupSocket,
 //     monitorFocus
 //   } from '@mckennatim/mqtt-hooks'
-
 import {
   connect,
   Context, 
@@ -52,12 +50,12 @@ const Control = () => {
   const[bridge, setBridge] = useState({darr:[0], pro:[[]], timeleft:0})
   const[center, setCenter] = useState({darr:[0], pro:[[]], timeleft:0})
   const[devtime, setDevtime] = useState({dow:0})
-  const[mytime, setMytime] = useState({})
-  //console.log('devtime: ', devtime)
-  console.log('mytime: ', mytime)
+  const[tzd_tza, setTzd_tza] =useState(0)
+  const[status, setStatus] = useState('focused')
+  // console.log('tzd_tza: ', tzd_tza)
 
   const [prog, setProg] = useState('[[0,0,0]]')
-  const [priorprog, setPriorProg] = useState([[0,0,0]])
+  // const [priorprog, setPriorProg] = useState([[0,0,0]])
 
   function onMessageArrived(message){
     const nsarr = processMessage(message, devs, zones, {pond, bridge, center, devtime})
@@ -75,22 +73,24 @@ const Control = () => {
             setCenter({...ns[key]})
             break
           case 'time':
-            setDevtime({...ns[key]})  
-            break
-          case 'mytime':
-            setMytime({...ns[key]})  
+            const tza = new Date().toString().split('GMT')[1].split('00')[0]*1
+            const tzd = {...ns[key]}.zone -3
+            setTzd_tza(tzd-tza)
+            setDevtime({...ns[key]}) 
             break
         }
       })
     }
   }
 
-  monitorFocus(window, client, lsh, ()=>{
-    console.log('in monitorFocus')
-    setupSocket(client, devs, publish, topics, ()=>doOtherShit())
+  monitorFocus(window, client, lsh, (status, client)=>{
+    setStatus(status)
+    if (client.isConnected()){
+      setupSocket(client, devs, publish, topics, (devs,client)=>doOtherShit(devs,client))
+    }
   })
   
-  const toggleOnOff=()=>{
+  //const toggleOnOff=()=>{
     // const dinfo = getDinfo('light_gh', devs)
     // const newt = !light_gh.darr[0]*1
     // const topic = `${dinfo.dev}/cmd`
@@ -98,7 +98,7 @@ const Control = () => {
     // console.log('topic + payload: ', topic + payload)
 
     //publish(client, topic, payload)
-  }
+  // }
 
   const changeProg=(e)=>{
     console.log('e.target.value: ', e.target.value)
@@ -140,6 +140,7 @@ const Control = () => {
         return(
           <div>
             <h1>Cascada </h1>
+            tzd_tza={tzd_tza}
             <Pond data={pond} zinf={getZinfo('pond',zones)} client={client} publish={publish} />
             <Spot data={bridge} zinf={getZinfo('bridge',zones)}/>
             <Spot data={center} zinf={getZinfo('center',zones)}/>
@@ -165,6 +166,7 @@ const Control = () => {
 
   return (
     <div>
+      {status}
       {rrender()}
     </div>
   );

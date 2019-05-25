@@ -1,10 +1,10 @@
 import React, {useState} from 'react'
+import {startWhen, endWhen, newInterval, add2sched}from '../../nod/src'
 
 
 const Pond=(props)=>{
   const{data, zinf}= props
   const href = `#sched?${zinf.name}`
-  console.log('data.timeleft/60: ', data.timeleft/60)
   const [howlong, setHowlong]= useState(data.timeleft/60)
   const [onoff, setOnoff]= useState(0)
   const handleChange=(e)=>{
@@ -14,6 +14,9 @@ const Pond=(props)=>{
   const toggleOnoff = ()=>{
     setOnoff(!onoff*1)
     console.log('onoff: ', onoff)
+    if(onoff){
+      console.log('publish a new scedule')
+    }
   }
 
   return(

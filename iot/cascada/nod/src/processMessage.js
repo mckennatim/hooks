@@ -1,6 +1,5 @@
 
 const messageReducer = (state, action)=>{
-  console.log('action: ', action)
   const keys =Object.keys(state)
   const newstate = keys.reduce((newdata, label)=>{
     if(action.type==label){
@@ -38,7 +37,7 @@ const processRawMessage= (mess)=>{
   const topic = narr[1]
   var pls = mess.payloadString
   const payload= JSON.parse(pls)
-  console.log('topic + payload: ', topic + pls)
+  // console.log('topic + payload: ', topic + pls)
   const message = {dev:dev, topic:topic, payload:payload}
   return message
 }
@@ -71,13 +70,11 @@ const processMessage = (mess, devs, zones, bigstate)=>{
     if(message.topic=='devtime'){
       action.type='time'
       action.payload = message.payload
-      console.log('action: ', action)
     }
     if(Object.entries(action.payload).length != 0){
       const prt ={}
       prt[action.type]= {...bigstate[action.type]}
       const newstate =  messageReducer(prt, action)
-      console.log('newstate: ', newstate)
       newstates.push(newstate)
     }    
   })

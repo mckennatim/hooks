@@ -19,7 +19,7 @@ const monitorFocus=(window, client, lsh, cb)=>{
   window.onfocus = ()=>{
     if(!client.isConnected()){
       // console.log('focused')
-      connect(client, lsh, ()=>cb())
+      connect(client, lsh, (client)=>cb('focused-connected',client))
     }
   }
   window.onblur= ()=>{
@@ -27,6 +27,7 @@ const monitorFocus=(window, client, lsh, cb)=>{
     if(client.isConnected()){
       try{
         client.disconnect()
+        cb('blur-disconnected', client)
       }catch(err){
         console.log(err)
       }

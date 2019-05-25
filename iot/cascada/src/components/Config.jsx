@@ -3,9 +3,9 @@ import { useDevSpecs, Context } from '../../nod/src'
 import {cfg, ls} from '../utilities/getCfg'
 
 
-const Config =(props)=>{
-  const [client, publish] = useContext(Context);
-  const {devs, zones, binfo, error}= useDevSpecs(ls, cfg, client, (devs)=>console.log('devs: ', devs))
+const Config =()=>{
+  const [client] = useContext(Context);
+  const {devs, zones, binfo}= useDevSpecs(ls, cfg, client, (devs)=>console.log('devs: ', devs))
   console.log('devs, zones, binfo: ', devs, zones, binfo)
 
   return(

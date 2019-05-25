@@ -3,7 +3,6 @@ import React, {useState} from 'react'
 
 const Spot=(props)=>{
   const{data, zinf}= props
-  console.log('data.timeleft/60: ', data.timeleft/60)
   const [howlong, setHowlong]= useState(data.timeleft/60)
   const handleChange=(e)=>{
     setHowlong(e.target.value)
