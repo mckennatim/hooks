@@ -24,7 +24,26 @@ module.exports={
           loader: "babel-loader" 
         }]
       },
-      { test: /\.html$/, loader: "html-loader" }
+      { test: /\.html$/, loader: "html-loader" },
+      {
+        test: /\.css$/,
+        use: [
+          {loader: 'style-loader'}, 
+          {loader: 'css-loader'} 
+        ]
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192,
+              fallback: 'file-loader'
+            }
+          }
+        ]
+      }
     ],
   },
   optimization: {

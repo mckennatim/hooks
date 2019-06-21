@@ -1,8 +1,9 @@
 import React from 'react'
 import {responsivePage} from '../showRWD'
 // import {ClientSocket} from '@mckennatim/mqtt-hooks'
-import {ClientSocket} from '@mckennatim/mqtt-hooks'
+import {ClientSocket} from '../../nod/src'
 import {cfg} from '../utilities/getCfg'
+import '../styles/ca.css'
 
 class App extends React.Component{
   constructor(props) {
@@ -32,7 +33,7 @@ class App extends React.Component{
   render(){
     return(
       <ClientSocket cfg={cfg}>
-      <div>
+      <div className="sprklr">
         <div style={style.container}>
         <div style={style.content}>
           {/* <Splash/> */}
@@ -56,12 +57,12 @@ let style = {
   he:{
     height: '50px',
     background: 'white',
+    
     flexGrow: 1,
     flexGhrink: 0,
     flexBasis: '98%', 
   },
   container:{
-    background: '#CCCCCC',
     display: 'flex',
     flexDirection: 'row', /* generally better */
     flexWrap: 'wrap',
@@ -70,8 +71,8 @@ let style = {
     alignItems: 'stretch'
   },
   content:{
+    marginLeft:"20px",
     minHeight:'200px',
-    background: '#99CCFF',
     flexGrow: 1,
     flexShrink: 1, /*can shrink from 300px*/
     flexBasis: '225px'  

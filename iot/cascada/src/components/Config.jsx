@@ -1,5 +1,5 @@
 import React, {useContext} from 'react'
-import { useDevSpecs, Context } from '@mckennatim/mqtt-hooks'
+import { useDevSpecs, Context } from '../../nod/src'
 import {cfg, ls} from '../utilities/getCfg'
 
 

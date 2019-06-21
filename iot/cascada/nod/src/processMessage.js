@@ -6,7 +6,7 @@ const messageReducer = (state, action)=>{
       const tmp ={}
       tmp[label] ={...newdata[label]} //
       Object.keys(state[label]).map((d)=>{
-        if(action.payload[d]){
+        if(typeof action.payload[d] !== 'undefined'){
           tmp[label][d] = action.payload[d]
         }
       })
@@ -24,7 +24,8 @@ const findLabel=(message, devs)=>{
   if(message.topic=='srstate'){
     i = devs[dev].filter((a)=>a.sr === message.payload.id)
   }if(message.topic=='timr'){
-    i = devs[dev].filter((a)=>message.payload.tIMElEFT[a.sr]>0)
+    i = devs[dev].filter((a)=>message.payload.tIMElEFT[a.sr]>0)//hack
+    // console.log('i: ', JSON.stringify(i))
   }if(message.topic=='sched'){
     i = devs[dev].filter((a)=>a.sr === message.payload.id)
   }
@@ -53,6 +54,9 @@ const processMessage = (mess, devs, zones, bigstate)=>{
       if(devinf && devinf.label){
         action.type=devinf.label
         action.payload.darr = message.payload.darr
+        if(message.payload.darr[0]==0){
+          action.payload.timeleft=0
+        }
       }
     }
     if(message.topic=='timr'){
@@ -71,6 +75,7 @@ const processMessage = (mess, devs, zones, bigstate)=>{
       action.type='time'
       action.payload = message.payload
     }
+    // console.log('action: ', JSON.stringify(action))
     if(Object.entries(action.payload).length != 0){
       const prt ={}
       prt[action.type]= {...bigstate[action.type]}
@@ -85,5 +90,6 @@ const processMessage = (mess, devs, zones, bigstate)=>{
     newstates[0]={jdtime:message.payload}
   }
   return newstates
+  
 }
 export{processMessage}

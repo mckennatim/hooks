@@ -1,8 +1,23 @@
 
 # hooks
-
+https://x-team.com/blog/rxjs-observables/
 
 ## log
+## 10-setRelayStatus-useEffect
+Created a `data.status` property onMessageArrived and watched that from Spot.jsx in a useEffect hook that runs whenever `data.status` changes.
+
+Re-renders can happen either because props of a component change coming in from above or state changes by a hook. 
+
+How when a prop changes can you use that change to change some local state?
+
+One way is to have a function run on every re-render that listens for the prop change and then changes some local state.
+
+BUT HERE IS THE RUB
+When you change local state you cause a re-render. Since the prop you were listening for has maybe not yet changed back, then that function that runs on re-render goes infinite.
+
+## 09-spot-onoff
+cleaned up so spot only goes on and off. deployed
+
 ## 08-mqtt-hooks_utility4cascada
 
 wtf does a  `add2sched` do????

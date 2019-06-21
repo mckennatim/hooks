@@ -1,7 +1,67 @@
 body {
    font-family: "Comic Sans MS", "Trebuchet MS", sans-serif;
-    color: black;
+   font-weight:400;
+   background-image: url('../img/bkg-water.png');
 }
+h3 {
+   font-weight:400;
+}
+.slider{
+   margin:auto;
+   width: 250px;
+   height: 40px;
+}
+
+input[type=range]::-moz-range-track {
+   width: 100%;
+   height: 8.4px;
+   cursor: pointer;
+   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+   background: #021627;
+   border-radius: 1.3px;
+   border: 0.2px solid #010101;
+ }
+
+ input[type=range]::-webkit-slider-runnable-track {
+   width: 100%;
+   height: 8.4px;
+   cursor: pointer;
+   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+   background: #053a68;
+   border-radius: 1.3px;
+   border: 0.2px solid #010101;
+ }
+ 
+ /* Special styling for WebKit/Blink */
+input[type=range]::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   border: 1px solid #000000;
+   height: 46px;
+   width: 26px;
+   border-radius: 3px;
+   background: #8f0d0d;
+   cursor: pointer;
+   margin-top: -7px; /* You need to specify a margin in Chrome, but in Firefox and IE it is automatic */
+   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d; /* Add cool effects to your sliders! */
+ }
+ 
+ /* All the same stuff for Firefox */
+ input[type=range]::-moz-range-thumb {
+   box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+   border: 1px solid #000000;
+   height: 36px;
+   width: 16px;
+   border-radius: 3px;
+   background: #ffffff;
+   cursor: pointer;
+ }
+
+ .radio-group {
+   width:180px;
+   float:left;
+}
+/*
+
 #bkg{
    height:900px;
    background-image:url('../img/bkg-water.png');
@@ -15,6 +75,7 @@ body {
    padding-left:30px;
    width: 300px;
    height: 130px;
+   color: "blue";
 }
 .button-big{
 	position:relative;
@@ -26,8 +87,8 @@ body {
 .button-big a {
 	margin:4px;
 	background:black;
-   width: 110px; /*div height is set by img size+padding, width=110 otherwise goes to screenwidth*/
-   display: block; /*otherwise button will shrink to text size*/
+   width: 110px; /*div height is set by img size+padding, width=110 otherwise goes to screenwidth
+   display: block; /*otherwise button will shrink to text size
    padding:1px;
    border-top: 1px solid #96d1f8;
    -webkit-border-radius: 10px;
@@ -36,7 +97,7 @@ body {
    -webkit-box-shadow: rgba(0,0,0,1) -2px 2px 4px;
    -moz-box-shadow: rgba(0,0,0,1) -2px 2px 4px;
    box-shadow: rgba(0,0,0,1) -2px 2px 4px;
-   /*text-shadow: rgba(1,0,0,.4) 0 2px 0; */
+   text-shadow: rgba(1,0,0,.4) 0 2px 0; 
 }
 .button-big a .ui-link{
 }
@@ -55,7 +116,7 @@ body {
 		font-family: Georgia, serif;
   		font-family: "Comic Sans MS", cursive, sans-serif;
    		font-family: Arial, Helvetica, sans-serif;
-		font-family: Verdana, Geneva, sans-serif;*/
+		font-family: Verdana, Geneva, sans-serif;
 }
 .button-big a:hover {
    border-top-color: #28597a;
@@ -89,8 +150,8 @@ body {
 .button-med a {
    margin:4px;
    background:white;
-   width: 42px; /*div height is set by img size+padding, width=110 otherwise goes to screenwidth*/
-   display: block; /*otherwise button will shrink to text size*/
+   width: 42px; /*div height is set by img size+padding, width=110 otherwise goes to screenwidth
+   display: block; /*otherwise button will shrink to text size
    padding:1px;
    border-top: 1px solid #96d1f8;
    -webkit-border-radius: 10px;
@@ -117,3 +178,5 @@ div label{
    padding-left: 15px;
    padding-top: 3px;
 }
+
+*/
