@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, getNow}from '../../nod/src'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, getNow}from '@mckennatim/mqtt-hooks'
 
 const SchedMod=()=>{
   
@@ -20,20 +20,11 @@ const SchedMod=()=>{
     return JSON.stringify(preport)
   }
 
-
-
-  // const asched = [[0,0,0], [10,10,1], [12,25,0], [17,20,1], [17,59,0]]
-  //const asched = [[0,0,1]]
- // console.log('asched: ', JSON.stringify(asched))
-  //console.log('add2sched(asched, nintvl, tzd_tza): ', JSON.stringify(add2sched(asched, nintvl, tzd_tza)))
-  //console.log('props: ', props)
   const qry = window.location.hash.split('?')[1]
-  //console.log('qry: ', qry)
 
   const [howlong, setHowlong]=useState(2)
   const [delay, setDelay]=useState('0:0')
 
-  //const [tzd_tza] = useState(0)
   const [sched, setSched] = useState(JSON.stringify([[0,0,0],[9,10,1],[9,40,0],[17,0,1],[17,50,0]]))
   const [report, setReport]= useState(JSON.stringify([{sched:sched, nintvl:[[]]}]))
   const [base, setBase] = useState(sched)
@@ -63,18 +54,6 @@ const SchedMod=()=>{
     setReport(nrepo)
   }
 
-  // const createReport=(nintvl, newsched)=>{
-  //   const preport = JSON.parse(report)
-  //   console.log('preport: ', preport)
-  //   console.log('nintvl: ', nintvl)
-  //   if (preport.length>20){
-  //     preport.shift()
-  //   }
-  //   preport.push({sched:newsched, nintvl:nintvl})
-  //   console.log('preport: ', preport)
-  //   return JSON.stringify(preport)
-  // }
-
   const handleChange=(e)=>{
     setHowlong(e.target.value)
   }
@@ -86,7 +65,7 @@ const SchedMod=()=>{
   const resetSched =()=>{
     setSched(base)
   }
-
+  
   const renderReport=()=>{
     const preport= JSON.parse(report)
     const lis = preport.map((entry, idx)=>{
@@ -106,6 +85,8 @@ const SchedMod=()=>{
 
   return(
     <div>
+      {/* {renderSVG()}
+      {getRectPos()} */}
       <h2>SchedMod for {qry}</h2>
       {btime}{btz}<br/>
       tzd_tza={tzd_tza}<br/>
@@ -114,14 +95,27 @@ const SchedMod=()=>{
       <input className="slider" type="range" min="2" max="120" step="1" value={howlong} onChange={handleChange}></input><br/>
       delay as hr:min {delay} <input type="text" size="2" value={delay} onChange={handleDelay}/>
         <br/>
-      <input type="text" value={base} onChange={modBaseSched} size="50"/>  
+        time: <input type="time"/><br/>
+      <input type="text" value={base} onChange={modBaseSched} size="40"/>  
       <button onClick={resetSched}>reset sched</button>
       <br/>
       {JSON.stringify(getNow(tzd_tza))}<br/>
-
       {renderReport()}
     </div>
   )
 }
 
 export{SchedMod}
+
+// function calcAng(dy,dx){
+//   var ang
+//   if(dx==0){
+//     dy>0 ? ang=pi/2 :ang=3*pi/2
+//   }else{ang=Math.atan(dy/dx)}
+//   if(dx>0&&dy<0){
+//     ang=ang+2*pi
+//   }else if (dx<0){
+//     ang=ang+pi
+//   }
+//   return ang
+// }

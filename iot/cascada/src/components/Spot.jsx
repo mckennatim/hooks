@@ -6,34 +6,24 @@ import off100 from '../img/off100.gif'
 import spinning from '../img/loading60.gif'
 import timed from '../img/loadno60.gif'
 import {spotBut} from '../styles/appstyles'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '../../nod/src'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '@mckennatim/mqtt-hooks'
 
 const Spot=(props)=>{
   const{tzd_tza, data, zinf, dinf, client, publish}= props
-  // console.log('JSON.stringify(props): ', JSON.stringify(props.data))
   const href = `#sched?${zinf.name}`
   const [onoff, setOnoff]= useState(0)
   const [image, setImage] = useState(off100)
   const [wtext, setWtext] = useState("howlong")
   const [howlong, setHowlong]= useState(1)
   const [delay, setDelay]= useState('0:0')
-  // const [justoff, setJustoff]= useState(false)
 
   const imageToggled = ()=>{
-    console.log('image clicked in spot')
-    console.log('onoff: ', onoff)
-    console.log('wtext: ', wtext)
-    console.log('data: ', data)
     if (wtext=='settingtimer'){
-      console.log('should send schedule')
       const starttime = startWhen(tzd_tza, delay)
       const endtime = endWhen(starttime, m2hm(howlong))
       const nintvl = newInterval(starttime,[1], endtime, [0])
       const sched =data.pro
       const nsched =add2sched(sched, nintvl, tzd_tza)
-      console.log('nintvl: ', JSON.stringify(nintvl))
-      console.log('sched: ', JSON.stringify(sched))
-      console.log('nsched: ', JSON.stringify(nsched))
       const prog =JSON.stringify(nsched)
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${prog}}`
@@ -59,26 +49,7 @@ const Spot=(props)=>{
     }
   }, [data.status])
 
-  // const getSval =()=>{
-  //   //console.log('wtext: ', wtext, data.timeleft)
-  //   if (data.timeleft>0){
-  //     //setWtext('timeron') too may rerenders
-  //     return 'timed'
-  //   }
-  //   if( data.darr[0] ==0 && wtext!= 'timeron' && wtext!='settingtimer'){
-  //     return 'off'
-  //   }
-  //   if( data.darr[0] ==1 && wtext!= 'timeron' && wtext!='settingtimer'){
-  //     return 'on'
-  //   }
-  //   if (wtext=='settingtimer'){
-  //     return 'timed'
-  //   }
-  //   return 'timed'
-  // } 
-
   const handleRadio =(value)=>{
-    console.log('value: ', value, data.timeleft)
     if (value == 'on'){
       setImage(spinning)
       setWtext('on')
@@ -86,7 +57,6 @@ const Spot=(props)=>{
       const prog ='[[0,0,1]]'
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${prog}}`
-      console.log('topic + payload: ', topic + payload)
       publish(client, topic, payload)
     }
     if (value == 'off'){

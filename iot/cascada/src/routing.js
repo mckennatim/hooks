@@ -6,6 +6,7 @@ var routes = [
   {path: 'config', page: 'Config'},
   {path: 'splash', page: 'Splash'},
   {path: 'sched', page: 'SchedMod'},
+  {path: 'disc', page: 'Disc'},
   {path: '*', page: 'Control'},
 ]
 const makeRouter = (routes)=>{

@@ -2,7 +2,16 @@
 # hooks
 https://x-team.com/blog/rxjs-observables/
 
+files using @mckennatim/mqtt-hooks
+
+- App.jsx
+- Control.jsx
+- SchedMod.jsx
+- 
+
 ## log
+## 11-cascada-disc
+touch and drag working on pc,android and iphone
 ## 10-setRelayStatus-useEffect
 Created a `data.status` property onMessageArrived and watched that from Spot.jsx in a useEffect hook that runs whenever `data.status` changes.
 

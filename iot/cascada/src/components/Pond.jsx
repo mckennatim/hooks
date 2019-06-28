@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '../../nod/src'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '@mckennatim/mqtt-hooks'
 import {BigButtonA} from './BigButtonA.jsx'
 import waterfall_off from '../img/waterfall_off.gif'
 import waterfall_on from '../img/waterfall_on.gif'
@@ -32,9 +32,6 @@ const Pond=(props)=>{
       const nintvl = newInterval(starttime,[1], endtime, [0])
       const sched =data.pro
       const nsched =add2sched(sched, nintvl, tzd_tza)
-      console.log('nintvl: ', JSON.stringify(nintvl))
-      console.log('sched: ', JSON.stringify(sched))
-      console.log('nsched: ', JSON.stringify(nsched))
       const prog =JSON.stringify(nsched)
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${prog}}`

@@ -10,9 +10,9 @@ import {
   getDinfo, 
   setupSocket,
   monitorFocus
-} from '../../nod/src'
-// const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-const mytimezone = 'America/Los_Angeles'
+} from '@mckennatim/mqtt-hooks'
+const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+// const mytimezone = 'America/Los_Angeles'
 
 
 const lsh = ls.getItem()
@@ -23,9 +23,7 @@ const Control = () => {
   client.onMessageArrived= onMessageArrived
 
   const doOtherShit=(devs, client)=>{
-    // const time = getDinfo('pond', devs).dev+'/time'
     client.subscribe('moment/jdtime')
-    // publish(client, time, "What time is it at device?")
     publish(client, 'moment/dtime', mytimezone )
   }
 
@@ -43,15 +41,10 @@ const Control = () => {
   const[devtime, setDevtime] = useState({dow:0})
   const[tzd_tza, setTzd_tza] =useState(0)
   const[status, setStatus] = useState('focused')
-  // console.log('tzd_tza: ', tzd_tza)
-
-  // const [prog, setProg] = useState('[[0,0,0]]')
-  // const [priorprog, setPriorProg] = useState([[0,0,0]])
 
   function onMessageArrived(message){
     const nsarr = processMessage(message, devs, zones, {pond, bridge, center, devtime})
     if(nsarr.length>0){
-      // console.log('nsarr: ', JSON.stringify(nsarr))
       nsarr.map((ns)=>{
         const key =Object.keys(ns)[0]
         // console.log('ns: ', JSON.stringify(ns))
@@ -92,53 +85,16 @@ const Control = () => {
     publish(client, time, "What time is it at device?")
   }
   
-  //const toggleOnOff=()=>{
-    // const dinfo = getDinfo('light_gh', devs)
-    // const newt = !light_gh.darr[0]*1
-    // const topic = `${dinfo.dev}/cmd`
-    // const payload = `{"id":${dinfo.sr},"sra":[${newt}]}`
-    // console.log('topic + payload: ', topic + payload)
-
-    //publish(client, topic, payload)
-  // }
-
-  // const changeProg=(e)=>{
-  //   console.log('e.target.value: ', e.target.value)
-  //   setProg(e.target.value)
-  // }
-
-  // const sendChange=()=>{
-  //   console.log('prog: ', prog)
-  //   const dinfo = getDinfo('light_gh', devs)
-  //   const topic = `${dinfo.dev}/prg`
-  //   const payload = `{"id":${dinfo.sr},"pro":${prog}}`
-  //   console.log('topic + payload: ', topic + payload)
-  //   publish(client, topic, payload)
-  // }
   const goSignin =()=>{
     const href = makeHref(window.location.hostname, 'signin', '')//, `?${locid}`)
     console.log('href: ', href)
     window.location.assign(href)
   }
 
-  // const renderProg=()=>{
-  //   return(
-  //     <div>
-  //       <input type="text" size="30" onChange={changeProg} value={prog}/>
-  //       <button onClick={sendChange}>change prog for today</button>
-  //     </div>
-  //   )
-  // }
-
-  // const renderOnOff=()=>{
-  //   // const btext = light_gh.darr[0] ? 'ON': 'OFF'
-  //   // const bkg = light_gh.darr[0] ? {background:'green'} : {background:'red'}
-  //   // return(<button style={bkg}onClick={toggleOnOff}>{btext}</button>)
-  // }
-  const resetJustoff = (data)=>(tf)=>{
+  const setStatusTimed = (data)=>(tf)=>{
     console.log('data: ', JSON.stringify(data))
     console.log('tf: ', tf)
-    const nb = {...bridge, justoff:false}
+    const nb = {...bridge, status:'timed'}
     console.log('nb: ', JSON.stringify(nb)) 
     setBridge(nb)
     console.log('bridge: ', JSON.stringify(bridge))
@@ -163,7 +119,7 @@ const Control = () => {
               client={client} 
               publish={publish}
               tzd_tza={tzd_tza}
-              resetJustoff={resetJustoff(bridge)}
+              setStatus={setStatusTimed(bridge)}
             />
             <Spot data={center} 
               zinf={getZinfo('center',zones)} 
@@ -201,7 +157,7 @@ const Control = () => {
 
 export{Control}
 
-function setRelayStatus (bs){
+function setRelayStatus(bs){
   if(bs.timeleft>0){
     bs.status='timed'
   }else if (bs.darr[0]==1 && bs.timeleft==0){
