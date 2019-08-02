@@ -14,12 +14,7 @@ const Disc =()=>{
   const[knoby, setKnoby ] = useState(200)
   const[hrmin, setHrmin] = useState('0:0')
   const[pointerType, setPointerType] = useState('touch')
-
-  const dec2hrmin=(dec)=>{
-    const min = Math.floor(dec%1*60)
-    const hr = Math.floor(dec)
-    return `${hr}:${min}`
-  }
+  const[isout, setIsOut]= useState(false)
 
   useEffect(()=>{
     function detectInputType (e){
@@ -76,9 +71,13 @@ const Disc =()=>{
     setHasCapture(true)
     absorbEvent(e)
     console.log(e.type)
+    console.log('knobx, knoby: ', knobx, knoby)
+    console.log('e.pageX, e.pageY: ', e.pageX, e.pageY)
+    console.log('e.screenX, e.screenY: ', e.screenX, e.screenY)
   }
 
   const handleMove=(ev)=>{
+    let rad = isout ? outr : inr
     absorbEvent(ev)
     if(hasCapture){
       var e
@@ -89,11 +88,11 @@ const Disc =()=>{
       }
       const tx = Math.round(e.pageX)
       const ty = Math.round(e.pageY)
-      const dx = tx-centx
-      const dy = ty-centy
-      const mrad = calcAng(dy,dx) 
-      const nx =  (inr*Math.cos(mrad)+centx).toFixed(1)
-      const ny = (inr*Math.sin(mrad)+centy).toFixed(1)
+      // const dx = tx-centx
+      // const dy = ty-centy
+      const mrad = calcAngle(ty,tx) 
+      const nx =  (rad*Math.cos(mrad)+centx).toFixed(1)
+      const ny = (rad*Math.sin(mrad)+centy).toFixed(1)
       const hr = (24-mrad*3.819719).toFixed(1)
       setKnobx(nx)
       setKnoby(ny)
@@ -106,7 +105,28 @@ const Disc =()=>{
     setHasCapture(false)
   }
 
+  const butStart=()=>{
+    console.log('but start')
+    const mrad = calcAngle(knoby,knobx) 
+    const nx =  (outr*Math.cos(mrad)+centx).toFixed(1)
+    const ny = (outr*Math.sin(mrad)+centy).toFixed(1)
+    setIsOut(true)
+    setKnobx(nx)
+    setKnoby(ny)
+  }
+
+  const butEnd = ()=>{
+    console.log('but end')
+    const mrad = calcAngle(knoby,knobx) 
+    const nx =  (inr*Math.cos(mrad)+centx).toFixed(1)
+    const ny = (inr*Math.sin(mrad)+centy).toFixed(1)
+    setIsOut(false)
+    setKnobx(nx)
+    setKnoby(ny)
+  }
+
   const renderSVG=()=>{
+
     return(
       <div>
         <svg id="svg" 
@@ -128,8 +148,6 @@ const Disc =()=>{
             onTouchMove={handleMove}
             onTouchStart={handleStart}
             onMouseDown={handleStart}
-            //onMouseMove={handleMove}
-            
           /> 
         </svg>  
       </div>
@@ -140,15 +158,30 @@ const Disc =()=>{
     <div id="odiv" style={styles.div}>
       {renderSVG()}
       {pointerType} {hrmin} 
-      <button>start</button><button>end</button>
+      <button onClick={butStart}>start</button><button onClick={butEnd}>end</button>
     </div>
   )
 }
 
 export{Disc}
 
-function calcAng(dy,dx){
+// function calcAng(dy,dx){
+//   var ang
+//   if(dx==0){
+//     dy>0 ? ang=pi/2 :ang=3*pi/2
+//   }else{ang=Math.atan(dy/dx)}
+//   if(dx>0 && dy<0){
+//     ang=ang+2*pi
+//   }else if (dx<0){
+//     ang=ang+pi
+//   }
+//   return ang
+// }
+
+function calcAngle(ty,tx){
   var ang
+  const dx = tx-centx
+  const dy = ty-centy
   if(dx==0){
     dy>0 ? ang=pi/2 :ang=3*pi/2
   }else{ang=Math.atan(dy/dx)}
@@ -167,4 +200,10 @@ function absorbEvent(event) {
   e.cancelBubble = true;
   e.returnValue = false;
   return false;
+}
+
+function dec2hrmin(dec){
+  const min = Math.floor(dec%1*60)
+  const hr = Math.floor(dec)
+  return `${hr}:${min}`
 }

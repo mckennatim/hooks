@@ -10,6 +10,12 @@ files using @mckennatim/mqtt-hooks
 - 
 
 ## log
+
+## 12-cascada-draw
+`renderSVGsched` takes a schedule array and creates an svg image of that schedule. It reduces the schedarray to another array that creates a set of intervals. It is still hacky
+
+`renderSchedList` also reduces the schedarray to another array that creates a set of intervals
+
 ## 11-cascada-disc
 touch and drag working on pc,android and iphone
 ## 10-setRelayStatus-useEffect
