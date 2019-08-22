@@ -11,6 +11,9 @@ files using @mckennatim/mqtt-hooks
 
 ## log
 
+## 13-cascada-drawB
+still a mess with lots of global variables and functions. on to draw2 for temp.
+
 ## 12-cascada-draw
 `renderSVGsched` takes a schedule array and creates an svg image of that schedule. It reduces the schedarray to another array that creates a set of intervals. It is still hacky
 

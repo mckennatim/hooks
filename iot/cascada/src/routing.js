@@ -8,6 +8,7 @@ var routes = [
   {path: 'sched', page: 'SchedMod'},
   {path: 'disc', page: 'Disc'},
   {path: 'draw', page: 'Draw'},
+  {path: 'draw2', page: 'Draw2'},
   {path: '*', page: 'Control'},
 ]
 const makeRouter = (routes)=>{

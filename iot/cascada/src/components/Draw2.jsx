@@ -10,7 +10,7 @@ var asched = [[0,0,0],[3,0,1], [4,30,0], [9,10,1], [10,40,0], [16,0,1],[17,50,0]
 var sunrise = "6:20"
 var sunset= "19:30"
 
-const Draw =()=>{
+const Draw2 =()=>{
 
   const[hasCapture, setHasCapture]=useState(false)
   const[knobx, setKnobx ] = useState(270)
@@ -355,7 +355,7 @@ const Draw =()=>{
   )
 }
 
-export{Draw}
+export{Draw2}
 
 // function calcAng(dy,dx){
 //   var ang
