@@ -1,21 +1,24 @@
 import React, {useState, useEffect} from 'react'
+import Slider from 'react-rangeslider'
+import 'react-rangeslider/lib/index.css'
 
 var centx =170
 var centy = 200
-var inr =100
-var outr =140
+var inr =90
+var outr =150
 var pi=Math.PI
-var asched = [[0,0,0],[3,0,1], [4,30,0], [9,10,1], [10,40,0], [16,0,1],[17,50,0], [20,0,1], [21,30,0]]
-// var asched = [[0,0,0],[16,0,1],[17,50,0]]
+// var asched = [[0,0,0],[3,0,1], [4,30,0], [9,10,1], [10,40,0], [16,0,1],[17,50,0], [20,0,1], [21,30,0]]
+var asched = [[0,0,1]]
 var sunrise = "6:20"
 var sunset= "19:30"
 
 const Draw2 =()=>{
 
   const[hasCapture, setHasCapture]=useState(false)
-  const[knobx, setKnobx ] = useState(270)
-  const[knoby, setKnoby ] = useState(200)
+  const[knobx, setKnobx ] = useState(centx)
+  const[knoby, setKnoby ] = useState(centy+inr)
   const[hrmin, setHrmin] = useState('6:0')
+  const[temp, setTemp] = useState(55)
   const[pointerType, setPointerType] = useState('touch')
   const[isout, setIsOut]= useState(false)
   const [sched,setSched]=useState(asched)
@@ -78,13 +81,14 @@ const Draw2 =()=>{
       stroke: "#000",
       strokeLinecap: "round",
       strokeLinejoin: "round",
-      strokeWidth: 5,
+      strokeWidth: 2,
       fill: "none" 
     },
     t:{
       strokeWidth: 0,
       fill: 'green',
-      fontSize: "12"
+      fontSize: "12",
+      pointerEvents: "none"
     },
     ul:{
       listStyle: "none",
@@ -129,15 +133,10 @@ const Draw2 =()=>{
       })
       setDelidx(didx-1)
       if(isout){
-        console.log('isout: ', isout)
         const idx = sched.findIndex((s)=>{
           return interval[1][0]==s[0] && interval[1][1]==s[1]
         })
-        console.log('idx: ', idx)
-        console.log('hrmin: ', hrmin)
-        console.log('interval: ', JSON.stringify(interval))
-        const nsched = replaceInterval(sched, hrmin, idx)
-        console.log('nsched: ', JSON.stringify(nsched))
+        replaceInterval(sched, hrmin, idx)
       }
     }
   }
@@ -178,11 +177,11 @@ const Draw2 =()=>{
   }
 
   const butDel = ()=>{
-    console.log('delidx: ', delidx)
-    console.log('sched: ', JSON.stringify(sched))
-    const nsched =sched.slice(0)
+    const nsched =sched.slice(0)//copy
     nsched.splice(delidx,2)
-    console.log('nsched: ', JSON.stringify(nsched))
+    if (nsched.length==0) {
+      nsched.push([0,0,0])
+    }
     setSched(nsched)
   }
 
@@ -192,6 +191,16 @@ const Draw2 =()=>{
     return(
       JSON.stringify(xyarr)
     )
+  }
+
+  const handleTempChangeStart=()=>{
+    console.log('temp change start')
+  }
+  const handleTempChange=(value)=>{
+    setTemp(value)
+  }
+  const handleTempChangeComplete=()=>{
+    console.log('temp change end')
   }
 
   const renderNightDay=()=>{
@@ -217,65 +226,54 @@ const Draw2 =()=>{
  
 
   const renderSVGsched=(schedarr)=>{// eslint-disable-line 
-    console.log('schedarr: ', JSON.stringify(schedarr))//sched from device
     const sa = schedarr.reduce((acc,s,i)=>{
       const r =s[2]==0 ? inr : outr//THIS WIIL CCHANGE FOR TEMP
       const xy = time2xy([s[0]*1,s[1]*1], r)//get location of sched[i] at r
-      // const txtang = calcAngle(xy[1],xy[0])/(2*pi)*360 -180
-      // console.log('txtang: ', txtang, s[0], s[1])
       const begarc = `M${xy[0]} ${xy[1]} A${r} ${r}` //beginning of arc path, just data
-      /* const no = {r:0||1, s:[hr,min], d:[begarc], xy:[0,0]}*/
-      const no = {r:s[2], s:[s[0],s[1]], d:[begarc], xy:[0,0]}
+      const datarr = {r:s[2], stHM:[s[0],s[1]], begarc:[begarc], xy:[0,0], xytxt:[0,0]}
+      let laf
       if(i>0){
-        const en = [s[0],s[1]] //end [hr,min]
-        const st =acc[i-1].s   //start [hr,min]
-        let laf = largeArcFlag(st, en)
-        console.log('laf: ', laf)
-        acc[i-1].e=en//adds the end [hr,min] to acc
+        const endHM = [s[0],s[1]] //end [hr,min]
+        const stHM =acc[i-1].stHM   //start [hr,min]
+        laf = largeArcFlag(stHM, endHM)
+        acc[i-1].endHM=endHM//adds the end [hr,min] to acc
         const xye = time2xy([s[0]*1,s[1]*1], acc[i-1].r==0 ? inr : outr)
         const xyl = time2xy([s[0]*1,s[1]*1], r)
-        const xyt = time2xy([s[0]*1,s[1]*1], inr-5)
-        const tang = calcAngle(xyt[1],xyt[0])/(2*pi)*360 -180
-        console.log('tang: ', tang, s[0], s[1])
-                //
+        const xytxt = time2xy([s[0]*1,s[1]*1], inr-5)
+        const tang = calcAngle(xytxt[1],xytxt[0])/(2*pi)*360 -180
         acc[i-1].tang=tang
-        acc[i-1].xy=xyt
-        let d1 = acc[i-1].d[0]
-        d1=`${d1} 0 ${laf},0 ${xye[0]} ${xye[1]}`
-        let d2 = `M${xye[0]} ${xye[1]} L${xyl[0]} ${xyl[1]}`
-        acc[i-1].d[0]=d1
-        acc[i-1].d[1]=d2
+        acc[i-1].xytxt=xytxt
+        let begarc = acc[i-1].begarc[0]
+        let arc=`${begarc} 0 ${laf},0 ${xye[0]} ${xye[1]}`
+        let rayln = `M${xye[0]} ${xye[1]} L${xyl[0]} ${xyl[1]}`
+        if(!acc[i-1].d){acc[i-1].d = []}
+        acc[i-1].d[0]=arc
+        acc[i-1].d[1]=rayln
       }
-      if(i==schedarr.length-1){ //just src ending at [0,0]
-        const en = [23,59]
-        let st = [0,0]
-        if(schedarr.length!=1){
-          st =acc[i-1].s   //start [hr,min]
-        } 
-        const laf = largeArcFlag(st, en)
-        no.e=en
+      if(i==schedarr.length-1){ //just segment ending at [23,59]
+        const endHM = [23,59]
+        let stHM = [s[0],s[1]]
+        laf = schedarr.length==1 ? 1 : largeArcFlag(stHM, endHM)
+        datarr.endHM=endHM
         const xyee = time2xy([0,0], r)
-        let d2 = no.d[0]
-        d2=`${d2} 0 ${laf},0 ${xyee[0]} ${xyee[1]}`
-        no.d[0]=d2
+        let arc=`${begarc} 0 ${laf},0 ${xyee[0]-1} ${xyee[1]}`
+        if(!datarr.d){datarr.d = []}
+        datarr.d[0]=arc
       }
-      acc[i]=no
+      acc[i]=datarr
       return acc
     },[])
-    console.log('sa: ', JSON.stringify(sa))
-    // const txtang = [-135,-158,132,109,30,2,-30,-53]
     return(
       <g style={styles.g}>
         {sa.map((s,i)=>{
           const txtang = s.tang ? s.tang : 0
-          const trans = `rotate(${txtang},${s.xy[0]},${s.xy[1]})`
-          // const trans = `rotate(30,${centx},${centy})`
-          
+          const trans = `rotate(${txtang},${s.xytxt[0]},${s.xytxt[1]})`
+          console.log('sched: ', JSON.stringify(sched))
           return(
           <g key={i}>
           <path d={s.d[0]} ></path>
           {s.d[1] && <path d={s.d[1]} ></path>}
-          <text style={styles.t} x={s.xy[0]} y={s.xy[1]}  transform={trans}>{hma2time(s.e)}</text>
+          <text style={styles.t} x={s.xytxt[0]} y={s.xytxt[1]}  transform={trans}>{hma2time(s.endHM)}</text>
           </g>
           ) 
         })}
@@ -315,18 +313,18 @@ const Draw2 =()=>{
       <div>
         <svg id="svg" 
           width="342" 
-          height="420" 
+          height="481" 
           xmlns="http://www.w3.org/2000/svg" version="1.1"
           onMouseMove={handleMove}
           onMouseUp={handleEnd}
           >
-          <rect style={styles.svg} id ="rect" x="1" y="1" width="340" height="400" fill="none" stroke="red" strokeWidth="5" />
+          <rect style={styles.svg} id ="rect" x="1" y="1" width="340" height="480" fill="none" stroke="red" strokeWidth="5" />
           {renderNightDay()}
-          <circle style={styles.inner} id="inner"  /> 
-          <circle style={styles.outer} id="outer"  /> 
-          <text x="20" y="20">{hrmin2time(hrmin)}</text>
-          <text x="20" y="390" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={tapStartEnd}>{isout ? "end" : "start"}</text>
-          <text x="250" y="390" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={butDel}>delete</text>
+          {/* <circle style={styles.inner} id="inner"  /> 
+          <circle style={styles.outer} id="outer"  />  */}
+          <text x={centx} y="20" textAnchor="middle">{hrmin2time(hrmin)}</text>
+          <text x="20" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={tapStartEnd}>{isout ? "end" : "start"}</text>
+          <text x="250" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={butDel}>delete</text>
           <circle 
             style={styles.knob} 
             id="knob"  
@@ -346,6 +344,16 @@ const Draw2 =()=>{
   return(
     <div id="odiv" style={styles.div}>
       {renderSVG()}
+      <div className='slider'>
+        <Slider
+          min={55}
+          max={72}
+          value={temp}
+          onChangeStart={handleTempChangeStart}
+          onChange={handleTempChange}
+          onChangeComplete={handleTempChangeComplete}        
+        />
+      </div>
       {pointerType} {hrmin2time(hrmin)} {showXY()}
       <button onClick={butStart}>start</button><button onClick={butEnd}>end</button>
       {delidx}
@@ -403,7 +411,6 @@ function absorbEvent(event) {
 // }
 function largeArcFlag(hma1, hma2) {
   const hrdiff = Math.abs((hma1[0]+hma1[1]/60) - (hma2[0]+hma2[1]/60))
-  console.log('hrdiff: ', hma1, hma2, hrdiff) 
   return hrdiff>12 ? 1 : 0 //set large arc flag
 }
 
@@ -439,7 +446,6 @@ function createInterval(hrmin, dur){
   const hma= [hm[0]*1, hm[1]*1]
   const min1 = hma[0]*60+hma[1]
   const min2 = (min1+dur)/60
-  console.log('min2: ', min2)
   const min = Math.floor(min2%1*60)
   const hr = Math.floor(min2)
   hma.push(1)
@@ -465,10 +471,7 @@ function insertInterval(intvl, sched){
 }
 
 function replaceInterval(sched, hrmin, idx){
-  console.log('sched[idx]: ', JSON.stringify(sched[idx]))
   const hma = hrmin2arr(hrmin)
-  console.log('hma: ', JSON.stringify(hma))
-  console.log('sched[idx]: ', JSON.stringify(sched[idx]), JSON.stringify(sched[idx-1]))
   if (hma[0]*60+hma[1] > sched[idx-1][0]*60+sched[idx-1][1]){
     sched[idx][0]=hma[0]
     sched[idx][1]=hma[1]

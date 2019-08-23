@@ -71,7 +71,7 @@ let style = {
     alignItems: 'stretch'
   },
   content:{
-    marginLeft:"20px",
+    marginLeft:"6px",
     minHeight:'200px',
     flexGrow: 1,
     flexShrink: 1, /*can shrink from 300px*/

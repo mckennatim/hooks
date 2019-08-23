@@ -27,6 +27,7 @@
     "react-dom": "^16.8.6",
     "react-json-view": "^1.19.1",
     "react-radio-group": "^3.0.3",
+    "react-rangeslider": "^2.2.0",
     "rxjs": "^6.4.0",
     "rxjs-compat": "^6.4.0",
     "rxjs-hooks": "^0.3.3",
