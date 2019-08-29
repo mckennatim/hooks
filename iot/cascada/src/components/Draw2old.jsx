@@ -339,8 +339,8 @@ const Draw2 =()=>{
           >
           <rect style={styles.svg} id ="rect" x="1" y="1" width="340" height="480" fill="none" strokeWidth="2" />
           {renderNightDay()}
-          <circle style={styles.inner} id="inner"  /> 
-          <circle style={styles.outer} id="outer"  /> 
+          {/* <circle style={styles.inner} id="inner"  /> 
+          <circle style={styles.outer} id="outer"  />  */}
           <text x={centx} y="20" textAnchor="middle">{hrmin2time(hrmin)}</text>
           <text x="20" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={tapStartEnd}>{isout ? "end" : "start"}</text>
           <text x="250" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={butDel}>delete</text>

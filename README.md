@@ -11,8 +11,8 @@ files using @mckennatim/mqtt-hooks
 
 ## log
 
-## 14-cascada-draw2
-for temp
+## 14-cascada-draw2b
+for temp, now to generalize and create an api
 
 ## 13-cascada-drawB
 still a mess with lots of global variables and functions. on to draw2 for temp.

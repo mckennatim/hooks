@@ -6,17 +6,22 @@ var centx =170
 var centy = 200
 var inr =90
 var outr =150
+const templines=[{v:72,c:'red'}, {v:68, c:'orange'},{v:64, c:'green'},  {v:60, c:'purple'}, {v:56, c:'blue'}]
 var pi=Math.PI
 // var asched = [[0,0,0],[3,0,1], [4,30,0], [9,10,1], [10,40,0], [16,0,1],[17,50,0], [20,0,1], [21,30,0]]
-var asched = [[0,0,1]]
+var asched = [[0,0,58], [6,20,69], [8,30,64], [17,40,68], [23,0,58]]
 var sunrise = "6:20"
 var sunset= "19:30"
+const temp2rad = (temp)=>{
+  //y=1/3x+25 55-75 -> 90 - 150
+  return 3*(temp-25)
+}
 
 const Draw2 =()=>{
 
   const[hasCapture, setHasCapture]=useState(false)
   const[knobx, setKnobx ] = useState(centx)
-  const[knoby, setKnoby ] = useState(centy+inr)
+  const[knoby, setKnoby ] = useState(centy + temp2rad(asched[0][2]))
   const[hrmin, setHrmin] = useState('6:0')
   const[temp, setTemp] = useState(55)
   const[pointerType, setPointerType] = useState('touch')
@@ -81,7 +86,7 @@ const Draw2 =()=>{
       stroke: "#000",
       strokeLinecap: "round",
       strokeLinejoin: "round",
-      strokeWidth: 2,
+      strokeWidth: 3,
       fill: "none" 
     },
     t:{
@@ -93,6 +98,11 @@ const Draw2 =()=>{
     ul:{
       listStyle: "none",
       background: "white"
+    },
+    templines:{
+      
+      strokeWidth: .5,
+      fill: 'none'
     }
   }
 
@@ -106,7 +116,9 @@ const Draw2 =()=>{
   }
 
   const handleMove=(ev)=>{
-    let rad = isout ? outr : inr
+    //let rad = isout ? outr : inr
+    let rad = temp2rad(sched[delidx][2])
+
     absorbEvent(ev)
     if(hasCapture){
       var e
@@ -128,10 +140,12 @@ const Draw2 =()=>{
       const hmarr= xy2time(tx,ty)
       //console.log('hmarr2hrmin(xy2time(tx,ty)): ', hmarr2hrmin(xy2time(tx,ty)))
       setHrmin(hmarr2hrmin(hmarr))
-      const didx = sched.findIndex((d)=>{
+      let didx = sched.findIndex((d)=>{
         return d[0]*60+d[1]*1 > hmarr[0]*60+hmarr[1]*1
       })
-      setDelidx(didx-1)
+      didx = didx==-1 ? sched.length-1 : didx-1
+      setDelidx(didx)
+      console.log('sched[didx][2]: ', sched[didx][2])
       if(isout){
         const idx = sched.findIndex((s)=>{
           return interval[1][0]==s[0] && interval[1][1]==s[1]
@@ -147,13 +161,14 @@ const Draw2 =()=>{
   }
 
   const butStart=()=>{
-    const intvl=createInterval(hrmin, 20)
+    const intvl=createInterval(hrmin, 20, sched, delidx, temp)
     setInterval(intvl)
     const nsched =insertInterval(intvl, sched)
     setSched(nsched)
+    const r= temp2rad(temp)
     const mrad = calcAngle(knoby,knobx) 
-    const nx =  (outr*Math.cos(mrad)+centx).toFixed(1)
-    const ny = (outr*Math.sin(mrad)+centy).toFixed(1)
+    const nx =  (r*Math.cos(mrad)+centx).toFixed(1)
+    const ny = (r*Math.sin(mrad)+centy).toFixed(1)
     setIsOut(true)
     setKnobx(nx)
     setKnoby(ny)
@@ -178,11 +193,14 @@ const Draw2 =()=>{
 
   const butDel = ()=>{
     const nsched =sched.slice(0)//copy
+    console.log('nsched: ', JSON.stringify(nsched))
     nsched.splice(delidx,2)
     if (nsched.length==0) {
       nsched.push([0,0,0])
     }
+    console.log('nsched: ', JSON.stringify(nsched))
     setSched(nsched)
+    setDelidx(nsched.length-1)
   }
 
   const showXY=()=>{
@@ -198,6 +216,8 @@ const Draw2 =()=>{
   }
   const handleTempChange=(value)=>{
     setTemp(value)
+    //3*(value-25)
+    // console.log('3*(value-25)', temp2rad(value))
   }
   const handleTempChangeComplete=()=>{
     console.log('temp change end')
@@ -223,21 +243,39 @@ const Draw2 =()=>{
       </g>
     )
   }
+
+  const renderTempLines=()=>{
+    const tcircs = templines.map((t,i)=>{
+      const rad = temp2rad(t.v)
+      return(
+        <g key={i}>
+        <circle style={styles.templines}  cx={centx} cy={centy} r={rad} stroke={t.c}/>
+        <text fontSize='8' x={centx} y={centy-rad} textAnchor="middle">{t.v}</text>
+        </g>
+      )
+    })
+    return(
+      <g >
+        {tcircs}
+      </g>
+    )
+  }
  
 
   const renderSVGsched=(schedarr)=>{// eslint-disable-line 
     const sa = schedarr.reduce((acc,s,i)=>{
-      const r =s[2]==0 ? inr : outr//THIS WIIL CCHANGE FOR TEMP
+      // const r =s[2]==0 ? inr : outr//THIS WIIL CCHANGE FOR TEMP
+      const r = temp2rad(s[2])
       const xy = time2xy([s[0]*1,s[1]*1], r)//get location of sched[i] at r
       const begarc = `M${xy[0]} ${xy[1]} A${r} ${r}` //beginning of arc path, just data
-      const datarr = {r:s[2], stHM:[s[0],s[1]], begarc:[begarc], xy:[0,0], xytxt:[0,0]}
+      const datarr = {r:r, stHM:[s[0],s[1]], begarc:[begarc], xy:[0,0], xytxt:[0,0]}
       let laf
       if(i>0){
         const endHM = [s[0],s[1]] //end [hr,min]
         const stHM =acc[i-1].stHM   //start [hr,min]
         laf = largeArcFlag(stHM, endHM)
         acc[i-1].endHM=endHM//adds the end [hr,min] to acc
-        const xye = time2xy([s[0]*1,s[1]*1], acc[i-1].r==0 ? inr : outr)
+        const xye = time2xy([s[0]*1,s[1]*1], acc[i-1].r)
         const xyl = time2xy([s[0]*1,s[1]*1], r)
         const xytxt = time2xy([s[0]*1,s[1]*1], inr-5)
         const tang = calcAngle(xytxt[1],xytxt[0])/(2*pi)*360 -180
@@ -268,7 +306,7 @@ const Draw2 =()=>{
         {sa.map((s,i)=>{
           const txtang = s.tang ? s.tang : 0
           const trans = `rotate(${txtang},${s.xytxt[0]},${s.xytxt[1]})`
-          console.log('sched: ', JSON.stringify(sched))
+          // console.log('sched: ', JSON.stringify(sched))
           return(
           <g key={i}>
           <path d={s.d[0]} ></path>
@@ -309,22 +347,25 @@ const Draw2 =()=>{
   const slist= renderSchedList(sched)
   const schedSVG=renderSVGsched(sched)  
   const renderSVG=()=>{
+    console.log('sched[delidx]: ', delidx, JSON.stringify(sched))
     return(
       <div>
         <svg id="svg" 
           width="342" 
-          height="481" 
+          height="402" 
           xmlns="http://www.w3.org/2000/svg" version="1.1"
           onMouseMove={handleMove}
           onMouseUp={handleEnd}
           >
-          <rect style={styles.svg} id ="rect" x="1" y="1" width="340" height="480" fill="none" stroke="red" strokeWidth="5" />
+          <rect style={styles.svg} id ="rect" x="1" y="1" width="340" height="400" fill="none" stroke="red" strokeWidth="5" />
           {renderNightDay()}
+          {renderTempLines()}
           {/* <circle style={styles.inner} id="inner"  /> 
           <circle style={styles.outer} id="outer"  />  */}
-          <text x={centx} y="20" textAnchor="middle">{hrmin2time(hrmin)}</text>
-          <text x="20" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={tapStartEnd}>{isout ? "end" : "start"}</text>
+          <text x={centx} y="20" textAnchor="middle">{sched[delidx] && sched[delidx][2]} &deg; {hrmin2time(hrmin)}</text>
+          <text x="20" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={tapStartEnd}>{isout ? "finish" : "set"}</text>
           <text x="250" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={butDel}>delete</text>
+          <text x="20" y="40">{temp}</text>
           <circle 
             style={styles.knob} 
             id="knob"  
@@ -343,11 +384,12 @@ const Draw2 =()=>{
 
   return(
     <div id="odiv" style={styles.div}>
+
       {renderSVG()}
       <div className='slider'>
         <Slider
           min={55}
-          max={72}
+          max={74}
           value={temp}
           onChangeStart={handleTempChangeStart}
           onChange={handleTempChange}
@@ -441,15 +483,17 @@ function hma2time(hma){
   return `${hr}:${min} ${ap}`
 }
 
-function createInterval(hrmin, dur){
+function createInterval(hrmin, dur, sched, idx, temp){
   const hm = hrmin.split(':')
   const hma= [hm[0]*1, hm[1]*1]
   const min1 = hma[0]*60+hma[1]
   const min2 = (min1+dur)/60
   const min = Math.floor(min2%1*60)
   const hr = Math.floor(min2)
-  hma.push(1)
-  return[hma, [hr,min,0]]
+  hma.push(temp)
+  return[hma, [hr,min,sched[idx][2]]]
+
+  /////not good sched and temp not available here
 }
 
 function insertInterval(intvl, sched){
