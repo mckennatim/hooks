@@ -5,9 +5,14 @@ import waterfall_off from '../img/waterfall_off.gif'
 import waterfall_on from '../img/waterfall_on.gif'
 import loading from '../img/loading200.gif'
 import {pondBut} from '../styles/appstyles'
+import {router } from '../app'
+import {routes} from '../routing'
+import{setPageProps }from '../actions/responsive'
 
 const Pond=(props)=>{
-  const{data, zinf, dinf, tzd_tza, client, publish}= props
+  const{data, zinf, dinf, tzd_tza, client, publish, binf}= props
+  const locdata=binf.locdata
+  console.log('locdata: ', JSON.stringify(locdata))
   // console.log('JSON.stringify(data): ', JSON.stringify(data))
   const href = `#sched?${zinf.name}`
   const [howlong, setHowlong]= useState(1)
@@ -74,6 +79,13 @@ const Pond=(props)=>{
     setDelay(e.target.value)
   }
 
+  const nav2 = (name, prups, params)=>()=>{
+    const rt = routes.filter((r)=>r.page==name)
+    console.log('rt: ', rt)
+    setPageProps(prups)
+    router.navigate(`/${rt[0].path}?${params.qry}`)
+  }
+
   return(
     <div>
       <h3 style={{color:'yellow'}}> {zinf.name}</h3>
@@ -92,9 +104,14 @@ const Pond=(props)=>{
         <a href={href}>
           <span style={{fontSize: ".6em"}}>Modify the db schedule for {zinf.name}</span>
         </a><br></br>
-        
+        <button 
+          onClick={nav2(
+            'SchedMod', 
+            locdata, 
+            {params:{id:34}, qry:'pond'}
+          )}
+        >goto schedmod</button>
       </div>
-
     </div>
   )
 }

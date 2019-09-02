@@ -14,10 +14,19 @@ const cambio=(state, action) =>{
         infocus: action.payload.infocus
       };    
     case 'PAGE_SWITCHED':
+      console.log('state: ', state)
+      const npage = {...state.page, name:action.payload.name, params:action.payload.params}
+      console.log('npage: ', npage)
       return {
         ...state,
-        page: action.payload
-      };    
+        page: npage
+      };
+    case 'PAGE_SET_PROPS':
+      const ppage = {...state.page, prups:action.payload}
+      return{
+        ...state,
+        page:ppage
+      }
     default:
       return state;
   }

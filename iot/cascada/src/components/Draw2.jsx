@@ -145,7 +145,7 @@ const Draw2 =()=>{
       })
       didx = didx==-1 ? sched.length-1 : didx-1
       setDelidx(didx)
-      console.log('sched[didx][2]: ', sched[didx][2])
+      // console.log('sched[didx][2]: ', sched[didx][2])
       if(isout){
         const idx = sched.findIndex((s)=>{
           return interval[1][0]==s[0] && interval[1][1]==s[1]
@@ -347,7 +347,7 @@ const Draw2 =()=>{
   const slist= renderSchedList(sched)
   const schedSVG=renderSVGsched(sched)  
   const renderSVG=()=>{
-    console.log('sched[delidx]: ', delidx, JSON.stringify(sched))
+    // console.log('sched[delidx]: ', delidx, JSON.stringify(sched))
     return(
       <div>
         <svg id="svg" 
@@ -386,15 +386,17 @@ const Draw2 =()=>{
     <div id="odiv" style={styles.div}>
 
       {renderSVG()}
-      <div className='slider'>
-        <Slider
-          min={55}
-          max={74}
-          value={temp}
-          onChangeStart={handleTempChangeStart}
-          onChange={handleTempChange}
-          onChangeComplete={handleTempChangeComplete}        
-        />
+      <div >
+        <div className='slider'>
+          <Slider
+            min={55}
+            max={74}
+            value={temp}
+            onChangeStart={handleTempChangeStart}
+            onChange={handleTempChange}
+            onChangeComplete={handleTempChangeComplete}        
+          />
+        </div>
       </div>
       {pointerType} {hrmin2time(hrmin)} {showXY()}
       <button onClick={butStart}>start</button><button onClick={butEnd}>end</button>

@@ -24,6 +24,7 @@
     "fetch": true
   },	
 	"rules": {
+		"no-unsafe-finally": "off",
     "no-tabs": 1,
     "no-mixed-spaces-and-tabs": 1,
 		"import/named": 2,

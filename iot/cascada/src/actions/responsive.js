@@ -20,6 +20,13 @@ const switchPage = actionCreator((payload) => {
   }
 });
 
+const setPageProps = actionCreator((payload) => {
+  return {
+    type: 'PAGE_SET_PROPS',
+    payload
+  }
+});
+
 const setKeyVal = actionCreator((payload) => {
   return {
     type: 'SET_KEY_VAL',
@@ -27,4 +34,4 @@ const setKeyVal = actionCreator((payload) => {
   }
 });
 
-export{setDeviceType,  switchPage, setFocus, setKeyVal}
+export{setDeviceType,  switchPage, setFocus, setKeyVal, setPageProps}

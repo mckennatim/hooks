@@ -1,8 +1,13 @@
 import React, {useState} from 'react'
 import {startWhen, endWhen, newInterval, add2sched, m2hm, getNow}from '@mckennatim/mqtt-hooks'
+import{ ZoneTimer}from '../../../../../npm/react-zonetimer/lib/ZoneTimer'
+// import {ZoneTimer} from '../../nod/zonetimer/ZoneTimer.jsx'
 
-const SchedMod=()=>{
-  
+const SchedMod=(props)=>{
+  console.log('props: ', props)
+  const sunrise = props.cambio.page.prups.sunrise
+  const sunset = props.cambio.page.prups.sunset
+  console.log('sunrise, sunset: ', sunrise, sunset)
   const tzd_tza = -5
 
   const btz = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -83,8 +88,28 @@ const SchedMod=()=>{
     )
   }
 
+
   return(
     <div>
+      <ZoneTimer 
+        range={[55,75]}
+        templines={[
+          {v:72,c:'red'}, 
+          {v:68, c:'orange'},
+          {v:64, c:'green'},  
+          {v:60, c:'purple'}, 
+          {v:56, c:'blue'}]}
+        sunrise={sunrise} 
+        sunset={sunset} 
+      />
+      <ZoneTimer 
+        range={[0,1]}
+        templines={[
+          {v:1,c:'red'}, 
+          {v:0, c:'orange'}]}
+        sunrise={sunrise} 
+        sunset={sunset}   
+      />
       {/* {renderSVG()}
       {getRectPos()} */}
       <h2>SchedMod for {qry}</h2>

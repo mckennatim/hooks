@@ -10,9 +10,12 @@ import {
   getDinfo, 
   setupSocket,
   monitorFocus
-} from '@mckennatim/mqtt-hooks'
+} from '../../nod/src'
+//} from '@mckennatim/mqtt-hooks'
+// import {setKeyVal}from '../actions/responsive'
 const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 // const mytimezone = 'America/Los_Angeles'
+console.log('mytimezone: ', mytimezone)
 
 
 const lsh = ls.getItem()
@@ -28,13 +31,13 @@ const Control = () => {
   }
 
   const topics  = ['devtime', 'jdtime', 'srstate', 'sched', 'flags', 'timr'] 
-  const {devs, zones, error}= useDevSpecs(ls, cfg, client, (devs)=>
+  const {devs, zones, binfo, error}= useDevSpecs(ls, cfg, client, (devs)=>{
     connect(client,lsh,(client)=>{
       if (client.isConnected()){
         setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
       }
     })
-  )
+  })
   const[pond, setPond] = useState({darr:[0], pro:[[]], timeleft:0, status:'off'})
   const[bridge, setBridge] = useState({darr:[0], pro:[[]], timeleft:0, status:'off'})
   const[center, setCenter] = useState({darr:[0], pro:[[]], timeleft:0, status:'off'})
@@ -109,6 +112,7 @@ const Control = () => {
             <Pond data={pond} 
               zinf={getZinfo('pond',zones)} 
               dinf={getDinfo('pond', devs)}
+              binf={binfo}
               client={client} 
               publish={publish}
               tzd_tza={tzd_tza}
