@@ -1,14 +1,26 @@
-const getNow=(tzd_tza)=>{
+
+
+
+const getNow=(tzadj)=>{
   const d = new Date()
-  let hr = d.getHours()*1+tzd_tza
+  let hr = d.getHours()*1
   let min = d.getMinutes()*1
-  hr = hr>=24 ? 23 : hr
-  hr = hr<0 ? 24+hr : hr
+  const t = tzadj.split(':')
+  const tzh = t[0]*1
+  const tzm = tzh>0 ? t[1]*1 : t[1]*-1
+  if(tzm!=0) {
+    min=min+tzm
+    if(min>60){min+=-60; hr+=1}
+    if (min<0){min+=60; hr+=-1}
+  }
+  hr=hr+tzh
+  if(hr>=24){hr+=-24}
+  if (hr<0){hr+=24}
   return [hr, min]
 }
 
-const startWhen = (tzdif, delay )=> {
-  let [hr, min ]= getNow(tzdif)
+const startWhen = (tzadj, delay )=> {
+  let [hr, min ]= getNow(tzadj)
   const de = delay ? delay.split(':') : [0,0]
   hr += de[0]*1
   min += de[1]*1
@@ -55,11 +67,9 @@ const newInterval = (starttime, startval, endtime, endval)=>{
   return [st, en]
 }
 
-const add2sched =  (osched, nintvl, tzd_tza)=>{
-  //console.log('sched: ', JSON.stringify(sched))
+const add2sched =  (osched, nintvl, tzadj)=>{
   let i=0
-  let now= getNow(tzd_tza)
-  //console.log('getNow(tzd_tza): ', getNow(tzd_tza))
+  let now= getNow(tzadj)
   const sched = osched.slice()
   const newsched = sched.reduce((acc, cur, idx)=>{
     //console.log('cur: ', JSON.stringify(cur))

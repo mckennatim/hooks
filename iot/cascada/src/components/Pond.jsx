@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '@mckennatim/mqtt-hooks'
+//import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '@mckennatim/mqtt-hooks'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '../../nod/src/index'
 import {BigButtonA} from './BigButtonA.jsx'
 import waterfall_off from '../img/waterfall_off.gif'
 import waterfall_on from '../img/waterfall_on.gif'
@@ -10,11 +11,17 @@ import {routes} from '../routing'
 import{setPageProps }from '../actions/responsive'
 
 const Pond=(props)=>{
-  const{data, zinf, dinf, tzd_tza, client, publish, binf}= props
+  const{data, zinf, dinf, client, publish, binf}= props
+  console.log('props: ', props)
   const locdata=binf.locdata
+  const tzadj = locdata ? locdata.tzadj : "-07:00"
   console.log('locdata: ', JSON.stringify(locdata))
+  console.log('tzadj: ', tzadj)
+  console.log('data: ', data)
+  const sched = data.pro
+  console.log('sched: ', sched)
   // console.log('JSON.stringify(data): ', JSON.stringify(data))
-  const href = `#sched?${zinf.name}`
+  // const href = `#sched?${zinf.name}`
   const [howlong, setHowlong]= useState(1)
   const [delay, setDelay]= useState('0:0')
   const [onoff, setOnoff]= useState(0)
@@ -25,6 +32,7 @@ const Pond=(props)=>{
     setHowlong(e.target.value)
   }
 
+
   const toggleOnoff = ()=>{
     if(onoff==0){/*send in a new schedule which will turn it on by monitorRelayState */
       if (delay==0){
@@ -32,11 +40,11 @@ const Pond=(props)=>{
         setImage(loading)
         setWtext('waiting')
       }
-      const starttime = startWhen(tzd_tza, delay)
+      const starttime = startWhen(tzadj, delay)
       const endtime = endWhen(starttime, m2hm(howlong))
       const nintvl = newInterval(starttime,[1], endtime, [0])
       const sched =data.pro
-      const nsched =add2sched(sched, nintvl, tzd_tza)
+      const nsched =add2sched(sched, nintvl, tzadj)
       const prog =JSON.stringify(nsched)
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${prog}}`
@@ -101,13 +109,13 @@ const Pond=(props)=>{
         delay as hr:min <input type="text" size="2" value={delay} onChange={handleDelay}/>
         <br/>
         <span style={{fontSize: ".6em"}}>{JSON.stringify(data.pro)}</span><br/>
-        <a href={href}>
+        {/* <a href={href}>
           <span style={{fontSize: ".6em"}}>Modify the db schedule for {zinf.name}</span>
-        </a><br></br>
+        </a><br></br> */}
         <button 
           onClick={nav2(
             'SchedMod', 
-            locdata, 
+            {locdata, sched},
             {params:{id:34}, qry:'pond'}
           )}
         >goto schedmod</button>

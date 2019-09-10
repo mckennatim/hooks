@@ -14,8 +14,6 @@ import {
 //} from '@mckennatim/mqtt-hooks'
 // import {setKeyVal}from '../actions/responsive'
 const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-// const mytimezone = 'America/Los_Angeles'
-console.log('mytimezone: ', mytimezone)
 
 
 const lsh = ls.getItem()
@@ -90,7 +88,6 @@ const Control = () => {
   
   const goSignin =()=>{
     const href = makeHref(window.location.hostname, 'signin', '')//, `?${locid}`)
-    console.log('href: ', href)
     window.location.assign(href)
   }
 
