@@ -199,7 +199,7 @@ class DevCRUD extends React.Component{
   }
 
   render(){
-    // console.log('rerendering')
+    console.log('rerendering')
     // console.log(this.state)
     const{devinfo}=this.state
     const{

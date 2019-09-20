@@ -366,6 +366,7 @@ const Draw2 =()=>{
           <text x="20" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={tapStartEnd}>{isout ? "finish" : "set"}</text>
           <text x="250" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={butDel}>delete</text>
           <text x="20" y="40">{temp}</text>
+          {schedSVG}
           <circle 
             style={styles.knob} 
             id="knob"  
@@ -376,7 +377,6 @@ const Draw2 =()=>{
             onTouchStart={handleStart}
             onMouseDown={handleStart}
           /> 
-          {schedSVG}
         </svg>  
       </div>
     )

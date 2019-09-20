@@ -1,28 +1,22 @@
 import React, {useState} from 'react'
-//import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '@mckennatim/mqtt-hooks'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '../../nod/src/index'
+// import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '@mckennatim/mqtt-hooks'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '../../nod/mqtt-hooks'
 import {BigButtonA} from './BigButtonA.jsx'
 import waterfall_off from '../img/waterfall_off.gif'
 import waterfall_on from '../img/waterfall_on.gif'
 import loading from '../img/loading200.gif'
 import {pondBut} from '../styles/appstyles'
-import {router } from '../app'
-import {routes} from '../routing'
-import{setPageProps }from '../actions/responsive'
+import {nav2 } from '../app'
+// import {routes} from '../routing'
+// import{setPageProps }from '../actions/responsive'
 
-const Pond=(props)=>{
+const Pond=React.memo((props)=>{
   const{data, zinf, dinf, client, publish, binf}= props
-  console.log('props: ', props)
+  // console.log('data: ', JSON.stringify(data))
   const locdata=binf.locdata
   const tzadj = locdata ? locdata.tzadj : "-07:00"
-  console.log('locdata: ', JSON.stringify(locdata))
-  console.log('tzadj: ', tzadj)
-  console.log('data: ', data)
   const sched = data.pro
-  console.log('sched: ', sched)
-  // console.log('JSON.stringify(data): ', JSON.stringify(data))
-  // const href = `#sched?${zinf.name}`
-  const [howlong, setHowlong]= useState(1)
+  const [howlong, setHowlong]= useState(5)
   const [delay, setDelay]= useState('0:0')
   const [onoff, setOnoff]= useState(0)
   const [image, setImage] = useState(waterfall_off)
@@ -87,12 +81,11 @@ const Pond=(props)=>{
     setDelay(e.target.value)
   }
 
-  const nav2 = (name, prups, params)=>()=>{
-    const rt = routes.filter((r)=>r.page==name)
-    console.log('rt: ', rt)
-    setPageProps(prups)
-    router.navigate(`/${rt[0].path}?${params.qry}`)
-  }
+  // const nav2 = (name, prups, params)=>()=>{
+  //   const rt = routes.filter((r)=>r.page==name)
+  //   setPageProps(prups)
+  //   router.navigate(`/${rt[0].path}?${params.qry}`)
+  // }
 
   return(
     <div>
@@ -105,7 +98,7 @@ const Pond=(props)=>{
         styles={pondBut}
       ></BigButtonA>
       <div>
-        <input className="slider" type="range" min="1" max="120" step="1" value={howlong} onChange={handleChange}></input><br/>
+        <input className="slider" type="range" min="5" max="120" step="1" value={howlong} onChange={handleChange}></input><br/>
         delay as hr:min <input type="text" size="2" value={delay} onChange={handleDelay}/>
         <br/>
         <span style={{fontSize: ".6em"}}>{JSON.stringify(data.pro)}</span><br/>
@@ -115,14 +108,15 @@ const Pond=(props)=>{
         <button 
           onClick={nav2(
             'SchedMod', 
-            {locdata, sched},
-            {params:{id:34}, qry:'pond'}
+            {locdata, sched,from:'Control'},
+            dinf.label
           )}
         >goto schedmod</button>
       </div>
     </div>
   )
-}
+// })
+}, shouldRerender)
 
 export{Pond}
 
@@ -131,3 +125,17 @@ export{Pond}
 //   const min = Math.floor(dur/60)
 //   return `${min}:${sec}`
 // }
+
+function shouldRerender(prev, next){
+  //dont render if locdata is undefined && timleft isn't changing
+  // console.log('prev.data.pro[0].length: ', prev.data.pro[0].length)
+  let tf = !!prev.binf.locdata 
+            && prev.data.timeleft==next.data.timeleft
+            && prev.data.darr[0] == next.data.darr[0]
+            && prev.data.status == next.data.status
+  if (prev.data.pro[0].length==0)tf=false
+  if (next.data.pro) tf=false //not sure wtf
+  // console.log('tf: ', tf)
+  //keep rendering until the pro data comes in
+  return tf
+}

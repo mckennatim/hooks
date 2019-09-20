@@ -9,7 +9,18 @@ const initState = {
   cambio: {
     qconn:false,
     infocus: true,
-    page: {name: 'Splash', params: null}
+    page: {
+      name: 'Splash', 
+      params: null,
+      prups: {
+        locdata:{
+          sunrise:"06:00",
+          sunset:"18:00", 
+          tzadj: "00:00"
+        },
+        sched: [[0,0,0]]
+      }
+    }
   },
   help:{
     allhelp:[]

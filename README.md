@@ -2,14 +2,39 @@
 # hooks
 https://x-team.com/blog/rxjs-observables/
 
-files using @mckennatim/mqtt-hooks
+Does the pcb work?
+Yes if you leave out the diode. Why? not sure
 
+Why does srstate publish from device when nothing has changed?
+
+Somehow a cicuit connected to the pin matters.
+
+cmd works. What's up with Sched? Actually for [[0,0,1]] it does change srstate darr[1] but it doesn't publish a new state (so app never knows about it). For [[0,0,0]] it does change srstate darr[0] and then it keeps publishing like for all darr[0] srstates
+   
+
+
+When Pkt: CYURD004/cmd {"id":3,"sra":[1]} is sent srstates do not repeat but when CYURD004/cmd {"id":3,"sra":[0]} srstate keeps publishing even with no change
+
+
+What files using @mckennatim/mqtt-hooks in cascada?
 - App.jsx
 - Control.jsx
 - SchedMod.jsx
-- 
+- Pond.JSX
+- Spot.jsx
+- Config.jsx
+
+Where is app name kept?  
+- in denv.json
 
 ## log
+
+## 14-cascada-control-sched-ZoneTimer
+ZoneTimer now works with cascada. When in ZoneTimer and you hit save the prop function `onClick={props.retNewSched(sched)}>save<` sends it to setNewSched in SchedMod component which runs `nav2(ret2page, {locdata, sched}, query)()` which puts locdata and sched in cambio.page.prups and navigates to ret2page which takes its value from prups.from which got set to `Control` on the way to SchedMod from Pond.
+
+Once back in `Control`, the app reconnects to the mqtt client and gets fresh data from the device. At the same time updateFrom() runs and if the hash is like `#/control?pond` then it prepares to send the new schedule to the device. It waits a couple of secondes until the current schedules come in over the line and then publishes the new CYURD002/prg.pro to the device. Once activated on the device, the new schedule is then published by the device (CYURD002/sched). That gets parsed by `mqtt-hooks` and a message arrives with ponds new schedule which causes a rerender of Pond.
+
+
 
 ## 14-cascada-draw2b
 for temp, now to generalize and create an api

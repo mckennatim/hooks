@@ -6,11 +6,17 @@ import off100 from '../img/off100.gif'
 import spinning from '../img/loading60.gif'
 import timed from '../img/loadno60.gif'
 import {spotBut} from '../styles/appstyles'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '@mckennatim/mqtt-hooks'
+// import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '@mckennatim/mqtt-hooks'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '../../nod/mqtt-hooks'
+import {nav2 } from '../app'
 
-const Spot=(props)=>{
-  const{tzd_tza, data, zinf, dinf, client, publish}= props
-  const href = `#sched?${zinf.name}`
+const Spot=React.memo((props)=>{
+  const{data, zinf, dinf, client, publish, binf}= props
+  // console.log('spot data: ', JSON.stringify(data))
+  const locdata=binf.locdata
+  // const tzadj = locdata ? locdata.tzadj : "-07:00"
+  const tzadj = locdata ? locdata.tzadj : "-07:00"
+  const sched = data.pro  
   const [onoff, setOnoff]= useState(0)
   const [image, setImage] = useState(off100)
   const [wtext, setWtext] = useState("howlong")
@@ -19,11 +25,11 @@ const Spot=(props)=>{
 
   const imageToggled = ()=>{
     if (wtext=='settingtimer'){
-      const starttime = startWhen(tzd_tza, delay)
+      const starttime = startWhen(tzadj, delay)
       const endtime = endWhen(starttime, m2hm(howlong))
       const nintvl = newInterval(starttime,[1], endtime, [0])
       const sched =data.pro
-      const nsched =add2sched(sched, nintvl, tzd_tza)
+      const nsched =add2sched(sched, nintvl, tzadj)
       const prog =JSON.stringify(nsched)
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${prog}}`
@@ -121,12 +127,32 @@ const Spot=(props)=>{
         delay as hr:min <input type="text" size="2" value={delay} onChange={handleDelay}/>
         <br/>
         <span style={{fontSize: ".6em"}}>{JSON.stringify(data.pro)}</span><br/>
-        <a href={href}>
+        {/* <a href={href}>
           <span style={{fontSize: ".6em"}}>Modify the db schedule for {zinf.name}</span>
-        </a><br></br>
+        </a><br></br> */}
+        <button 
+          onClick={nav2(
+            'SchedMod', 
+            {locdata, sched},
+            {params:{id:34}, qry:dinf.label}
+          )}
+        >goto schedmod</button>        
       </div>
     </div>
   )
-}
+}, dontRerenderIf)
+// })
 
 export{Spot}
+
+function dontRerenderIf(prev, next){
+  //dont render if locdata is undefined && timleft isn't changing
+  // console.log('prev.data.pro[0].length: ', prev.data.pro[0].length)
+  let tf = !!prev.binf.locdata 
+            && prev.data.timeleft==next.data.timeleft
+            && prev.data.darr[0] == next.data.darr[0]
+            && prev.data.status == next.data.status
+  if (prev.data.pro[0].length==0)tf=false
+  //keep rendering until the pro data comes in
+  return tf
+}

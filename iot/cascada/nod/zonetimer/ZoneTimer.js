@@ -1,16 +1,14 @@
 import React, {useEffect, useState, useRef} from 'react'
 import usePosition from './usePosition';
 import {styles} from './styles'
-// import Slider from 'react-rangeslider'
-// import 'react-rangeslider/lib/index.css'
+import Slider from 'react-rangeslider'
+import 'react-rangeslider/lib/index.css'
 import{themodule} from './themodule'
 
 
 
 const ZoneTimer = (props)=>{
-  const {sunrise, sunset, asched} =props
-  console.log('props: ', props)
-  console.log('asched: ', asched)
+  const {sunrise, sunset, asched, range} =props
   const tm = themodule(props.range)
 
   let ref = useRef(null);
@@ -24,6 +22,7 @@ const ZoneTimer = (props)=>{
   const [sched,setSched] = useState(asched)
   const[isout, setIsOut]= useState(false)
   const [interval, setInterval]=useState([])
+  const[temp, setTemp] = useState(range[0])
 
   useEffect(()=>{
     function detectInputType (e){
@@ -50,7 +49,6 @@ const ZoneTimer = (props)=>{
       const e = pointerType=="mouse" ? ev : ev.touches[0]
       const tx = Math.round(e.pageX)-left
       const ty = Math.round(e.pageY)-top
-      console.log('tx,ty: ', tx,ty)
       const{x,y}=tm.setxy(tx,ty,r)
       setKnobx(x)
       setKnoby(y)
@@ -75,9 +73,66 @@ const ZoneTimer = (props)=>{
     setHasCapture(false)
   }
 
+  const handleTempChangeStart=()=>{
+    console.log('temp change start')
+  }
+  const handleTempChange=(value)=>{
+    setTemp(value)
+    //3*(value-25)
+    // console.log('3*(value-25)', temp2rad(value))
+  }
+  const handleTempChangeComplete=()=>{
+    console.log('temp change end')
+  }
+
+  const butStart=()=>{
+    const intvl=tm.createInterval(hrmin, 20, sched, sidx, temp)
+    setInterval(intvl)
+    const nsched =tm.insertInterval(intvl, sched)
+    setSched(nsched)
+    const r= tm.v2r(temp)
+    const ang = tm.calcAng(knoby,knobx) 
+    const nx =  tm.rad2x(r, ang)
+    const ny = tm.rad2y(r, ang)
+    setIsOut(true)
+    setKnobx(nx)
+    setKnoby(ny)
+  }
+
+  const butEnd = ()=>{
+    const ang = tm.calcAng(knoby,knobx) 
+    const nx =  tm.rad2x(tm.inr, ang)
+    const ny = tm.rad2y(tm.inr, ang)
+    setIsOut(false)
+    setKnobx(nx)
+    setKnoby(ny)
+  }
+
+  const tapStartEnd =()=>{
+    if(isout){
+      butEnd()
+    }else{
+      butStart()
+    } 
+  }
+
+  const butDel = ()=>{
+    const nsched =sched.slice(0)//copy
+    console.log('nsched: ', JSON.stringify(nsched))
+    nsched.splice(sidx,2)
+    if (nsched.length==0) {
+      nsched.push([0,0,0])
+    }
+    console.log('nsched: ', JSON.stringify(nsched))
+    setSched(nsched)
+    setSidx(nsched.length-1)
+  }
+  // const saveBack=(dog)=>()=>{
+  //   console.log('dog: ', dog)
+  // }
+
   const renderNightDay=()=>{
     const {dnight,dday,noony,midy}=tm.drawDayNight(sunrise, sunset)
-    console.log('dnight,dday: ', dnight,dday)
     return(
       <g>
         <path d={dnight} stroke="black" strokeWidth=".5" fill="#37c7ef"></path>
@@ -115,6 +170,13 @@ const ZoneTimer = (props)=>{
     stroke: 'blue',
     strokeWidth: 2,
     fill: hasCapture ? 'yellow' : 'white'
+  }
+  styles.rngdiv={
+    width: tm.width,
+    float:'left',
+    background:'white',
+    borderStyle: 'solid', 
+    borderColor:'blue'
   }
 
   const renderSVGsched=(schedarr)=>{// eslint-disable-line 
@@ -186,8 +248,14 @@ const ZoneTimer = (props)=>{
         onMouseUp={handleEnd}
         >
         <rect style={styles.svg} d ="rect" x="1" y="1" width={tm.width} height={tm.height} />
+        <text x={tm.centx} y="20" textAnchor="middle">{sched[sidx] && sched[sidx][2]} &deg; {tm.hrmin2time(hrmin)}</text>
+        <text x="20" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={tapStartEnd}>{isout ? "finish" : "set"}</text>
+        <text x="250" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={butDel}>delete</text>
+        <text x="20" y="40">{temp}</text>
+        <text x="250" y={tm.height-20} fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={props.retNewSched(sched)}>save</text>
         {renderNightDay()}
         {renderTempLines()}
+        {schedSVG}
         <circle 
             style={styles.knob} 
             id="knob"  
@@ -198,7 +266,7 @@ const ZoneTimer = (props)=>{
             onTouchStart={handleStart}
             onMouseDown={handleStart}
           /> 
-        {schedSVG}
+        
       </svg>
     </div>
     )
@@ -207,6 +275,18 @@ const ZoneTimer = (props)=>{
   return (
     <div ref={ref}>
       {renderSVG()}
+      <div style={styles.rngdiv}>
+        <div className='slider'>
+          <Slider
+            min={range[0]}
+            max={range[1]}
+            value={temp}
+            onChangeStart={handleTempChangeStart}
+            onChange={handleTempChange}
+            onChangeComplete={handleTempChangeComplete}        
+          />
+        </div>
+      </div>
     </div>
   )
 }

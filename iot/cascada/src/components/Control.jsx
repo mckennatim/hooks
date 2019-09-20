@@ -10,8 +10,10 @@ import {
   getDinfo, 
   setupSocket,
   monitorFocus
-} from '../../nod/src'
-//} from '@mckennatim/mqtt-hooks'
+// } from '@mckennatim/mqtt-hooks'
+} from '../../nod/mqtt-hooks'
+import { setKeyVal } from '../actions/responsive'
+
 // import {setKeyVal}from '../actions/responsive'
 const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 
@@ -19,8 +21,15 @@ const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
 const lsh = ls.getItem()
 
 
-const Control = () => {
+const Control = (props) => {
+  const page =props.cambio.page
+  const query = page.params.query
+  const prups = page.prups
+  const rsched = prups.sched
   const [client, publish] = useContext(Context);
+  // let pond= {darr:[0], pro:[[]], timeleft:0, status:'off'}
+  // let bridge= {darr:[0], pro:[[]], timeleft:0, status:'off'}
+  // let center= {darr:[0], pro:[[]], timeleft:0, status:'off'}
   client.onMessageArrived= onMessageArrived
 
   const doOtherShit=(devs, client)=>{
@@ -28,19 +37,23 @@ const Control = () => {
     publish(client, 'moment/dtime', mytimezone )
   }
 
+
+
   const topics  = ['devtime', 'jdtime', 'srstate', 'sched', 'flags', 'timr'] 
   const {devs, zones, binfo, error}= useDevSpecs(ls, cfg, client, (devs)=>{
     connect(client,lsh,(client)=>{
+      console.log('client.isConnected(): ', client.isConnected())
       if (client.isConnected()){
         setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
       }
     })
   })
+
   const[pond, setPond] = useState({darr:[0], pro:[[]], timeleft:0, status:'off'})
   const[bridge, setBridge] = useState({darr:[0], pro:[[]], timeleft:0, status:'off'})
   const[center, setCenter] = useState({darr:[0], pro:[[]], timeleft:0, status:'off'})
   const[devtime, setDevtime] = useState({dow:0})
-  const[tzd_tza, setTzd_tza] =useState(0)
+  const[, setTzd_tza] =useState(0)
   const[status, setStatus] = useState('focused')
 
   function onMessageArrived(message){
@@ -52,15 +65,20 @@ const Control = () => {
         switch (key){
           case 'pond':
             const ps = {...ns[key]}
+            // console.log('ps: ', ps)
             setPond(setRelayStatus(ps))
+            // pond = setRelayStatus(ps)
             break
           case 'bridge':
             const bs = {...ns[key]}
             setBridge(setRelayStatus(bs))
+            // bridge = {...ns[key]}
+            // console.log('bridge: ', bridge)
             break
           case 'center':
             const cs = {...ns[key]}
             setCenter(setRelayStatus(cs))
+            // center = setRelayStatus(cs)
             break
           case 'jdtime':
             const tza = new Date().toString().split('GMT')[1].split('00')[0]*1
@@ -100,11 +118,45 @@ const Control = () => {
     console.log('bridge: ', JSON.stringify(bridge))
   }
 
+  const updateFrom = ()=>{
+    // console.log('location: ', location.hash)
+    const q = location.hash.split('?')
+    // console.log('q[0]: ', q[0])
+    if (client.isConnected() && q[0]=='#/control' && (q[1]=='pond' || q[1]=='bridge'|| q[1]=='center')){
+      console.log('q: ', q)
+      // console.log('rsched: ', rsched)
+      const ssched = JSON.stringify(rsched)
+      const dinf = getDinfo(query, devs)
+      const topic = `${dinf.dev}/prg`
+      const payload = `{"id":${dinf.sr},"pro":${ssched}}`
+      location.replace('#/control')
+      // console.log('location: ', location.hash)
+      setTimeout(()=>{
+        publish(client, topic, payload)
+        console.log('do gpublish')
+      },2000)
+    }
+  }
+
+  updateFrom()
+
   const rrender=()=>{
     if (!error){
       if(zones.length>0 && devs){
+        // if (client.isConnected() &&(query=='pond' || query=='bridge'|| query=='center')){
+        //   console.log('query: ', query)
+        //   const dinf = getDinfo(query, devs)
+        //   const topic = `${dinf.dev}/prg`
+        //   const payload = `{"id":${dinf.sr},"pro":${rsched}}`
+        //   publish(client, topic, payload)
+        //   const npage ={...page}
+        //   npage.params.query =""
+        //   setKeyVal({page:npage})
+        // }
         return(
+          
           <div>
+            <button onClick={updateFrom}>update from</button>
             <h1 style={{fontWeight: 300}}>Cascada </h1>
             <Pond data={pond} 
               zinf={getZinfo('pond',zones)} 
@@ -112,22 +164,21 @@ const Control = () => {
               binf={binfo}
               client={client} 
               publish={publish}
-              tzd_tza={tzd_tza}
             />
             <Spot data={bridge} 
               zinf={getZinfo('bridge',zones)} 
               dinf={getDinfo('bridge', devs)}
+              binf={binfo}
               client={client} 
               publish={publish}
-              tzd_tza={tzd_tza}
               setStatus={setStatusTimed(bridge)}
             />
             <Spot data={center} 
               zinf={getZinfo('center',zones)} 
               dinf={getDinfo('center', devs)}
+              binf={binfo}
               client={client} 
               publish={publish}
-              tzd_tza={tzd_tza}
             />
           </div>
         )

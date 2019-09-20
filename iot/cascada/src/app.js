@@ -6,7 +6,8 @@ import {debounceTime, tap} from 'rxjs/operators'
 import { createStore } from './rxred';
 import { log } from './utilities/wfuncs';
 import {initState} from './store'
-import {routing} from './routing'
+import {routing, routes} from './routing'
+import {setPageProps} from '../src/actions/responsive'
 
 fromEvent(window, 'resize')
   .pipe(
@@ -27,7 +28,17 @@ createStore(initState)
     return ReactDOM.render(<App {...state} />, container)
   });
 
-  var router=routing()
+var router=routing()
 
-  export{router}
+const nav2 = (name, prups, qry)=>()=>{
+  console.log('in nav2')
+  console.log('name: ', name)
+  const rt = routes.filter((r)=>r.page==name)
+  setPageProps(prups)
+  const navstr = qry ? `/${rt[0].path}?${qry}` : `/${rt[0].path}`
+  router.navigate(navstr)
+}
+
+
+export{router, nav2}
 

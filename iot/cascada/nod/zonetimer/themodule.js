@@ -69,12 +69,44 @@ const themodule =(range)=>{
     time2xy: time2xy,
     hma2time: hma2time,
     calcAng: calcAng,
+    rad2x: rad2x,
+    rad2y: rad2y,
     largeArcFlag: largeArcFlag,
+    hrmin2time: (hrmin)=>{
+      const hma = hrmin2arr(hrmin)
+      return hma2time(hma)
+    },
     setxy: (dx,dy, r) =>{
       const ang = calcAng(dy,dx)
       const x = rad2x(r,ang)
       const y = rad2y(r,ang)
       return{x,y}
+    },
+    createInterval: (hrmin, dur, sched, idx, temp)=>{
+      const hma= hrmin2arr(hrmin)
+      const min1 = hma[0]*60+hma[1]
+      const min2 = (min1+dur)/60
+      const min = Math.floor(min2%1*60)
+      const hr = Math.floor(min2)
+      hma.push(temp)
+      return[hma, [hr,min,sched[idx][2]]]
+    },
+    insertInterval:(intvl, sched)=>{
+      var gi = true
+      const ns = sched.reduce((acc,s, i)=>{
+        if (intvl[0][0] < s[0] && gi){
+          acc.push(intvl[0])
+          acc.push(intvl[1])
+          gi=false
+        }
+        acc.push(s)
+        if (i==sched.length-1 && gi){
+          acc.push(intvl[0])
+          acc.push(intvl[1])
+        }
+        return acc
+      },[])
+      return ns
     },
     replaceInterval:(sched, hm, idx)=>{
       if (hm.a[0]*60+hm.a[1] > sched[idx-1][0]*60+sched[idx-1][1]){
