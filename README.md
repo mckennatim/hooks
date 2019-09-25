@@ -30,7 +30,7 @@ What files using @mckennatim/mqtt-hooks in cascada?
 Where is app name kept?  
 - in denv.json
 
-## log
+## log 
 
 ## 16-ZoneTimer-Draw2-Draw3
 Modified the originally digital ZoneTimer and themodule to have Zonetimer work for analog values of hilimit and lolimit used in temperature, humidity... type sensors as well.
@@ -61,6 +61,7 @@ In `butStart` when adding a new interval `butStart` creates a 20 minute interval
 
 `tm.replaceInterval` got changed a lot both to accomodate analog and to fix the common problem of what happens when you are adding an interval and you sweep past a subsequent change (into the next + next interval). `replaceInteval` fires from `handleMove` when `isout`, that is when you are in the process of adding a new interval and are moving around from the 20 minute default start. The desired behavior has the sweep vacuuming up any old values and overiding them leavin only a new swept schedule. Some of what happened was to prevent idx=-1 not found values from causing errors. That is why you now see a bunch of `if(idx>=0 &&... `. That shouldn't happen anyway so this is a HACK that might already be fixed upriver. As soon as you have run into the next interval so that `hrXmin(sched[idx])>hrXmin(sched[idx+1]` you have to revise sched[idx] AND interval[1] with the values (analog or digital) from the idx+1 interval leaving the sched[idx] hr and min alone. Then you get rid of sched[idx+1] (and reduce the idx). Finally, if the values (of the new current sched[newidx] are the same as the ones you are sweeping over sched[newidx+1] then you can get rid of that next sched so you can go one sweeping any where you want forward. Once you are out of the function then you set the new values for sched, interval and sidx.
 
+oh dog
 
 
 ## 15-cascada-control-sched-ZoneTimer
