@@ -1,5 +1,8 @@
 
 # hooks
+## questions
+Why does double control no longer work
+
 https://x-team.com/blog/rxjs-observables/
 
 Does the pcb work?
@@ -29,12 +32,43 @@ Where is app name kept?
 
 ## log
 
-## 14-cascada-control-sched-ZoneTimer
+## 16-ZoneTimer-Draw2-Draw3
+Modified the originally digital ZoneTimer and themodule to have Zonetimer work for analog values of hilimit and lolimit used in temperature, humidity... type sensors as well.
+
+There were a number of hackky steps involved.
+
+`dif` and `difrange` were added as props parameters, `dif` is the default difference between hilimit and lolimit. `difrange` give the max of possible values of `dif` you can choose in the now apearing `DiffSlider`
+
+Some were in rendering differently. On every render `isdiff` is set as `asched[0].length>3 ? true : false`. That is used on line ~303 in `renderSVG` where `{isdiff && <text x="20" y="53">{temp+diff/2}-{temp-diff/2}</text>}` to show a range instaed of a single value. It is also used in `renderSVGsched` and anywhere `r` is set like in line ~243 `let r = isdiff ? tm.v2r((s[2]+s[3])/2) : tm.v2r(s[2])` and line ~340 in `renderDiffSlider`
+      
+
+In `handleMove` where the device value is turned into an SVG radius value. When isdiff then `r` is an average of the hilimit and lolimit values.
+
+    if (isdiff){
+      r  = tm.v2r((sched[sidx][2]+sched[sidx][3])/2)
+    }
+
+In `butStart` when adding a new interval `butStart` creates a 20 minute interval. `tm.createInterval` gets `isdiff` as a parameter and changes the process of creating an interval by pushing two values instead of one onto the new interval
+
+`butDelete` has a number of cases to consider. 
+
+* For both analog and digital deleting the `first interval` deletes the [0,0,x,? ] entry and replaces the hour, min of the new first entry with 0,0.
+* If you are deleting the `last interval` then you just delete 1, the one before it will now run til 23:59:59
+* Otherwise (for the in between cases) 
+  * for digital where the previous interval always equals the following interval always delete two schedule entries
+  * for analog if the hilimit and lolomit values of the interval before are the same as those of the interval after then you delete 2 entries otherwise you just delete one
+* The last case is if the interval you are deleting is the only interval. It has to be replaced with something. For digital it is repalced by range[0] which is 0. For analog it is replaced by `[0,0,midrange+diff/2,midrange-diff/2]`
+
+`tm.replaceInterval` got changed a lot both to accomodate analog and to fix the common problem of what happens when you are adding an interval and you sweep past a subsequent change (into the next + next interval). `replaceInteval` fires from `handleMove` when `isout`, that is when you are in the process of adding a new interval and are moving around from the 20 minute default start. The desired behavior has the sweep vacuuming up any old values and overiding them leavin only a new swept schedule. Some of what happened was to prevent idx=-1 not found values from causing errors. That is why you now see a bunch of `if(idx>=0 &&... `. That shouldn't happen anyway so this is a HACK that might already be fixed upriver. As soon as you have run into the next interval so that `hrXmin(sched[idx])>hrXmin(sched[idx+1]` you have to revise sched[idx] AND interval[1] with the values (analog or digital) from the idx+1 interval leaving the sched[idx] hr and min alone. Then you get rid of sched[idx+1] (and reduce the idx). Finally, if the values (of the new current sched[newidx] are the same as the ones you are sweeping over sched[newidx+1] then you can get rid of that next sched so you can go one sweeping any where you want forward. Once you are out of the function then you set the new values for sched, interval and sidx.
+
+
+
+## 15-cascada-control-sched-ZoneTimer
 ZoneTimer now works with cascada. When in ZoneTimer and you hit save the prop function `onClick={props.retNewSched(sched)}>save<` sends it to setNewSched in SchedMod component which runs `nav2(ret2page, {locdata, sched}, query)()` which puts locdata and sched in cambio.page.prups and navigates to ret2page which takes its value from prups.from which got set to `Control` on the way to SchedMod from Pond.
 
 Once back in `Control`, the app reconnects to the mqtt client and gets fresh data from the device. At the same time updateFrom() runs and if the hash is like `#/control?pond` then it prepares to send the new schedule to the device. It waits a couple of secondes until the current schedules come in over the line and then publishes the new CYURD002/prg.pro to the device. Once activated on the device, the new schedule is then published by the device (CYURD002/sched). That gets parsed by `mqtt-hooks` and a message arrives with ponds new schedule which causes a rerender of Pond.
 
-
+It looks like a success. One control instead of 2. One codebase for both analag and digital ZoneTimers.
 
 ## 14-cascada-draw2b
 for temp, now to generalize and create an api

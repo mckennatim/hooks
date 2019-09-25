@@ -31,8 +31,8 @@ createStore(initState)
 var router=routing()
 
 const nav2 = (name, prups, qry)=>()=>{
-  console.log('in nav2')
-  console.log('name: ', name)
+  // console.log('in nav2')
+  // console.log('name: ', name)
   const rt = routes.filter((r)=>r.page==name)
   setPageProps(prups)
   const navstr = qry ? `/${rt[0].path}?${qry}` : `/${rt[0].path}`

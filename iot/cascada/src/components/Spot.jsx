@@ -6,8 +6,8 @@ import off100 from '../img/off100.gif'
 import spinning from '../img/loading60.gif'
 import timed from '../img/loadno60.gif'
 import {spotBut} from '../styles/appstyles'
-// import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '@mckennatim/mqtt-hooks'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '../../nod/mqtt-hooks'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '@mckennatim/mqtt-hooks'
+// import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms} from '../../nod/mqtt-hooks'
 import {nav2 } from '../app'
 
 const Spot=React.memo((props)=>{
@@ -133,19 +133,19 @@ const Spot=React.memo((props)=>{
         <button 
           onClick={nav2(
             'SchedMod', 
-            {locdata, sched},
-            {params:{id:34}, qry:dinf.label}
+            {locdata, sched,from:'Control'},
+            dinf.label
           )}
-        >goto schedmod</button>        
+        >modify today&#39;s schedule</button>        
       </div>
     </div>
   )
-}, dontRerenderIf)
+}, dontRerenderIfTrue)
 // })
 
 export{Spot}
 
-function dontRerenderIf(prev, next){
+function dontRerenderIfTrue(prev, next){
   //dont render if locdata is undefined && timleft isn't changing
   // console.log('prev.data.pro[0].length: ', prev.data.pro[0].length)
   let tf = !!prev.binf.locdata 
@@ -153,6 +153,6 @@ function dontRerenderIf(prev, next){
             && prev.data.darr[0] == next.data.darr[0]
             && prev.data.status == next.data.status
   if (prev.data.pro[0].length==0)tf=false
-  //keep rendering until the pro data comes in
+  if (next.data.pro) tf=false //not sure wtf
   return tf
 }

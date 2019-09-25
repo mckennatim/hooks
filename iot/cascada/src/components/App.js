@@ -1,7 +1,7 @@
 import React from 'react'
 import {responsivePage} from '../showRWD'
-// import {ClientSocket} from '@mckennatim/mqtt-hooks'
-import {ClientSocket} from '../../nod/mqtt-hooks'
+import {ClientSocket} from '@mckennatim/mqtt-hooks'
+// import {ClientSocket} from '../../nod/mqtt-hooks'
 import {cfg} from '../utilities/getCfg'
 import '../styles/ca.css'
 

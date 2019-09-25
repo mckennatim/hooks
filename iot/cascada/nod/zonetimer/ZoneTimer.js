@@ -8,8 +8,9 @@ import{themodule} from './themodule'
 
 
 const ZoneTimer = (props)=>{
-  const {sunrise, sunset, asched, range} =props
+  const {sunrise, sunset, asched, range, difrange, dif} =props
   const tm = themodule(props.range)
+  const isdiff =  asched[0].length>3 ? true : false
 
   let ref = useRef(null);
   let { left, top } = usePosition(ref);
@@ -22,13 +23,14 @@ const ZoneTimer = (props)=>{
   const [sched,setSched] = useState(asched)
   const[isout, setIsOut]= useState(false)
   const [interval, setInterval]=useState([])
-  const[temp, setTemp] = useState(range[0])
+  const[diff,setDiff] = useState(dif)
+  const[temp, setTemp] = useState(range[1])
 
   useEffect(()=>{
     function detectInputType (e){
       tm.absorbEvent(e)
       setPointerType(e.pointerType)
-      console.log('e.pointerType: ', e.pointerType)
+      // console.log('e.pointerType: ', e.pointerType)
       window.removeEventListener('pointerdown', detectInputType);
     }
     window.addEventListener("pointerdown", detectInputType, {passive:false});
@@ -43,7 +45,13 @@ const ZoneTimer = (props)=>{
   }
 
   const handleMove=(ev)=>{
+    console.log('sched[sidx]: ', sched[sidx])
+    console.log('sched: ', JSON.stringify(sched))
+    console.log('sidx: ', sidx)
     let r = tm.v2r(sched[sidx][2])
+    if (isdiff){
+      r  = tm.v2r((sched[sidx][2]+sched[sidx][3])/2)
+    }
     tm.absorbEvent(ev)
     if(hasCapture){
       const e = pointerType=="mouse" ? ev : ev.touches[0]
@@ -53,17 +61,30 @@ const ZoneTimer = (props)=>{
       setKnobx(x)
       setKnoby(y)
       const hm= tm.xy2time(x,y)
+      console.log('hm: ', JSON.stringify(hm))
       setHrmin(hm.s)
       let didx = sched.findIndex((d)=>{
-        return d[0]*60+d[1]*1 > hm.a[0]*60+hm.a[1]*1
+        return tm.hrXmin(d) > tm.hrXmin(hm.a)
       })
       didx = didx==-1 ? sched.length-1 : didx-1
       setSidx(didx)
+      console.log('just set didx ', didx)
       if(isout){
-        const idx = sched.findIndex((s)=>{
-          return interval[1][0]==s[0] && interval[1][1]==s[1]
+        let idx = sched.findIndex((s)=>{
+          console.log('s: ', JSON.stringify(s))
+          console.log('interval: ', JSON.stringify(interval))
+          return interval[1] && interval[1][0]==s[0] && interval[1][1]==s[1]
         })
-        tm.replaceInterval(sched, hm, idx)
+        console.log('idx: ', idx)
+        console.log('interval: ', JSON.stringify(interval))
+        const {rsched,rinterval, ridx}=tm.replaceInterval(sched, hm, idx, interval)
+        const nridx = ridx==-1 ? sched.length-1 : ridx
+        console.log('nridx: ', nridx)
+        setInterval(rinterval)
+        setSched(rsched)
+        setSidx(nridx)
+        console.log('sched: ', JSON.stringify(sched))
+        console.log('sidx: ', JSON.stringify(sidx))
       }
     }
   }
@@ -82,13 +103,26 @@ const ZoneTimer = (props)=>{
     // console.log('3*(value-25)', temp2rad(value))
   }
   const handleTempChangeComplete=()=>{
-    console.log('temp change end')
+    // console.log('temp change end')
+  }
+  const handleDiffChangeStart=()=>{
+    console.log('temp change start')
+  }
+  const handleDiffChange=(value)=>{
+    setDiff(value)
+    //3*(value-25)
+    // console.log('3*(value-25)', temp2rad(value))
+  }
+  const handleDiffChangeComplete=()=>{
+    // console.log('temp change end')
   }
 
   const butStart=()=>{
-    const intvl=tm.createInterval(hrmin, 20, sched, sidx, temp)
+    const intvl=tm.createInterval(hrmin, 20, sched, sidx, temp, isdiff, diff)
     setInterval(intvl)
+    console.log('intvl: ', JSON.stringify(intvl))
     const nsched =tm.insertInterval(intvl, sched)
+    console.log('nsched: ', JSON.stringify(nsched))
     setSched(nsched)
     const r= tm.v2r(temp)
     const ang = tm.calcAng(knoby,knobx) 
@@ -119,10 +153,33 @@ const ZoneTimer = (props)=>{
   const butDel = ()=>{
     const nsched =sched.slice(0)//copy
     console.log('nsched: ', JSON.stringify(nsched))
-    nsched.splice(sidx,2)
-    if (nsched.length==0) {
-      nsched.push([0,0,0])
+    if (sidx==0 && nsched.length>1 ){
+      nsched.splice(sidx,1) 
+      nsched[0][0] = 0
+      nsched[0][1] =0
+    } else if(sidx==sched.length-1){
+      nsched.splice(sidx,1)
+    } else{
+      /*prevent multiple similar entries in sched when values are the same on either side of a delete */
+      if(!isdiff)nsched.splice(sidx,2)
+      if(isdiff){
+        console.log('nsched[sidx]: ', nsched[sidx-1])
+        console.log('nsched[sidx+1]: ', nsched[sidx+1])
+        if (nsched[sidx-1][2]==nsched[sidx+1][2] 
+          && nsched[sidx-1][3]==nsched[sidx+1][3]){
+          console.log('deleting 2')  
+          nsched.splice(sidx,2)
+        }else {
+          console.log('deleting 1')
+          nsched.splice(sidx,1)
+        }
+      } 
     }
+    if (nsched.length==0) {
+      const midrange =(range[0]+range[1])/2
+      isdiff ? nsched.push([0,0,midrange+diff/2,midrange-diff/2]) : nsched.push([0,0,range[0]])
+    }
+
     console.log('nsched: ', JSON.stringify(nsched))
     setSched(nsched)
     setSidx(nsched.length-1)
@@ -182,7 +239,7 @@ const ZoneTimer = (props)=>{
   const renderSVGsched=(schedarr)=>{// eslint-disable-line 
     const sa = schedarr.reduce((acc,s,i)=>{
       // const r =s[2]==0 ? inr : outr//THIS WIIL CCHANGE FOR TEMP
-      const r = tm.v2r(s[2])
+      let r = isdiff ? tm.v2r((s[2]+s[3])/2) : tm.v2r(s[2])
       const xy = tm.time2xy([s[0]*1,s[1]*1], r)//get location of sched[i] at r
       const begarc = `M${xy[0]} ${xy[1]} A${r} ${r}` //beginning of arc path, just data
       const datarr = {r:r, stHM:[s[0],s[1]], begarc:[begarc], xy:[0,0], xytxt:[0,0]}
@@ -218,6 +275,7 @@ const ZoneTimer = (props)=>{
       acc[i]=datarr
       return acc
     },[])
+    // setDiffs(difs)
     return(
       <g style={styles.g}>
         {sa.map((s,i)=>{
@@ -238,6 +296,10 @@ const ZoneTimer = (props)=>{
  
   const schedSVG=renderSVGsched(sched)  
   const renderSVG=()=>{
+    const hi =sched[sidx] && sched[sidx][2]
+    const lo =sched[sidx] && sched[sidx][3]
+    const d = (hi-lo)
+    const hl = sched[sidx] && sched[sidx][3] ? `${hi}-${lo}(${d})` : `${hi}`
     return(
     <div>
       <svg id="svg" 
@@ -248,10 +310,11 @@ const ZoneTimer = (props)=>{
         onMouseUp={handleEnd}
         >
         <rect style={styles.svg} d ="rect" x="1" y="1" width={tm.width} height={tm.height} />
-        <text x={tm.centx} y="20" textAnchor="middle">{sched[sidx] && sched[sidx][2]} &deg; {tm.hrmin2time(hrmin)}</text>
+        <text x={tm.centx} y="20" textAnchor="middle">{hl}&deg; {tm.hrmin2time(hrmin)}</text>
         <text x="20" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={tapStartEnd}>{isout ? "finish" : "set"}</text>
         <text x="250" y="25" fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={butDel}>delete</text>
         <text x="20" y="40">{temp}</text>
+        {isdiff && <text x="20" y="53">{temp+diff/2}-{temp-diff/2}</text>}
         <text x="250" y={tm.height-20} fontSize="24" fill="green" stroke="red" strokeWidth="1" onClick={props.retNewSched(sched)}>save</text>
         {renderNightDay()}
         {renderTempLines()}
@@ -272,10 +335,35 @@ const ZoneTimer = (props)=>{
     )
   }
 
+  const renderDiffSlider=()=>{
+    if (isdiff){
+      const drng = difrange ? [0, difrange] : [0,6]
+      return(
+      <div style={styles.rngdiv}>
+        set difference
+        <div className='slider'>
+          <Slider
+            min={drng[0]}
+            max={drng[1]}
+            value={diff}
+            onChangeStart={handleDiffChangeStart}
+            onChange={handleDiffChange}
+            onChangeComplete={handleDiffChangeComplete}        
+          />
+        </div>
+      </div>
+      )
+    }
+    return(
+      <div>nothing</div>
+    )
+  }
+
   return (
     <div ref={ref}>
       {renderSVG()}
       <div style={styles.rngdiv}>
+        set value
         <div className='slider'>
           <Slider
             min={range[0]}
@@ -287,6 +375,7 @@ const ZoneTimer = (props)=>{
           />
         </div>
       </div>
+      {renderDiffSlider()}
     </div>
   )
 }

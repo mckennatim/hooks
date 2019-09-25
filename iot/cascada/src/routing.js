@@ -9,6 +9,7 @@ var routes = [
   {path: 'disc', page: 'Disc'},
   {path: 'draw', page: 'Draw'},
   {path: 'draw2', page: 'Draw2'},
+  {path: 'draw3', page: 'Draw3'},
   {path: '*', page: 'Control'},
 ]
 const makeRouter = (routes)=>{

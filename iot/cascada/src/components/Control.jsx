@@ -10,9 +10,8 @@ import {
   getDinfo, 
   setupSocket,
   monitorFocus
-// } from '@mckennatim/mqtt-hooks'
-} from '../../nod/mqtt-hooks'
-import { setKeyVal } from '../actions/responsive'
+} from '@mckennatim/mqtt-hooks'
+// } from '../../nod/mqtt-hooks'
 
 // import {setKeyVal}from '../actions/responsive'
 const mytimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -119,18 +118,14 @@ const Control = (props) => {
   }
 
   const updateFrom = ()=>{
-    // console.log('location: ', location.hash)
     const q = location.hash.split('?')
-    // console.log('q[0]: ', q[0])
     if (client.isConnected() && q[0]=='#/control' && (q[1]=='pond' || q[1]=='bridge'|| q[1]=='center')){
       console.log('q: ', q)
-      // console.log('rsched: ', rsched)
       const ssched = JSON.stringify(rsched)
       const dinf = getDinfo(query, devs)
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${ssched}}`
       location.replace('#/control')
-      // console.log('location: ', location.hash)
       setTimeout(()=>{
         publish(client, topic, payload)
         console.log('do gpublish')

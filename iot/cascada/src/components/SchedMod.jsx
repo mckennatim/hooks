@@ -1,6 +1,6 @@
 import React from 'react'
-import {ZoneTimer} from '../../nod/zonetimer/index'
-// import{ZoneTimer}from '@mckennatim/react-zonetimer'
+// import {ZoneTimer} from '../../nod/zonetimer/index'
+import{ZoneTimer}from '@mckennatim/react-zonetimer'
 import {nav2 } from '../app'
 
 const SchedMod=(props)=>{
@@ -12,7 +12,7 @@ const SchedMod=(props)=>{
 
   const setNewSched=(sched)=>()=>{
     nav2(ret2page, {locdata, sched}, query)()
-    console.log('sched: ', JSON.stringify(sched))
+    // console.log('sched: ', JSON.stringify(sched))
   }
 
   return(

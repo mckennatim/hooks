@@ -1,6 +1,6 @@
 import React, {useState} from 'react'
-// import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '@mckennatim/mqtt-hooks'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '../../nod/mqtt-hooks'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '@mckennatim/mqtt-hooks'
+// import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms}from '../../nod/mqtt-hooks'
 import {BigButtonA} from './BigButtonA.jsx'
 import waterfall_off from '../img/waterfall_off.gif'
 import waterfall_on from '../img/waterfall_on.gif'
@@ -111,12 +111,12 @@ const Pond=React.memo((props)=>{
             {locdata, sched,from:'Control'},
             dinf.label
           )}
-        >goto schedmod</button>
+        >modify today&#39;s schedule</button>
       </div>
     </div>
   )
 // })
-}, shouldRerender)
+}, dontRerenderIfTrue)
 
 export{Pond}
 
@@ -126,7 +126,7 @@ export{Pond}
 //   return `${min}:${sec}`
 // }
 
-function shouldRerender(prev, next){
+function dontRerenderIfTrue(prev, next){
   //dont render if locdata is undefined && timleft isn't changing
   // console.log('prev.data.pro[0].length: ', prev.data.pro[0].length)
   let tf = !!prev.binf.locdata 
