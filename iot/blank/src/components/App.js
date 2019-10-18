@@ -1,7 +1,7 @@
 import React from 'react'
 import {responsivePage} from '../showRWD'
 import {ClientSocket} from '@mckennatim/mqtt-hooks'
-// import {ClientSocket} from '../../nod/src'
+// import {ClientSocket} from '../../../../npm/mqtt-hooks'
 import {cfg} from '../utilities/getCfg'
 
 class App extends React.Component{

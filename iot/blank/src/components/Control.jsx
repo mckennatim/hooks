@@ -2,24 +2,16 @@ import React, {useContext, useState} from 'react'// eslint-disable-line no-unuse
 import {cfg, ls, makeHref} from '../utilities/getCfg'
 
 import {
-    Context, 
-    useDevSpecs,  
-    processMessage, 
-    getZinfo,
-    getDinfo, 
-    setupSocket,
-    monitorFocus
-  } from '@mckennatim/mqtt-hooks'
-
-// import {
-//   Context, 
-//   useDevSpecs,  
-//   processMessage, 
-//   getZinfo,
-//   getDinfo, 
-//   setupSocket,
-//   monitorFocus
-// } from '../../nod/src'
+  connect,
+  Context, 
+  useDevSpecs,  
+  processMessage, 
+  getZinfo,
+  getDinfo, 
+  setupSocket,
+  monitorFocus
+} from '@mckennatim/mqtt-hooks'
+// } from '../../../../npm/mqtt-hooks'
 
 const lsh = ls.getItem()
 
@@ -61,16 +53,19 @@ const Control = () => {
   }
 
   const topics  = ['srstate', 'sched', 'flags', 'timr'] 
-  const {devs, zones, binfo, error}= useDevSpecs(ls, cfg, client, (client, devs)=>{
-    if (client.isConnected()){
-      setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
-    }
+  const {devs, zones, binfo, error}= useDevSpecs(ls, cfg, client, (devs)=>{
+    connect(client,lsh,(client)=>{
+      console.log('client.isConnected(): ', client.isConnected())
+      if (client.isConnected()){
+        setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
+      }
+    })
   })
   const[temp_out, setTemp_out] = useState({darr:[0,0,0,0]})
   const[temp_gh, setTemp_gh] = useState({darr:[0,0,0,0]})
   const[hum_gh, setHum_gh] = useState({darr:[0,0,0,0]})
   const[light_gh, setLight_gh] = useState({pro:[[]], timeleft:0, darr:[0]})
-
+  const[status, setStatus] = useState('focused')
   const [prog, setProg] = useState('[[0,0,0]]')
   const [priorprog, setPriorProg] = useState([[0,0,0]])
 
@@ -106,8 +101,10 @@ const Control = () => {
   }
 
   monitorFocus(window, client, lsh, ()=>{
-    console.log('in monitorFocus')
-    setupSocket(client, devs, publish, topics, ()=>doOtherShit())
+    setStatus(status)
+    if (client.isConnected()){
+      setupSocket(client, devs, publish, topics, (devs,client)=>doOtherShit(devs,client))
+    }
   })
   
   const toggleOnOff=()=>{

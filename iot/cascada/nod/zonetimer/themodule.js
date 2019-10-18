@@ -125,36 +125,24 @@ const themodule =(range)=>{
     },
     replaceInterval:(sched, hm, idx, interval)=>{
       let newidx = idx
-      console.log('sched.hm,idx: ', JSON.stringify(sched),hm,idx)
       if (idx>=0 && hrXmin(hm.a) > hrXmin(sched[idx])){
         sched[idx][0]=hm.a[0]
         sched[idx][1]=hm.a[1]
       }
       const mintvl = interval.slice(0)
-      console.log('before hrXmin sched[idx]: ', JSON.stringify(sched[idx]))
       if(idx>=0 &&  sched.length>idx+1 && hrXmin(sched[idx])>hrXmin(sched[idx+1])){
-        console.log('CAUGFJTYTFGF')
-        console.log('sched[idx+1].slice(2): ', sched[idx+1].slice(2))
-        console.log('sched[idx].slice(0,2): ', sched[idx].slice(0,2))
         const rev = sched[idx].slice(0,2).concat(sched[idx+1].slice(2)) 
         sched[idx]=rev
         mintvl[1]=rev
-        console.log('mintvl: ', JSON.stringify(mintvl))
-        console.log('sched[idx-1]: ', JSON.stringify(sched[idx-1]))
-        console.log('sched[idx]: ', JSON.stringify(sched[idx]))
-        console.log('sched[idx+1]: ', JSON.stringify(sched[idx+1]))
         sched.splice(idx+1,1)
         newidx += -1
         if(sched[newidx][2]==sched[newidx+1][2]
           && sched[newidx][3]==sched[newidx+1][3]){
-          console.log(' get rid ofsched[idx]: ', JSON.stringify(sched[newidx+1]))
           sched.splice(newidx+1,1)
           if(sched[newidx+1]) mintvl[1]=sched[newidx+1]
           newidx += -1
         }
       }
-      console.log('sched: ', JSON.stringify(sched))
-      console.log('mintvl: ', JSON.stringify(mintvl))
       return {rsched:sched, rinterval:mintvl, ridx:newidx}
     },
     drawDayNight: (sunrise,sunset)=>{

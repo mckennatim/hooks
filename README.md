@@ -32,6 +32,8 @@ Where is app name kept?
 
 ## log 
 
+## 17-hvac-blank
+
 ## 16-ZoneTimer-Draw2-Draw3
 Modified the originally digital ZoneTimer and themodule to have Zonetimer work for analog values of hilimit and lolimit used in temperature, humidity... type sensors as well.
 

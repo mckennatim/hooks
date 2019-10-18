@@ -110,6 +110,7 @@ const Control = () => {
   }
 
   monitorFocus(window, client, lsh, (status, client)=>{
+    console.log('status: ', status)
     setStatus(status)
     if (client.isConnected()){
       setupSocket(client, devs, publish, topics, (devs,client)=>doOtherShit(devs,client))

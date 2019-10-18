@@ -1,6 +1,6 @@
 import React from 'react'
-import {ZoneTimer} from '../../nod/zonetimer/index'
-// import{ZoneTimer}from '@mckennatim/react-zonetimer'
+// import {ZoneTimer} from '../../nod/zonetimer/index'
+import{ZoneTimer}from '@mckennatim/react-zonetimer'
 // import {nav2 } from '../app'
 
 const Draw2=(props)=>{
