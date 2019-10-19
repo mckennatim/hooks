@@ -1,6 +1,6 @@
 import React, {useContext, useState, useReducer} from 'react'// eslint-disable-line no-unused-vars
 import {cfg, ls, makeHref} from '../utilities/getCfg'
-import {nav2} from '../app'
+// import {nav2} from '../app'
 import {Zones} from './Zones.jsx'
 
 import {
@@ -8,11 +8,8 @@ import {
   Context, 
   useDevSpecs,  
   processMessage, 
-  getZinfo,
-  getDinfo, 
   setupSocket,
   monitorFocus,
-  ClientSocket
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
 
@@ -52,7 +49,6 @@ const Control = () => {
     timer: {pro:[[]], timeleft:0, darr:[0,0,0,0]}
   }
   const[status, setStatus] = useState('focused')
-  const [prog, setProg] = useState('[[0,0,0]]')
   const [state, dispatch] = useReducer(reducer, initialState);
 
   function reducer(state,action){
@@ -63,8 +59,9 @@ const Control = () => {
 
 
   function onMessageArrived(message){
-    const nsarr = processMessage(message, devs, zones, state)
+    const nsarr = processMessage(message, devs, state)
     if(nsarr.length>0){
+      // console.log('nsarr: ', JSON.stringify(nsarr))
       nsarr.map((ns)=>{
         const key =Object.keys(ns)[0]
         const action = {type:key, payload:ns[key]}
@@ -94,12 +91,15 @@ const Control = () => {
     window.location.assign(href)
   }
 
+  // console.log('state: ', JSON.stringify(state))
+
   const rrender=()=>{
     if (!error){
       return(
         <div>
           {status}
-          <h1>HVAC </h1>
+          <h1>hvac </h1>
+          <h3>outside temp: {state.temp_out.darr[0]}</h3>
           <Zones zones={zones} state={state} devs={devs}/>
           <pre>{JSON.stringify(devs, null, 2)}</pre><br/>
           <pre>{JSON.stringify(zones, null, 4)}</pre> <br/>

@@ -1,15 +1,11 @@
 import React,{useContext, useReducer, useState, useEffect} from 'react'
-import {cfg, ls, makeHref} from '../utilities/getCfg'
+import {ls} from '../utilities/getCfg'
 import {
   connect,
   Context, 
-  useDevSpecs,  
   processMessage, 
-  getZinfo,
-  getDinfo, 
   setupSocket,
-  monitorFocus,
-  ClientSocket
+  monitorFocus
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
 const lsh = ls.getItem()
@@ -19,6 +15,10 @@ const Zone = (props) =>{
   const zinfo = prups.zinfo
   const zid = zinfo[0].id
   const devs = prups.devs
+  // console.log('devs: ', JSON.stringify(devs))
+  // console.log('zinfo: ', JSON.stringify(zinfo))
+  // console.log('prups.state: ', prups.state)
+  if (prups.state){prups.state.temp_out={darr:[0,0,0,0]}}
 
   const [client, publish] = useContext(Context);
   client.onMessageArrived= onMessageArrived
@@ -43,18 +43,17 @@ const Zone = (props) =>{
   }
 
   function reducer(state,action){
-    console.log('state: ', JSON.stringify(state))
-    console.log('action: ', JSON.stringify(action))
     const nstate = {...state}
     nstate[action.type]= action.payload
     return nstate
   }
 
   function onMessageArrived(message){
-    const nsarr = processMessage(message, devs, zinfo, state)
-    const zarr = nsarr.filter((n)=>Object.keys(n)[0]==zinfo[0].id)
+    const nsarr = processMessage(message, devs, state)
+    // console.log('nsarr: ', JSON.stringify(nsarr))
+    const zarr = nsarr.filter((n)=>Object.keys(n)[0]==zinfo[0].id||Object.keys(n)[0]==zinfo[1].id)
     if(zarr.length>0){
-      console.log('zarr[0]: ', JSON.stringify(zarr[0]))
+      // console.log('zarr[0]: ', JSON.stringify(zarr[0]))
       const key =Object.keys(zarr[0])[0]
       const action = {type:key, payload:zarr[0][key]}
       dispatch(action)
@@ -67,24 +66,43 @@ const Zone = (props) =>{
       setupSocket(client, devs, publish, topics, (devs,client)=>doOtherShit(devs,client))
     }
   })
-  const da = state[zid].darr
-  const pro = state[zid].pro
-  const temp =da[0]
-  const set = (da[2]+da[3])/2
-  const onoff = da[1]
-  return (
+
+  const renderZone=()=>{
+    if (zinfo[0].id == 'nada' ){
+      window.history.back()
+      return(
+        <div>duclsad nada</div>
+      )
+    }else{
+      const da = state[zid].darr
+      const pro = state[zid].pro
+      const temp =da[0]
+      const set = (da[2]+da[3])/2
+      const onoff = da[1]
+      return (
+        <div>
+          {status}
+          <h1>{zinfo[0].name}</h1>
+          <h3>outside temperature: {state.temp_out.darr[0]}</h3>
+          <h3>temp:{temp}</h3>
+          <div>
+            set: {set} onoff: {onoff}
+          </div>
+    
+          <pre>{JSON.stringify(pro)}</pre><br/>
+          <button>override thermostat setting</button><br/>
+          <button>change todays schedule</button><br/>
+          <button>change weekly schedule</button><br/>
+          <button>set hold</button>
+        </div>
+      );
+    }
+  }
+  return(
     <div>
-      {status}
-      <h1>{zinfo[0].name}</h1>
-      <h3>temp:{temp}</h3>
-      <div>
-        set: {set} onoff: {onoff}
-      </div>
-
-      <pre>{JSON.stringify(pro)}</pre><br/>
-
+      {renderZone()}
     </div>
-  );
+  )
 }
 
 export{Zone}

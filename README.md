@@ -32,6 +32,15 @@ Where is app name kept?
 
 ## log 
 
+## 18-hvac
+HVAC is based upon greenhouse. It uses a local mqtt-hooks and has made a couple of changes to that. `processMessage` no longer has a `zones` parameter. `bigstate` is a poorly named parameter that tells mqtt-hooks which sensors and which sensor keys the local app wants to pay attention to. The others just fly by.
+
+`Zone` is another component (besides Control) that uses the mqtt `Context`. it connects when the component mounts using  `useEffect`. once connected it subscribes and `setUpSocket`
+
+`monitorFocus` also connects or not depending if the page is `focused` or `blurred`. It's callback also then `setUpSocket`.
+
+The best thing that changed from `cascada` is getting rid all the `case` statements in `onMessageArrived`. At the same time both `Control` and `Zone` are using useReducer instead of useState. So now `onMessageArrived` just dispatches an action of type sensorname and payload the mqtt payload. The reducer just updates the relavant part of state, leaving the rest as is.
+
 ## 17-hvac-blank
 
 ## 16-ZoneTimer-Draw2-Draw3

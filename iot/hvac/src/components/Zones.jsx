@@ -1,8 +1,7 @@
 import React from 'react'
 import{nav2} from '../app'
 import {
-  getZinfo,
-  getDinfo
+  getZinfo
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
 
@@ -10,14 +9,16 @@ const Zones=(props)=>{
   const {zones, devs, state}=props
   const keys = Object.keys(state)
   const tkeys = keys.filter((k)=>k!='temp_out'&&k!='timer')
-  const temp_out = state.temp_out
-  const timer = state.timer
+  // const temp_out = state.temp_out
+  // const timer = state.timer
+  // console.log('temp_out: ', temp_out)
 
-  const gotoZone=(k)=>(j)=>{
+  const gotoZone=(k)=>()=>{
     const zinfo = [getZinfo(k, zones)]
-    const dinfo =getDinfo(k, devs)
-    console.log('dinfo: ', dinfo)
-    console.log('zinfo: ', zinfo)
+    // const dinfo =getDinfo(k, devs)
+    const tinfo = getZinfo('temp_out', zones)
+    zinfo.push(tinfo)
+    console.log('zinfo: ', JSON.stringify(zinfo))
     const zstate = {}
     zstate[k]=state[k]
     nav2('Zone', {state: zstate, zinfo, devs, from:'Zones'}, k)
