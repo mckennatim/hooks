@@ -9,7 +9,7 @@ import {
   useDevSpecs,  
   processMessage, 
   setupSocket,
-  monitorFocus,
+  monitorFocus
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
 
@@ -24,10 +24,12 @@ const Control = () => {
     publish(client, "presence", "hello form do other shit")
   }
 
+
   const topics  = ['srstate', 'sched', 'flags', 'timr'] 
 
-  const {devs, zones, binfo, error}= useDevSpecs(ls, cfg, client, (devs)=>{
+  const {devs, zones, binfo, specs, error}= useDevSpecs(ls, cfg, client, (devs)=>{
     console.log('client.isConnected(): ', client.isConnected())
+    // setTilNext()
     if(!client.isConnected()){
       connect(client,lsh,(client)=>{
         console.log('client.isConnected(): ', client.isConnected())
@@ -39,6 +41,10 @@ const Control = () => {
       setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
     }
   })
+
+  const tzadj = binfo.locdata ? binfo.locdata.tzadj : "0"
+
+
   
   const initialState = {
     kid: {pro:[[]], darr:[0,0,0,0]},
@@ -92,7 +98,30 @@ const Control = () => {
   }
 
   // console.log('state: ', JSON.stringify(state))
+  const renderSpecs = () =>{
+    const thespecs = specs.map((s,i)=>{
+      const server = JSON.parse(s.server)
+      const spec = JSON.parse(s.specs)
+      return(
+        <li key={i}>{s.devid} <br/> 
+        {s.description} <br/> 
+        owner: {s.owner} <br/>
+        hysteresis: {spec.hysteresis} <br/>
+        <pre>{JSON.stringify(server, null, 4)}</pre>
+        <pre>{JSON.stringify(spec, null, 4)}</pre>
+        </li>
+      )
+    })
+    return(
+      <div>
+      <ul>
+        {thespecs}
+      </ul>
+      </div>
+    )
+  }
 
+  // console.log('binfo: ', binfo)
   const rrender=()=>{
     if (!error){
       return(
@@ -100,10 +129,13 @@ const Control = () => {
           {status}
           <h1>hvac </h1>
           <h3>outside temp: {state.temp_out.darr[0]}</h3>
-          <Zones zones={zones} state={state} devs={devs}/>
+          tzadj: {tzadj}
+          <Zones zones={zones} state={state} devs={devs} tzadj={tzadj}/>
           <pre>{JSON.stringify(devs, null, 2)}</pre><br/>
           <pre>{JSON.stringify(zones, null, 4)}</pre> <br/>
           <pre>{JSON.stringify(binfo, null, 4)}</pre>
+          {specs && renderSpecs()}
+          {/* <pre>{JSON.stringify(specs, null, 4)}</pre> */}
         </div>
 
       )

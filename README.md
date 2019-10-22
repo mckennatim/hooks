@@ -31,7 +31,8 @@ Where is app name kept?
 - in denv.json
 
 ## log 
-
+## 19-hvac-tilNext
+working at displayin set until next 
 ## 18-hvac
 HVAC is based upon greenhouse. It uses a local mqtt-hooks and has made a couple of changes to that. `processMessage` no longer has a `zones` parameter. `bigstate` is a poorly named parameter that tells mqtt-hooks which sensors and which sensor keys the local app wants to pay attention to. The others just fly by.
 

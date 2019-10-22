@@ -5,7 +5,8 @@ import {
   Context, 
   processMessage, 
   setupSocket,
-  monitorFocus
+  monitorFocus,
+  getDinfo
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
 const lsh = ls.getItem()
@@ -35,6 +36,7 @@ const Zone = (props) =>{
 
   const[status, setStatus] = useState('focused')
   const [state, dispatch] = useReducer(reducer, prups.state);
+  const [over, setOver] = useState(68)
 
   const topics  = ['srstate', 'sched', 'flags', 'timr']
   const doOtherShit=()=>{
@@ -66,6 +68,23 @@ const Zone = (props) =>{
       setupSocket(client, devs, publish, topics, (devs,client)=>doOtherShit(devs,client))
     }
   })
+  const cmdOverride=()=>{
+    console.log('in command override')
+    const da =state[zid].darr
+    const dif = da[2]-da[3]
+    const newdarr = [over+dif/2,over-dif/2]
+    console.log('newdarr: ', newdarr)
+    console.log('devs, null,2: ', JSON.stringify(devs, null,2))
+    const di = getDinfo(zid,devs)
+    const topic = `${di.dev}/cmd`
+    const payload = `{"id":${di.sr},"sra":[${newdarr}]}`
+    console.log('topic, payload: ', topic, payload)
+    publish(client, topic, payload)
+  }
+
+  const handleOver=(e)=>{
+    setOver(e.target.value*1)
+  }
 
   const renderZone=()=>{
     if (zinfo[0].id == 'nada' ){
@@ -86,11 +105,12 @@ const Zone = (props) =>{
           <h3>outside temperature: {state.temp_out.darr[0]}</h3>
           <h3>temp:{temp}</h3>
           <div>
-            set: {set} onoff: {onoff}
+          onoff: {onoff} setpoint: {set}  intil: 
           </div>
     
           <pre>{JSON.stringify(pro)}</pre><br/>
-          <button>override thermostat setting</button><br/>
+          <input type="range" min="50" max="75" value={over} onChange={handleOver}/><span>{over}</span><br/>
+          <button onClick={cmdOverride}>override thermostat setting</button><br/>
           <button>change todays schedule</button><br/>
           <button>change weekly schedule</button><br/>
           <button>set hold</button>

@@ -1,12 +1,13 @@
 import React from 'react'
 import{nav2} from '../app'
 import {
-  getZinfo
+  getZinfo,
+  whereInSched
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
 
 const Zones=(props)=>{
-  const {zones, devs, state}=props
+  const {zones, devs, state, tzadj}=props
   const keys = Object.keys(state)
   const tkeys = keys.filter((k)=>k!='temp_out'&&k!='timer')
   // const temp_out = state.temp_out
@@ -24,6 +25,16 @@ const Zones=(props)=>{
     nav2('Zone', {state: zstate, zinfo, devs, from:'Zones'}, k)
   }
 
+  const findKnext=(k)=>{
+    const sched = state[k].pro
+    if(sched[0].length>0 && tzadj.length>0){
+      whereInSched(sched, tzadj)
+      return(
+        <span>{JSON.stringify(sched)}</span>
+      )
+    }
+  }
+
   const renderZones=()=>{
     if(zones.length>0){
       const tli = tkeys.map((k,i)=>{
@@ -31,7 +42,7 @@ const Zones=(props)=>{
         const set = (sk.darr[2]+sk.darr[3])/2
         const zone = zones.filter((z)=>z.id==k)
         return(
-        <li key={i} onClick={gotoZone(k)}>{sk.darr[1]} {zone[0].name} {sk.darr[0]} set {set}</li>
+        <li key={i} onClick={gotoZone(k)}>{sk.darr[1]} {zone[0].name} {sk.darr[0]} set {set} {findKnext(k)}</li>
         )
       })
       return(

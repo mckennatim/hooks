@@ -102,7 +102,7 @@
   }
 },
 "CYURD006": {
-  "device": "CYURD030",
+  "device": "CYURD060",
   "server": {
     "url": "sitebuilt.net",
     "mqtt": 1884,
