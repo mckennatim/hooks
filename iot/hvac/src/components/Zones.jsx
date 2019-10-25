@@ -7,7 +7,8 @@ import {
 } from '../../npm/mqtt-hooks'
 
 const Zones=(props)=>{
-  const {zones, devs, state, tzadj}=props
+  const {zones, devs, state, locdata}=props
+  const tzadj=locdata ? locdata.tzadj : "0"
   const keys = Object.keys(state)
   const tkeys = keys.filter((k)=>k!='temp_out'&&k!='timer')
   // const temp_out = state.temp_out
@@ -19,10 +20,9 @@ const Zones=(props)=>{
     // const dinfo =getDinfo(k, devs)
     const tinfo = getZinfo('temp_out', zones)
     zinfo.push(tinfo)
-    console.log('zinfo: ', JSON.stringify(zinfo))
     const zstate = {}
     zstate[k]=state[k]
-    nav2('Zone', {state: zstate, zinfo, devs, from:'Zones'}, k)
+    nav2('Zone', {state: zstate, zinfo, devs, locdata, from:'Zones'}, k)
   }
 
   const findKnext=(k)=>{

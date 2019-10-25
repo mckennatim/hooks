@@ -36,7 +36,6 @@ export function useDevSpecs(ls,cfg, client,cb ){
     if(!didCancel){
       fetchDevZones().then((data)=>{
         if(data){
-          console.log('data: ', data)
           if (data && data.qmessage){
             setError(data)
           }else{

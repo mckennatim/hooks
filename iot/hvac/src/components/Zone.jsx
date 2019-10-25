@@ -9,17 +9,21 @@ import {
   getDinfo
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
+import{nav2} from '../app'
 const lsh = ls.getItem()
 
 const Zone = (props) =>{
   const prups = props.cambio.page.prups
-  const zinfo = prups.zinfo
+  const {zinfo, devs, locdata} = prups
   const zid = zinfo[0].id
-  const devs = prups.devs
+  
+  // const asched = prups.state[zid].pro
   // console.log('devs: ', JSON.stringify(devs))
   // console.log('zinfo: ', JSON.stringify(zinfo))
   // console.log('prups.state: ', prups.state)
-  if (prups.state){prups.state.temp_out={darr:[0,0,0,0]}}
+  if (prups.state){
+    prups.state.temp_out={darr:[0,0,0,0]}
+  }
 
   const [client, publish] = useContext(Context);
   client.onMessageArrived= onMessageArrived
@@ -68,6 +72,12 @@ const Zone = (props) =>{
       setupSocket(client, devs, publish, topics, (devs,client)=>doOtherShit(devs,client))
     }
   })
+  const schedChange=(asched)=>()=>{
+    client.disconnect()
+    console.log('asched: ', asched, locdata, zid)
+    nav2('DailyScheduler', {...prups, asched}, zid)
+  }
+
   const cmdOverride=()=>{
     console.log('in command override')
     const da =state[zid].darr
@@ -111,7 +121,7 @@ const Zone = (props) =>{
           <pre>{JSON.stringify(pro)}</pre><br/>
           <input type="range" min="50" max="75" value={over} onChange={handleOver}/><span>{over}</span><br/>
           <button onClick={cmdOverride}>override thermostat setting</button><br/>
-          <button>change todays schedule</button><br/>
+          <button onClick={schedChange(pro)}>change todays schedule</button><br/>
           <button>change weekly schedule</button><br/>
           <button>set hold</button>
         </div>

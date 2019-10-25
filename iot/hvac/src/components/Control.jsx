@@ -28,11 +28,9 @@ const Control = () => {
   const topics  = ['srstate', 'sched', 'flags', 'timr'] 
 
   const {devs, zones, binfo, specs, error}= useDevSpecs(ls, cfg, client, (devs)=>{
-    console.log('client.isConnected(): ', client.isConnected())
     // setTilNext()
     if(!client.isConnected()){
       connect(client,lsh,(client)=>{
-        console.log('client.isConnected(): ', client.isConnected())
         if (client.isConnected()){
           setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
         }
@@ -42,10 +40,6 @@ const Control = () => {
     }
   })
 
-  const tzadj = binfo.locdata ? binfo.locdata.tzadj : "0"
-
-
-  
   const initialState = {
     kid: {pro:[[]], darr:[0,0,0,0]},
     lr: {pro:[[]], darr:[0,0,0,0]},
@@ -124,13 +118,13 @@ const Control = () => {
   // console.log('binfo: ', binfo)
   const rrender=()=>{
     if (!error){
+      const {locdata} = binfo
       return(
         <div>
           {status}
           <h1>hvac </h1>
           <h3>outside temp: {state.temp_out.darr[0]}</h3>
-          tzadj: {tzadj}
-          <Zones zones={zones} state={state} devs={devs} tzadj={tzadj}/>
+          <Zones zones={zones} state={state} devs={devs} locdata={locdata}/>
           <pre>{JSON.stringify(devs, null, 2)}</pre><br/>
           <pre>{JSON.stringify(zones, null, 4)}</pre> <br/>
           <pre>{JSON.stringify(binfo, null, 4)}</pre>

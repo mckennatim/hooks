@@ -79,17 +79,12 @@ const hma2time=(hma)=>{
 
 const whereInSched = (sched,tzadj)=>{
   let now= getNow(tzadj)
-  console.log('now: ', now)
   const idx = sched.findIndex((s)=>{
-    console.log('s: ', s, hm2m(s))
     return hm2m(s)>hm2m(now)
   })
-  console.log('idx: ', idx, sched[idx])
   if(idx>-1){
-   console.log('hm2m(sched[idx]): ', hma2time(sched[idx]))
+  //  console.log('hm2m(sched[idx]): ', hma2time(sched[idx]))
   }
-
-
 }
 
 const add2sched =  (osched, nintvl, tzadj)=>{
@@ -186,5 +181,5 @@ function setRelayStatus (bs){
   return bs
 }
 
-export{startWhen, endWhen, newInterval, add2sched, m2hm, m2ms, getNow, setRelayStatus, whereInSched}
+export{startWhen, endWhen, newInterval, add2sched, m2hm, m2ms, getNow, setRelayStatus, whereInSched, hma2time}
 

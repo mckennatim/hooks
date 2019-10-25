@@ -31,6 +31,8 @@ Where is app name kept?
 - in denv.json
 
 ## log 
+## 20-hvac-DailySchedule
+
 ## 19-hvac-tilNext
 working at displayin set until next 
 ## 18-hvac

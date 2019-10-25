@@ -5,6 +5,7 @@ var routes = [
   {path: 'control', page: 'Control'},
   {path: 'splash', page: 'Splash'},
   {path: 'zone', page: 'Zone'},
+  {path: 'daysched', page: 'DailyScheduler'},
   {path: '*', page: 'Control'},
 ]
 const makeRouter = (routes)=>{
