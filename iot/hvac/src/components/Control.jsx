@@ -27,7 +27,7 @@ const Control = () => {
 
   const topics  = ['srstate', 'sched', 'flags', 'timr'] 
 
-  const {devs, zones, binfo, specs, error}= useDevSpecs(ls, cfg, client, (devs)=>{
+  const {devs, zones, binfo, error}= useDevSpecs(ls, cfg, client, (devs)=>{
     // setTilNext()
     if(!client.isConnected()){
       connect(client,lsh,(client)=>{
@@ -91,31 +91,6 @@ const Control = () => {
     window.location.assign(href)
   }
 
-  // console.log('state: ', JSON.stringify(state))
-  const renderSpecs = () =>{
-    const thespecs = specs.map((s,i)=>{
-      const server = JSON.parse(s.server)
-      const spec = JSON.parse(s.specs)
-      return(
-        <li key={i}>{s.devid} <br/> 
-        {s.description} <br/> 
-        owner: {s.owner} <br/>
-        hysteresis: {spec.hysteresis} <br/>
-        <pre>{JSON.stringify(server, null, 4)}</pre>
-        <pre>{JSON.stringify(spec, null, 4)}</pre>
-        </li>
-      )
-    })
-    return(
-      <div>
-      <ul>
-        {thespecs}
-      </ul>
-      </div>
-    )
-  }
-
-  // console.log('binfo: ', binfo)
   const rrender=()=>{
     if (!error){
       const {locdata} = binfo
@@ -125,11 +100,6 @@ const Control = () => {
           <h1>hvac </h1>
           <h3>outside temp: {state.temp_out.darr[0]}</h3>
           <Zones zones={zones} state={state} devs={devs} locdata={locdata}/>
-          <pre>{JSON.stringify(devs, null, 2)}</pre><br/>
-          <pre>{JSON.stringify(zones, null, 4)}</pre> <br/>
-          <pre>{JSON.stringify(binfo, null, 4)}</pre>
-          {specs && renderSpecs()}
-          {/* <pre>{JSON.stringify(specs, null, 4)}</pre> */}
         </div>
 
       )

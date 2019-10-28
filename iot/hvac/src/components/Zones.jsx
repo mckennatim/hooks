@@ -22,15 +22,18 @@ const Zones=(props)=>{
     zinfo.push(tinfo)
     const zstate = {}
     zstate[k]=state[k]
-    nav2('Zone', {state: zstate, zinfo, devs, locdata, from:'Zones'}, k)
+    const mess = findKnext(k)
+    nav2('Zone', {state: zstate, zinfo, devs, locdata, from:'Zones', mess}, k)
   }
 
   const findKnext=(k)=>{
     const sched = state[k].pro
     if(sched[0].length>0 && tzadj.length>0){
-      whereInSched(sched, tzadj)
+      const idx = whereInSched(sched, tzadj)
+      const s = sched[idx]
+      const mess = idx==-1 ? "all day" : `until: ${s[0]}:${s[1]} then ${(s[2]+s[3])/2}`
       return(
-        <span>{JSON.stringify(sched)}</span>
+        mess
       )
     }
   }
@@ -42,7 +45,7 @@ const Zones=(props)=>{
         const set = (sk.darr[2]+sk.darr[3])/2
         const zone = zones.filter((z)=>z.id==k)
         return(
-        <li key={i} onClick={gotoZone(k)}>{sk.darr[1]} {zone[0].name} {sk.darr[0]} set {set} {findKnext(k)}</li>
+        <li key={i} onClick={gotoZone(k)}>{sk.darr[1]} {zone[0].name} {sk.darr[0]} set {set} <span>{findKnext(k)}</span></li>
         )
       })
       return(

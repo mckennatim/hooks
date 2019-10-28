@@ -13,10 +13,13 @@ import{nav2} from '../app'
 const lsh = ls.getItem()
 
 const Zone = (props) =>{
-  const prups = props.cambio.page.prups
-  const {zinfo, devs, locdata} = prups
+  const{page}=props.cambio
+  const {prups, params} = page
+  const {zinfo, devs, locdata, mess, doupd, sched} = prups
   const zid = zinfo[0].id
-  
+
+
+
   // const asched = prups.state[zid].pro
   // console.log('devs: ', JSON.stringify(devs))
   // console.log('zinfo: ', JSON.stringify(zinfo))
@@ -30,13 +33,20 @@ const Zone = (props) =>{
 
   useEffect(() => {
     connect(client,lsh,(client)=>{
-      console.log('client.isConnected(): ', client.isConnected())
       if (client.isConnected()){
         setupSocket(client, devs, publish, topics, (devs, client)=>doOtherShit(devs, client))
       }
     })
     return client.disconnect()
   },[])
+
+  // useEffect(()=>{
+  //   console.log('doupd: ', doupd)
+  //   if(doupd){
+  //     console.log('gonna publish taht shit')
+  //     console.log('client.isConnected(): ', client.isConnected())
+  //   }
+  // }, [doupd]) 
 
   const[status, setStatus] = useState('focused')
   const [state, dispatch] = useReducer(reducer, prups.state);
@@ -46,6 +56,14 @@ const Zone = (props) =>{
   const doOtherShit=()=>{
     //console.log('other shit but not connected doesnt work yet')
     publish(client, "presence", "hello form do other shit")
+    if(doupd){
+      console.log('props: ', props)
+      const ssched = JSON.stringify(sched)
+      const dinf = getDinfo(params.query, devs)
+      const topic = `${dinf.dev}/prg`
+      const payload = `{"id":${dinf.sr},"pro":${ssched}}`
+      publish(client, topic, payload)
+    }
   }
 
   function reducer(state,action){
@@ -75,7 +93,7 @@ const Zone = (props) =>{
   const schedChange=(asched)=>()=>{
     client.disconnect()
     console.log('asched: ', asched, locdata, zid)
-    nav2('DailyScheduler', {...prups, asched}, zid)
+    nav2('DailyScheduler', {...prups, zinfo, asched, from:'Zone'}, zid)
   }
 
   const cmdOverride=()=>{
@@ -115,10 +133,12 @@ const Zone = (props) =>{
           <h3>outside temperature: {state.temp_out.darr[0]}</h3>
           <h3>temp:{temp}</h3>
           <div>
-          onoff: {onoff} setpoint: {set}  intil: 
+          onoff: {onoff} setpoint: {set}  {mess} 
           </div>
     
-          <pre>{JSON.stringify(pro)}</pre><br/>
+          
+            <span style={styles.schedstr}>{JSON.stringify(pro)}</span>
+          <br/>
           <input type="range" min="50" max="75" value={over} onChange={handleOver}/><span>{over}</span><br/>
           <button onClick={cmdOverride}>override thermostat setting</button><br/>
           <button onClick={schedChange(pro)}>change todays schedule</button><br/>
@@ -136,3 +156,9 @@ const Zone = (props) =>{
 }
 
 export{Zone}
+
+const styles={
+  schedstr:{
+    fontSize: 9
+  }
+}
