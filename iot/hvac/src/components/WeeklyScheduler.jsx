@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {fetchWeekSched, getDinfo} from '../../npm/mqtt-hooks'
 import {cfg, ls} from '../utilities/getCfg'
+import {nav2} from '../app'
 // import Checkbox from '@material-ui/core/Checkbox';
 // import FormGroup from '@material-ui/core/FormGroup';
 // import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -10,16 +11,18 @@ const WeeklyScheduler=(props)=>{
   const{prups}=props.cambio.page
   const {sched, state, zinfo, temp_out, devs }=prups
   const zinf = zinfo[0]
+  const dinfo = devs ? getDinfo(zinf.id, devs): {dev: 'null', sr:-1}
   const initSchdb=[{dow:'current', sched:sched}]
 
   //[[{dow:31, pro:[[]]}], [{dow:31, pro:[[]]}]]  
   const [schdb, setSchdb] = useState(initSchdb)
   const [holddate,setHolddate]=useState('2019-10-29')
+  const [edsched, setEdsched] = useState(sched)
+  const [radiock, setRadiock] = useState(0)
 
   useEffect(()=>{
-    const dinf = devs ? getDinfo(zinf.id, devs): {dev: 'null', sr:-1}
-    console.log('dinf: ', dinf)
-    fetchWeekSched(ls,cfg, dinf.dev, dinf.sr).then((data)=>{
+    // const dinf = devs ? getDinfo(zinf.id, devs): {dev: 'null', sr:-1}
+    fetchWeekSched(ls,cfg, dinfo.dev, dinfo.sr).then((data)=>{
       console.log('data: ', data)
       const nsched = initSchdb.slice()
       const sc = data.results.map((d)=>{
@@ -29,8 +32,6 @@ const WeeklyScheduler=(props)=>{
       setSchdb(ns)
     })
   },[])
-
-  console.log('schdb: ', schdb)
 
   const save2server=()=>{
     var checkboxes = [...document.getElementsByName("days")];
@@ -48,13 +49,27 @@ const WeeklyScheduler=(props)=>{
       .filter((d)=>d!=undefined)
       .reduce((acc, e)=>e+acc, 0)
       savedayarr.push(ch)
-      console.log('savedayarray: ', savedayarr)
-
+      dinfo.dowarr=savedayarr
+      dinfo.sched=JSON.stringify(sched)
+      dinfo.until = savedayarr.includes(128) ? holddate : '0000-00-00'
+      console.log('dinfo: ', dinfo)
   }
 
   const upDate=(e)=>{
     console.log('e.target.value: ', e.target.value)
     setHolddate(e.target.value)
+  }
+
+  const modifySelected=()=>{
+    console.log('edsched: ', edsched)
+    console.log('edsched: ', JSON.stringify(edsched))
+    nav2('DailyScheduler', {...prups, zinfo, asched:edsched, from:'WeeklyScheduler'}, zinf.id)
+  }
+
+  const changeRadio=(i)=>(e)=>{
+    const psched = JSON.parse(e.target.value)
+    setRadiock(i)
+    setEdsched(psched)
   }
 
   const renderHeader=()=>{
@@ -79,20 +94,27 @@ const WeeklyScheduler=(props)=>{
 
   const renderSchdb=()=>{
     if(schdb.length>0){
-      console.log('schdb: ', schdb)
       const recs = schdb.map((s,i)=>{
+        const schstr = JSON.stringify(s.sched)
         return(
           <li key={i} style={styles.li}>
             <span style={styles.schedstr}>{parseDays(s.dow)}</span><br/>
-            <span style={styles.schedstr}>{JSON.stringify(s.sched)}</span>
-            <input type="radio"/>
+            <span style={styles.schedstr}>{schstr}</span>
+            <input name="radiosch" value={schstr} type="radio" 
+              onChange={changeRadio(i)} 
+              checked={i==radiock}
+            />
           </li>
         )
       })
       return(
+        <fieldset>
+          <legend>Saved Schedules</legend>
         <ul style={styles.ul}>
           {recs}
         </ul>
+        <button onClick={modifySelected}>modify selected</button><br/>
+        </fieldset>
       )
     }
   }
@@ -100,7 +122,9 @@ const WeeklyScheduler=(props)=>{
   const renderCkboxes = ()=>{
     return(
       <fieldset>      
-        <legend>Apply to days</legend>      
+        <legend>Apply to days</legend>
+        <span style={styles.schedstr}>{JSON.stringify(sched)}</span><br/>
+      
         <input type="checkbox" name="days" value="0"/>DEFAULT <br/> 
         <input type="checkbox" name="days" value="1"/>Monday<br/>      
         <input type="checkbox" name="days" value="2"/>Tuesday<br/>      
@@ -109,21 +133,18 @@ const WeeklyScheduler=(props)=>{
         <input type="checkbox" name="days" value="16"/>Friday<br/>      
         <input type="checkbox" name="days" value="32"/>Saturday<br/>      
         <input type="checkbox" name="days" value="64"/>Sunday<br/>      
-        <input type="checkbox" name="days" value="128"/>HOLD<br/> 
-        <input onChange={upDate} value={holddate}type="date"/>
+        <input type="checkbox" name="days" value="128"/>HOLD until 
+        <input onChange={upDate} value={holddate}type="date"/><br/>
+        <button onClick={save2server}>Save to Server</button>
       </fieldset>
     )  
   }
 
   return(
     <div>
-      {renderHeader()}
-    <h3>Schedules</h3>
+    {renderHeader()}
     {renderSchdb()}
-    <button>modify selected</button><br/>
-    <span style={styles.schedstr}>{JSON.stringify(sched)}</span><br/>
     {renderCkboxes()}
-    <button onClick={save2server}>Save to Server</button>
     </div>
   )
 }
@@ -137,7 +158,8 @@ const styles={
   ul: {
     listStyleType:'none',
     listStylePosition: 'inside',
-    paddingLeft: 0
+    paddingLeft: 0,
+    margin:4
   },
   li:{
     borderStyle:'ridge'

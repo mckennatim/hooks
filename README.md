@@ -30,7 +30,9 @@ What files using @mckennatim/mqtt-hooks in cascada?
 Where is app name kept?  
 - in denv.json
 
-## log 
+## log
+## 22-hvac-WeeklyScheduler-expres-maybe
+ready to modify the back end fro the trick bit
 ## 21-hvac-WeeklyScheduler
 ## 20-hvac-Zone_doupd
 
