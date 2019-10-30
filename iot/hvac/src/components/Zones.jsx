@@ -31,7 +31,7 @@ const Zones=(props)=>{
     if(sched[0].length>0 && tzadj.length>0){
       const idx = whereInSched(sched, tzadj)
       const s = sched[idx]
-      const mess = idx==-1 ? "all day" : `until: ${s[0]}:${s[1]} then ${(s[2]+s[3])/2}`
+      const mess = idx==-1 ? "until midnight" : `until: ${s[0]}:${s[1]} then ${(s[2]+s[3])/2}`
       return(
         mess
       )

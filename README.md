@@ -31,6 +31,7 @@ Where is app name kept?
 - in denv.json
 
 ## log 
+## 21-hvac-WeeklyScheduler
 ## 20-hvac-Zone_doupd
 
 ## 20-hvac-DailySchedule

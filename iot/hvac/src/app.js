@@ -31,7 +31,6 @@ createStore(initState)
   var router=routing()
 
   const nav2 = (name, prups, qry)=>{
-    console.log('name: ', name)
     const rt = routes.filter((r)=>r.page==name)
     // console.log('prups: ', JSON.stringify(prups))
     setPageProps(prups)

@@ -80,7 +80,6 @@ const hma2time=(hma)=>{
 const whereInSched = (sched,tzadj)=>{
   let now= getNow(tzadj)
   const idx = sched.findIndex((s)=>{
-
     return hm2m(s)>hm2m(now)
   })
   if(idx>-1){

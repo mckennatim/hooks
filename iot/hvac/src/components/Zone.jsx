@@ -114,6 +114,13 @@ const Zone = (props) =>{
     setOver(e.target.value*1)
   }
 
+  const handleWeekly=()=>{
+    client.disconnect()
+    const pro = state[zid].pro
+    const temp_out = state.temp_out.darr[0]
+    nav2('WeeklyScheduler', {...prups, zinfo, sched:pro, from:'Zone', temp_out, devs}, zid)
+  }
+
   const renderZone=()=>{
     if (zinfo[0].id == 'nada' ){
       window.history.back()
@@ -142,7 +149,7 @@ const Zone = (props) =>{
           <input type="range" min="50" max="75" value={over} onChange={handleOver}/><span>{over}</span><br/>
           <button onClick={cmdOverride}>override thermostat setting</button><br/>
           <button onClick={schedChange(pro)}>change todays schedule</button><br/>
-          <button>change weekly schedule</button><br/>
+        <button onClick={handleWeekly}>change weekly schedule</button><br/>
           <button>set hold</button>
         </div>
       );
@@ -159,6 +166,6 @@ export{Zone}
 
 const styles={
   schedstr:{
-    fontSize: 9
+    fontSize: 10
   }
 }

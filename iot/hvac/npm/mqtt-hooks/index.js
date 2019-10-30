@@ -3,7 +3,8 @@ import { processMessage as processMessageLib } from "./processMessage";
 import { useDevSpecs as useDevSpecsLib} from './useDevSpecs'
 import {Context}from './context'
 import {connect, monitorFocus, subscribe, req, setupSocket } from './mq'
-import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms, getNow, setRelayStatus, whereInSched} from './utility'
+import {startWhen, endWhen, newInterval, add2sched, m2hm, m2ms, getNow, setRelayStatus, whereInSched, hma2time} from './utility'
+import{fetchWeekSched}from './fetches'
 
 const getZinfo=(label,zones)=>zones.find((zone)=>zone.id==label)
 
@@ -25,4 +26,4 @@ const getDinfo=(label, devs)=>{
 export const ClientSocket = ProviderLib;
 export const processMessage = processMessageLib;
 export const useDevSpecs = useDevSpecsLib
-export {Context, connect, monitorFocus,getZinfo, getDinfo, subscribe, req, setupSocket, startWhen, endWhen, newInterval, add2sched, m2hm, m2ms, getNow, setRelayStatus, whereInSched}
+export {Context, connect, monitorFocus,getZinfo, getDinfo, subscribe, req, setupSocket, startWhen, endWhen, newInterval, add2sched, m2hm, m2ms, getNow, setRelayStatus, whereInSched, hma2time, fetchWeekSched}

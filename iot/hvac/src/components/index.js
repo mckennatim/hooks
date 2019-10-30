@@ -4,8 +4,9 @@ import{Control}from './Control.jsx'
 import{Config}from './Config.jsx'
 import{Zone} from './Zone.jsx'
 import{DailyScheduler} from './DailyScheduler.jsx'
+import{WeeklyScheduler} from './WeeklyScheduler.jsx'
 
 const multi =[]
 const panes= [1,1,2,2,3,3,4]
 
-export{App, Splash, Control, Config, Zone, DailyScheduler, panes, multi}
+export{App, Splash, Control, Config, Zone, DailyScheduler, WeeklyScheduler, panes, multi}
