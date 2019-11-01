@@ -2,11 +2,23 @@ import React, {useState, useEffect} from 'react'
 import {fetchWeekSched, getDinfo} from '../../npm/mqtt-hooks'
 import {cfg, ls} from '../utilities/getCfg'
 import {nav2} from '../app'
-// import Checkbox from '@material-ui/core/Checkbox';
-// import FormGroup from '@material-ui/core/FormGroup';
-// import FormControlLabel from '@material-ui/core/FormControlLabel';
-// import FormControl from '@material-ui/core/FormControl';
-// import FormLabel from '@material-ui/core/FormLabel';
+import {CondensedSched} from './CondensedSched.jsx'
+
+
+
+// const CondensedSched = ({sch})=>{
+//   const asched = sch.map((s,i)=>{
+//     const ti = hma2time(s)
+//     return (
+//       <span key={i} style={styles.schedstr}>
+//         <span> {ti} </span>
+//         <span > {s[3]}&deg; </span>
+//       </span>
+//     )
+//   })
+// return (<span>{asched}</span>)
+// }
+
 const WeeklyScheduler=(props)=>{
   const{prups}=props.cambio.page
   const {sched, state, zinfo, temp_out, devs }=prups
@@ -35,12 +47,12 @@ const WeeklyScheduler=(props)=>{
 
   const save2server=()=>{
     var checkboxes = [...document.getElementsByName("days")];
-    const savedayarr = []
+    const dowarr = []
     const ch = checkboxes
       .map((c)=>{
         if(c.checked){
           if (c.value == 0 || c.value==128){
-            savedayarr.push(c.value*1)
+            dowarr.push(c.value*1)
           }else{
             return c.value*1
           }
@@ -48,11 +60,54 @@ const WeeklyScheduler=(props)=>{
       })
       .filter((d)=>d!=undefined)
       .reduce((acc, e)=>e+acc, 0)
-      savedayarr.push(ch)
-      dinfo.dowarr=savedayarr
-      dinfo.sched=JSON.stringify(sched)
-      dinfo.until = savedayarr.includes(128) ? holddate : '0000-00-00'
-      console.log('dinfo: ', dinfo)
+      dowarr.push(ch)
+      dinfo.dowarr=dowarr
+      dinfo.sched=edsched
+      dinfo.until = dowarr.includes(128) ? holddate : '0000-00-00'
+      const bits = dowarr.pop()
+      let rsched = schdb
+        .filter((d)=>d.dow!='current')
+        .map((s)=>{
+          const band = s.dow & bits
+          if(band>0){
+            const nb =~band & s.dow
+            if (nb>0){
+              s.dow=nb
+              s.until='0000-00-00'
+              return s
+            }
+          }else{
+            s.until='0000-00-00'
+            return s
+          }
+        })
+        .filter((f)=>f!=null)
+      const newsched = {dow:bits, sched:edsched, until:'0000-00-00'}
+      rsched.push(newsched)
+      if (dowarr.includes(0)){
+        rsched = rsched.map((r)=>{
+          if(r.dow==0){
+            r.sched=edsched
+          }
+          return r
+        })
+      }
+      if (dowarr.includes(128)){
+        rsched= rsched.filter((f)=>f.dow!=128)
+        const holdsched ={dow:128, sched:edsched, until:holddate}
+        rsched.push(holdsched)
+      }
+      rsched.sort((a,b)=>a-b)
+      setSchdb(rsched)
+      const dsched =rsched.slice()
+      const keys = ['devid', 'senrel'].concat(Object.keys(dsched[0]))
+      const values = dsched.map((e)=>{
+        const d = {...e}
+        d.sched = JSON.stringify(d.sched)
+        return  [dinfo.dev, dinfo.sr].concat(Object.values(d))
+      })
+      console.log('keys: ', keys)
+      console.log('values: ', values)
   }
 
   const upDate=(e)=>{
@@ -61,13 +116,14 @@ const WeeklyScheduler=(props)=>{
   }
 
   const modifySelected=()=>{
-    console.log('edsched: ', edsched)
-    console.log('edsched: ', JSON.stringify(edsched))
     nav2('DailyScheduler', {...prups, zinfo, asched:edsched, from:'WeeklyScheduler'}, zinf.id)
   }
 
   const changeRadio=(i)=>(e)=>{
+    // console.log('e: ', e,target.value)
+    // console.log('i: ', i)
     const psched = JSON.parse(e.target.value)
+    // const psched = e.target.value
     setRadiock(i)
     setEdsched(psched)
   }
@@ -92,23 +148,48 @@ const WeeklyScheduler=(props)=>{
 
   }
 
+  // const renderSchedStr = (sch)=>{
+  //   const asched = sch.map((s,i)=>{
+  //     const ti = hma2time(s)
+  //     return (
+  //       <span key={i} style={styles.schedstr}>
+  //         <span> {ti} </span>
+  //         <span > {s[3]}&deg;, </span>
+  //       </span>
+  //     )
+  //   })
+  //   return asched
+  // }
+
+  const renderAsched = (sch, idx)=>{
+    return(
+      <div>
+        <CondensedSched sch={edsched}/>
+        <input name="radiosch" value={JSON.stringify(sch)} type="radio" 
+          onChange={changeRadio(idx)} 
+          checked={idx==radiock}
+        />
+      </div>
+    )
+  }
+
   const renderSchdb=()=>{
     if(schdb.length>0){
       const recs = schdb.map((s,i)=>{
-        const schstr = JSON.stringify(s.sched)
         return(
           <li key={i} style={styles.li}>
             <span style={styles.schedstr}>{parseDays(s.dow)}</span><br/>
-            <span style={styles.schedstr}>{schstr}</span>
-            <input name="radiosch" value={schstr} type="radio" 
+            {/* <span style={styles.schedstr}>{s.sched}</span> */}
+            {renderAsched(s.sched, i)}
+            {/* <input name="radiosch" value={JSON.stringify(s.sched)} type="radio" 
               onChange={changeRadio(i)} 
               checked={i==radiock}
-            />
+            /> */}
           </li>
         )
       })
       return(
-        <fieldset>
+        <fieldset style={styles.fieldset}>
           <legend>Saved Schedules</legend>
         <ul style={styles.ul}>
           {recs}
@@ -123,8 +204,8 @@ const WeeklyScheduler=(props)=>{
     return(
       <fieldset>      
         <legend>Apply to days</legend>
-        <span style={styles.schedstr}>{JSON.stringify(sched)}</span><br/>
-      
+        {/* <span style={styles.schedstr}>{renderSchedStr(edsched,0)}</span> */}
+        <CondensedSched sch={edsched}/><br/>
         <input type="checkbox" name="days" value="0"/>DEFAULT <br/> 
         <input type="checkbox" name="days" value="1"/>Monday<br/>      
         <input type="checkbox" name="days" value="2"/>Tuesday<br/>      
@@ -163,6 +244,10 @@ const styles={
   },
   li:{
     borderStyle:'ridge'
+  },
+  fieldset:{
+    paddingLeft: 4,
+    paddingRight: 4
   }
 }
 

@@ -10,6 +10,7 @@ import {
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
 import{nav2} from '../app'
+import {CondensedSched} from './CondensedSched.jsx'
 const lsh = ls.getItem()
 
 const Zone = (props) =>{
@@ -142,10 +143,7 @@ const Zone = (props) =>{
           <div>
           onoff: {onoff} setpoint: {set}  {mess} 
           </div>
-    
-          
-            <span style={styles.schedstr}>{JSON.stringify(pro)}</span>
-          <br/>
+            <CondensedSched sch={pro}/><br/>
           <input type="range" min="50" max="75" value={over} onChange={handleOver}/><span>{over}</span><br/>
           <button onClick={cmdOverride}>override thermostat setting</button><br/>
           <button onClick={schedChange(pro)}>change todays schedule</button><br/>
