@@ -162,8 +162,8 @@ const Zone = (props) =>{
 
 export{Zone}
 
-const styles={
-  schedstr:{
-    fontSize: 10
-  }
-}
+// const styles={
+//   schedstr:{
+//     fontSize: 10
+//   }
+// }

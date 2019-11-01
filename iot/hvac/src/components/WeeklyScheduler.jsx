@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {fetchWeekSched, getDinfo} from '../../npm/mqtt-hooks'
+import {fetchWeekSched, getDinfo, hma2time} from '../../npm/mqtt-hooks'
 import {cfg, ls} from '../utilities/getCfg'
 import {nav2} from '../app'
 import {CondensedSched} from './CondensedSched.jsx'
@@ -164,7 +164,8 @@ const WeeklyScheduler=(props)=>{
   const renderAsched = (sch, idx)=>{
     return(
       <div>
-        <CondensedSched sch={edsched}/>
+        {/* {renderSchedStr(sch)} */}
+        <CondensedSched sch={sch}/>
         <input name="radiosch" value={JSON.stringify(sch)} type="radio" 
           onChange={changeRadio(idx)} 
           checked={idx==radiock}
