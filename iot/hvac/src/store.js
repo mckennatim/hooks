@@ -18,7 +18,7 @@ const initState = {
           sunset:"18:00", 
           tzadj: "00:00"
         },
-        sched: [[0,0,0]],
+        sched: [[0,0,0,0]],
         zinfo:[{id:'nada'}]
       }
     }

@@ -2,7 +2,8 @@ import React from 'react'
 import{nav2} from '../app'
 import {
   getZinfo,
-  whereInSched
+  whereInSched,
+  hma2time
 // } from '@mckennatim/mqtt-hooks'
 } from '../../npm/mqtt-hooks'
 
@@ -31,7 +32,9 @@ const Zones=(props)=>{
     if(sched[0].length>0 && tzadj.length>0){
       const idx = whereInSched(sched, tzadj)
       const s = sched[idx]
-      const mess = idx==-1 ? "until midnight" : `until: ${s[0]}:${s[1]} then ${(s[2]+s[3])/2}`
+      console.log('s: ', s)
+      const ti =s ? hma2time(s): 'dog'//
+      const mess = idx==-1 ? "until midnight" : `until: ${ti} then ${(s[2]+s[3])/2}`
       return(
         mess
       )
@@ -45,15 +48,17 @@ const Zones=(props)=>{
         const set = (sk.darr[2]+sk.darr[3])/2
         const zone = zones.filter((z)=>z.id==k)
         return(
-        <li key={i} onClick={gotoZone(k)}>{sk.darr[1]} {zone[0].name} {sk.darr[0]} set {set} <span>{findKnext(k)}</span></li>
+        <li style={styles.li} key={i} onClick={gotoZone(k)}>{sk.darr[1]} {zone[0].name} {sk.darr[0]} set {set} <span style={{fontSize:10}}>{findKnext(k)}</span></li>
         )
       })
       return(
         <div>
-          <h3>Zones</h3>
-        <ul >
-          {tli}
-        </ul>     
+          <fieldset style={styles.fieldset}>
+            <legend>Zones</legend>
+            <ul style={styles.ul}>
+              {tli}
+            </ul>     
+          </fieldset>
         </div>
       )
     }else{
@@ -69,3 +74,22 @@ const Zones=(props)=>{
 }
 
 export{Zones}
+
+const styles={
+  schedstr:{
+    fontSize: 10
+  },
+  ul: {
+    listStyleType:'none',
+    listStylePosition: 'inside',
+    paddingLeft: 0,
+    margin:4
+  },
+  li:{
+    borderStyle:'ridge'
+  },
+  fieldset:{
+    paddingLeft: 4,
+    paddingRight: 4
+  }
+}

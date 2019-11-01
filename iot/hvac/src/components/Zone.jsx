@@ -141,7 +141,7 @@ const Zone = (props) =>{
           <h3>outside temperature: {state.temp_out.darr[0]}</h3>
           <h3>temp:{temp}</h3>
           <div>
-          onoff: {onoff} setpoint: {set}  {mess} 
+          onoff: {onoff} setpoint: {set}  <span style={styles.schedstr}>{mess}</span> 
           </div>
             <CondensedSched sch={pro}/><br/>
           <input type="range" min="50" max="75" value={over} onChange={handleOver}/><span>{over}</span><br/>
@@ -162,8 +162,8 @@ const Zone = (props) =>{
 
 export{Zone}
 
-// const styles={
-//   schedstr:{
-//     fontSize: 10
-//   }
-// }
+const styles={
+  schedstr:{
+    fontSize: 10
+  }
+}

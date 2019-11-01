@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import {fetchWeekSched, getDinfo, hma2time} from '../../npm/mqtt-hooks'
+import {fetchWeekSched, getDinfo} from '../../npm/mqtt-hooks'
 import {cfg, ls} from '../utilities/getCfg'
 import {nav2} from '../app'
 import {CondensedSched} from './CondensedSched.jsx'
 
-
+const dat = new Date().toISOString().split('T')[0]
+console.log('dat: ', dat)
 
 // const CondensedSched = ({sch})=>{
 //   const asched = sch.map((s,i)=>{
@@ -28,7 +29,7 @@ const WeeklyScheduler=(props)=>{
 
   //[[{dow:31, pro:[[]]}], [{dow:31, pro:[[]]}]]  
   const [schdb, setSchdb] = useState(initSchdb)
-  const [holddate,setHolddate]=useState('2019-10-29')
+  const [holddate,setHolddate]=useState(dat)
   const [edsched, setEdsched] = useState(sched)
   const [radiock, setRadiock] = useState(0)
 

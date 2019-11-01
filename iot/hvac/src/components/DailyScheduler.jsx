@@ -4,7 +4,6 @@ import {ZoneTimer} from '../../npm/zone-timer'
 import {nav2 } from '../app'
 
 const DailyScheduler=(props)=>{
-  console.log('props: ', props)
   const {prups}=props.cambio.page
   const {locdata, asched, from} = prups
   const query = props.cambio.page.params.query
@@ -14,7 +13,6 @@ const DailyScheduler=(props)=>{
 
   const setNewSched=(sched)=>()=>{
     nav2(from, {...prups, locdata, sched, doupd:true}, query)
-    console.log('sched: ', JSON.stringify(sched))
   }
 
   return(

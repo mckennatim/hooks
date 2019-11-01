@@ -5,10 +5,11 @@ const CondensedSched = (props)=>{
   const {sch} = props
   const asched = sch.slice().map((s,i)=>{
     const ti = hma2time(s)
+    // console.log('s: ', s)
     return (
       <span key={i} style={styles.schedstr}>
         <span> {ti} </span>
-        <span > {s[3]}&deg; </span>
+        <span > {(s[2]+s[3])/2}&deg; </span>
       </span>
     )
   })
