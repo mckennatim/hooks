@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {fetchWeekSched, getDinfo} from '../../npm/mqtt-hooks'
+import {fetchWeekSched, getDinfo, replaceWeekSched} from '../../npm/mqtt-hooks'
 import {cfg, ls} from '../utilities/getCfg'
 import {nav2} from '../app'
 import {CondensedSched} from './CondensedSched.jsx'
@@ -109,6 +109,7 @@ const WeeklyScheduler=(props)=>{
       })
       console.log('keys: ', keys)
       console.log('values: ', values)
+      replaceWeekSched(ls,cfg,{dev:dinfo.dev, sr:dinfo.sr, keys,values})
   }
 
   const upDate=(e)=>{
@@ -137,14 +138,15 @@ const WeeklyScheduler=(props)=>{
         <header>
           <img src={ima} alt="a kid"/>
           <span>  {zinf.name}</span>
-          <span> {zst.darr[0]}</span>
+          <span> {zst.darr[0]}</span><a href="./">goback</a>
           <div>outside:{temp_out}</div>
           <div>set@{(zst.darr[2]+zst.darr[3])/2}</div>
+          
         </header>
       )
     }
       return(
-        <header>got no head</header>
+        <header><a href="./">goback</a></header>
       )
 
   }
