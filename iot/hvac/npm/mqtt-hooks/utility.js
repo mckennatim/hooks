@@ -72,6 +72,7 @@ const hma2time=(hma)=>{
     hr = hr-12
     ap = 'pm'
   }
+  if(hr==12)ap='pm'
   if (hr==0 && min==0) hr=12
   hr = hr.toString().padStart(2,'')
   min = min.toString().padStart(2,'0')

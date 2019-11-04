@@ -32,7 +32,6 @@ const Zones=(props)=>{
     if(sched[0].length>0 && tzadj.length>0){
       const idx = whereInSched(sched, tzadj)
       const s = sched[idx]
-      console.log('s: ', s)
       const ti =s ? hma2time(s): 'dog'//
       const mess = idx==-1 ? "until midnight" : `until: ${ti} then ${(s[2]+s[3])/2}`
       return(

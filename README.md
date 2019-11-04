@@ -31,6 +31,8 @@ Where is app name kept?
 - in denv.json
 
 ## log
+## 25-hvac-WeeklyScheduler-debug
+## 24-hvac-WeeklyScheduler-senrel
 ## 23-hvac-WeeklyScheduler-expres-maybe
 ready to modify the back end fro the trick bit
 ## 21-hvac-WeeklyScheduler

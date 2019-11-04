@@ -18,7 +18,7 @@ const DailyScheduler=(props)=>{
   return(
     <div>
       <ZoneTimer 
-        range={[53,80]}
+        range={[53,74]}
         dif={2}
         difrange={12}
         templines={[

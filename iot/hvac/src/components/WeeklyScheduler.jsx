@@ -22,7 +22,8 @@ console.log('dat: ', dat)
 
 const WeeklyScheduler=(props)=>{
   const{prups}=props.cambio.page
-  const {sched, state, zinfo, temp_out, devs }=prups
+  const {sched, state, zinfo, temp_out, devs, from }=prups
+  const query = props.cambio.page.params.query
   const zinf = zinfo[0]
   const dinfo = devs ? getDinfo(zinf.id, devs): {dev: 'null', sr:-1}
   const initSchdb=[{dow:'current', sched:sched}]
@@ -45,6 +46,11 @@ const WeeklyScheduler=(props)=>{
       setSchdb(ns)
     })
   },[])
+
+  const setNewSched=()=>{
+    console.log('from, query,edsched: ', from, query,edsched)
+    nav2(from, {...prups, sched:edsched, doupd:true}, query)
+  }
 
   const save2server=()=>{
     var checkboxes = [...document.getElementsByName("days")];
@@ -85,19 +91,30 @@ const WeeklyScheduler=(props)=>{
         .filter((f)=>f!=null)
       const newsched = {dow:bits, sched:edsched, until:'0000-00-00'}
       rsched.push(newsched)
+      console.log('dowarr: ', dowarr)
       if (dowarr.includes(0)){
+        var foundit = false
         rsched = rsched.map((r)=>{
-          if(r.dow==0){
+          if(r.dow==0){//change if exists
+            foundit=true
+            console.log('it exists')
             r.sched=edsched
           }
           return r
-        })
+        })            
+        if (!foundit){
+          console.log('adding another')
+          const zerosched = {dow:0,sched:edsched, until:'0000-00-00'}
+          rsched.push(zerosched)
+        }
       }
       if (dowarr.includes(128)){
         rsched= rsched.filter((f)=>f.dow!=128)
         const holdsched ={dow:128, sched:edsched, until:holddate}
         rsched.push(holdsched)
+
       }
+      console.log('rsched: ', rsched)
       rsched.sort((a,b)=>a-b)
       setSchdb(rsched)
       const dsched =rsched.slice()
@@ -209,7 +226,7 @@ const WeeklyScheduler=(props)=>{
       <fieldset>      
         <legend>Apply to days</legend>
         {/* <span style={styles.schedstr}>{renderSchedStr(edsched,0)}</span> */}
-        <CondensedSched sch={edsched}/><br/>
+        <CondensedSched sch={edsched}/><button onClick={setNewSched}>Change today</button><br/>
         <input type="checkbox" name="days" value="0"/>DEFAULT <br/> 
         <input type="checkbox" name="days" value="1"/>Monday<br/>      
         <input type="checkbox" name="days" value="2"/>Tuesday<br/>      
