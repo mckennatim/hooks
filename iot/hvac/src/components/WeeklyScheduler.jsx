@@ -25,6 +25,8 @@ const WeeklyScheduler=(props)=>{
   const {sched, state, zinfo, temp_out, devs, from }=prups
   const query = props.cambio.page.params.query
   const zinf = zinfo[0]
+  console.log('zinf: ', zinf)
+  
   const dinfo = devs ? getDinfo(zinf.id, devs): {dev: 'null', sr:-1}
   const initSchdb=[{dow:'current', sched:sched}]
 
@@ -150,10 +152,11 @@ const WeeklyScheduler=(props)=>{
   const renderHeader=()=>{
     if(state){
       const ima = `./img/${zinf.img}`
+
       const zst = state[zinf.id]
       return(
-        <header>
-          <img src={ima} alt="a kid"/>
+        <header style={styles.header}>
+          <img src={ima} width="60" alt="a kid"/>
           <span>  {zinf.name}</span>
           <span> {zst.darr[0]}</span><a href="./">goback</a>
           <div>outside:{temp_out}</div>
@@ -269,6 +272,12 @@ const styles={
   fieldset:{
     paddingLeft: 4,
     paddingRight: 4
+  },
+  header:{
+    // position: '-webkit-sticky',
+    position: 'sticky',
+    top: 0,
+    background: 'white'
   }
 }
 

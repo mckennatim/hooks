@@ -31,6 +31,8 @@ Where is app name kept?
 - in denv.json
 
 ## log
+## 26-hvac-img
+cannot get webpack loader to work for shit
 ## 25-hvac-WeeklyScheduler-debug
 ## 24-hvac-WeeklyScheduler-senrel
 ## 23-hvac-WeeklyScheduler-expres-maybe

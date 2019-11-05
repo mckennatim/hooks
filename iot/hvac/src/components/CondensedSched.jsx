@@ -20,6 +20,6 @@ export{CondensedSched}
 
 const styles={
   schedstr:{
-    fontSize: 10
+    fontSize: 9,
   }
 }

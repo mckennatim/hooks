@@ -7,6 +7,7 @@ import { createStore } from './rxred';
 // import { log } from './utilities/wfuncs';
 import {initState} from './store'
 import {routing} from './routing'
+import './main.css'
 
 fromEvent(window, 'resize')
   .pipe(

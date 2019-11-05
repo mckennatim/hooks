@@ -46,8 +46,16 @@ const Zones=(props)=>{
         const sk = state[k]
         const set = (sk.darr[2]+sk.darr[3])/2
         const zone = zones.filter((z)=>z.id==k)
+        const ima = `./img/${zone[0].img}`
         return(
-        <li style={styles.li} key={i} onClick={gotoZone(k)}>{sk.darr[1]} {zone[0].name} {sk.darr[0]} set {set} <span style={{fontSize:10}}>{findKnext(k)}</span></li>
+        <li style={styles.li} key={i} onClick={gotoZone(k)}>
+          <img src={ima} alt={ima} width="70"/>
+          {sk.darr[1]} 
+          {zone[0].name}
+          {sk.darr[0]} 
+          set {set} 
+          <span style={{fontSize:10}}>{findKnext(k)}</span>
+        </li>
         )
       })
       return(

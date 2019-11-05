@@ -8,6 +8,7 @@ import { log } from './utilities/wfuncs';
 import {initState} from './store'
 import {routing,routes} from './routing'
 import {setPageProps} from '../src/actions/responsive'
+import './main.css'
 
 fromEvent(window, 'resize')
   .pipe(

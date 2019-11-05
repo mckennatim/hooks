@@ -134,10 +134,15 @@ const Zone = (props) =>{
       const temp =da[0]
       const set = (da[2]+da[3])/2
       const onoff = da[1]
+      const ima = `./img/${zinfo[0].img}`
       return (
         <div>
-          {status}
-          <h1>{zinfo[0].name}</h1>
+          <header>
+            <img src={ima} alt={ima} width="70"/>
+            <span>{zinfo[0].name}</span>
+            {status} <a href="./">goback</a>
+          </header>
+          
           <h3>outside temperature: {state.temp_out.darr[0]}</h3>
           <h3>temp:{temp}</h3>
           <div>
