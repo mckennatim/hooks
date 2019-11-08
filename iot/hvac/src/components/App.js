@@ -55,13 +55,13 @@ export{App}
 let style = {
   he:{
     height: '50px',
-    background: 'white',
+    background: '#222',
     flexGrow: 1,
     flexGhrink: 0,
     flexBasis: '98%', 
   },
   container:{
-    background: '#CCCCCC',
+    background: '#222',
     display: 'flex',
     flexDirection: 'row', /* generally better */
     flexWrap: 'wrap',
@@ -71,7 +71,7 @@ let style = {
   },
   content:{
     minHeight:'200px',
-    background: '#99CCFF',
+    background: '#222',
     flexGrow: 1,
     flexShrink: 1, /*can shrink from 300px*/
     flexBasis: '225px'  

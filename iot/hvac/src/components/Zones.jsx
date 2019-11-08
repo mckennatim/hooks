@@ -24,7 +24,7 @@ const Zones=(props)=>{
     const zstate = {}
     zstate[k]=state[k]
     const mess = findKnext(k)
-    nav2('Zone', {state: zstate, zinfo, devs, locdata, from:'Zones', mess}, k)
+    nav2('Zone', {state: zstate, zinfo, zones, devs, locdata, from:'Zones', mess}, k)
   }
 
   const findKnext=(k)=>{

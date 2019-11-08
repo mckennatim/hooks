@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {fetchWeekSched, getDinfo, replaceWeekSched} from '../../npm/mqtt-hooks'
+import {fetchWeekSched, getDinfo, replaceWeekSched, replaceZoneScheds} from '../../npm/mqtt-hooks'
 import {cfg, ls} from '../utilities/getCfg'
 import {nav2} from '../app'
 import {CondensedSched} from './CondensedSched.jsx'
@@ -22,7 +22,7 @@ console.log('dat: ', dat)
 
 const WeeklyScheduler=(props)=>{
   const{prups}=props.cambio.page
-  const {sched, state, zinfo, temp_out, devs, from }=prups
+  const {sched, state, zinfo, temp_out, devs, from, zones }=prups
   const query = props.cambio.page.params.query
   const zinf = zinfo[0]
   console.log('zinf: ', zinf)
@@ -54,7 +54,7 @@ const WeeklyScheduler=(props)=>{
     nav2(from, {...prups, sched:edsched, doupd:true}, query)
   }
 
-  const save2server=()=>{
+  const createDowarr = ()=>{
     var checkboxes = [...document.getElementsByName("days")];
     const dowarr = []
     const ch = checkboxes
@@ -69,11 +69,34 @@ const WeeklyScheduler=(props)=>{
       })
       .filter((d)=>d!=undefined)
       .reduce((acc, e)=>e+acc, 0)
-      dowarr.push(ch)
+    dowarr.push(ch)
+    return dowarr
+  }
+
+  const copy2zones = ()=>{
+    var dowarr = createDowarr()
+    var elzone = [...document.getElementsByName("zone")];
+    const ckzones = elzone
+      .map((e)=>{
+        if(e.checked) return e.value
+      })
+      .filter((f)=>f!=undefined)
+    console.log('dowarr, ckzones: ', dowarr, ckzones)
+    const devarr = ckzones.map((z)=>{
+      console.log('z, devs: ', z, devs)
+      const di = getDinfo(z, devs)
+      return di
+    })
+    replaceZoneScheds(ls,cfg,{dowarr, devarr, edsched, holddate, season:'fall'}).then((r)=>console.log('r: ', r))
+  }
+
+  const save2server=()=>{
+      const dowarr = createDowarr()
       dinfo.dowarr=dowarr
       dinfo.sched=edsched
       dinfo.until = dowarr.includes(128) ? holddate : '0000-00-00'
       const bits = dowarr.pop()
+      //go through schedules and get modify dow's that exist
       let rsched = schdb
         .filter((d)=>d.dow!='current')
         .map((s)=>{
@@ -93,7 +116,7 @@ const WeeklyScheduler=(props)=>{
         .filter((f)=>f!=null)
       const newsched = {dow:bits, sched:edsched, until:'0000-00-00'}
       rsched.push(newsched)
-      console.log('dowarr: ', dowarr)
+      //if dowarr includes zero and zero is in schedule edit it else add it
       if (dowarr.includes(0)){
         var foundit = false
         rsched = rsched.map((r)=>{
@@ -114,11 +137,11 @@ const WeeklyScheduler=(props)=>{
         rsched= rsched.filter((f)=>f.dow!=128)
         const holdsched ={dow:128, sched:edsched, until:holddate}
         rsched.push(holdsched)
-
       }
       console.log('rsched: ', rsched)
       rsched.sort((a,b)=>a-b)
       setSchdb(rsched)
+
       const dsched =rsched.slice()
       const keys = ['devid', 'senrel'].concat(Object.keys(dsched[0]))
       const values = dsched.map((e)=>{
@@ -170,19 +193,6 @@ const WeeklyScheduler=(props)=>{
       )
 
   }
-
-  // const renderSchedStr = (sch)=>{
-  //   const asched = sch.map((s,i)=>{
-  //     const ti = hma2time(s)
-  //     return (
-  //       <span key={i} style={styles.schedstr}>
-  //         <span> {ti} </span>
-  //         <span > {s[3]}&deg;, </span>
-  //       </span>
-  //     )
-  //   })
-  //   return asched
-  // }
 
   const renderAsched = (sch, idx)=>{
     return(
@@ -245,11 +255,33 @@ const WeeklyScheduler=(props)=>{
     )  
   }
 
+  const renderZones = ()=>{
+    if(zones){
+      const zck = zones
+      .filter((f)=>f.id!='temp_out')
+      .map((z,i)=>{
+        return(
+          <div key={i}> 
+            <input type="checkbox" name="zone" value={z.id}/>{z.name} <br/> 
+          </div>
+        )
+      })
+      return (
+        <fieldset>
+          <legend>Apply to zones</legend>
+          {zck}
+          <button onClick={copy2zones}>Copy to Zones</button>
+        </fieldset>
+      )
+    }
+  }
+
   return(
     <div>
     {renderHeader()}
     {renderSchdb()}
     {renderCkboxes()}
+    {renderZones()}
     </div>
   )
 }
@@ -277,7 +309,7 @@ const styles={
     // position: '-webkit-sticky',
     position: 'sticky',
     top: 0,
-    background: 'white'
+    backgroundImage: 'linear-gradient( #3c3c3c,#111 )'
   }
 }
 
