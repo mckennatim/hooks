@@ -86,6 +86,7 @@ const styles={
   schedstr:{
     fontSize: 10
   },
+
   ul: {
     listStyleType:'none',
     listStylePosition: 'inside',

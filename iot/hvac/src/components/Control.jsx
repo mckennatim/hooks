@@ -2,6 +2,7 @@ import React, {useContext, useState, useReducer} from 'react'// eslint-disable-l
 import {cfg, ls, makeHref} from '../utilities/getCfg'
 // import {nav2} from '../app'
 import {Zones} from './Zones.jsx'
+import {nav2} from '../app'
 
 import {
   connect,
@@ -91,15 +92,22 @@ const Control = () => {
     window.location.assign(href)
   }
 
+  const gotoBigData=()=>{
+    nav2('BigData', {zones, devs, locdata:binfo, from:'Control'}, "")
+  }
+
   const rrender=()=>{
     if (!error){
       const {locdata} = binfo
       return(
         <div>
+        <header style={styles.header}>
           {status}
-          <h1>hvac </h1>
-          <h3>outside temp: {state.temp_out.darr[0]}</h3>
-          <Zones zones={zones} state={state} devs={devs} locdata={locdata}/>
+          <div>hvac </div>
+          <div>outside temp: {state.temp_out.darr[0]}</div>
+          <button onClick={gotoBigData}>timeseries</button>
+        </header>
+        <Zones zones={zones} state={state} devs={devs} locdata={locdata}/>
         </div>
 
       )
@@ -123,4 +131,14 @@ const Control = () => {
 };
 
 export{Control}
+
+const styles ={
+  header:{
+    // position: '-webkit-sticky',
+    position: 'sticky',
+    top: 0,
+    backgroundImage: 'linear-gradient(#3c3c3c,#111 )',
+    color:'white'
+  },
+}
 

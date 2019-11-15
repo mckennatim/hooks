@@ -130,4 +130,26 @@ const replaceHold = (ls,cfg, db)=>{
   }
 }
 
-export{fetchWeekSched, replaceWeekSched, replaceZoneScheds,fetchSched, replaceHold, deleteHolds}
+const fetchBigData = (ls,cfg, db)=>{
+  var lsh = ls.getItem()
+  if(lsh){
+    let url= cfg.url.api+'/admin/u/bigdata'
+    let options= {
+      headers: {
+        'Authorization': 'Bearer '+ lsh['token'],
+        'Content-Type': 'application/json'
+      },
+      method: 'PUT',
+      body:JSON.stringify(db)
+    }  
+    return(
+      fetch(url, options)
+        .then((response)=>response.json())
+    ) 
+  }else{
+    let p2 =Promise.resolve({qmessage:'you dont exist! '})
+    return p2
+  }
+}
+
+export{fetchWeekSched, replaceWeekSched, replaceZoneScheds,fetchSched, replaceHold, deleteHolds, fetchBigData}

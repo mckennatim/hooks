@@ -3,12 +3,7 @@ import { switchPage} from './actions/responsive';
 
 var routes = [
   {path: 'control', page: 'Control'},
-  {path: 'config', page: 'Config'},
   {path: 'splash', page: 'Splash'},
-  {path: 'zone', page: 'Zone'},
-  {path: 'bigdata', page: 'BigData'},
-  {path: 'daysched', page: 'DailyScheduler'},
-  {path: 'wksched', page: 'WeeklyScheduler'},
   {path: '*', page: 'Control'},
 ]
 const makeRouter = (routes)=>{

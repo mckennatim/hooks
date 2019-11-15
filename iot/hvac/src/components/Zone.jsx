@@ -240,6 +240,12 @@ const Zone = (props) =>{
             <button onClick={handleWeekly}>change weekly schedule</button><br/>
           </fieldset>
           </div>
+          <div style={styles.hold}>
+          <fieldset>
+            <legend>Show Data</legend>
+            <button onClick={handleWeekly}>show data</button><br/>
+          </fieldset>
+          </div>
           
         </div>
       );
