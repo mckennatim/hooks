@@ -2,7 +2,12 @@ import React from 'react'
 import {hma2time} from '../../npm/mqtt-hooks'
 
 const CondensedSched = (props)=>{
-  const {sch} = props
+  const {sch,fontsz} = props
+  const styles={
+    schedstr:{
+      fontSize: fontsz,
+    }
+  }
   const asched = sch.slice().map((s,i)=>{
     const ti = hma2time(s)
     // console.log('s: ', s)
@@ -18,8 +23,3 @@ return (<span>{asched}</span>)
 
 export{CondensedSched}
 
-const styles={
-  schedstr:{
-    fontSize: 9,
-  }
-}

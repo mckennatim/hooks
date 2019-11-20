@@ -14,6 +14,13 @@ import {
 } from '../../npm/mqtt-hooks'
 import{nav2} from '../app'
 import {CondensedSched} from './CondensedSched.jsx'
+import '../css/zones.css'
+import Icon from '@material-ui/core/Icon';
+import {BigButton} from './BigButton.jsx'
+import boost2 from '../img/boost2.png'
+import hold from '../img/hold.png'
+import {bt_boost, bt_rel} from '../css/but.js'
+
 const lsh = ls.getItem()
 
 const dat = new Date().toISOString().split('T')[0]
@@ -174,6 +181,62 @@ const Zone = (props) =>{
     setHoldRadio(i)
   }
 
+  const renderHeader = ()=>{
+    const da = state[zid].darr
+    const temp =da[0]
+    const set = (da[2]+da[3])/2
+    const onoff = da[1]
+    const ima = `./img/${zinfo[0].img}`  
+    const ico = status=='blur-disconnected' ? 'block' : 'signal_cellular_alt'
+    const rt = {
+      outer:{
+        float:"right",
+        margin: '6px',
+      },
+      up:{
+        fontSize:'12px',
+        fontFamily: 'Helvetica,Arial,sans-serif',
+        float:'right',
+        width: '42px',
+        padding: '2px',
+        borderRadius: '3px',
+        background: onoff ? 'red' : 'rgba(38, 162, 43, 0.75)'
+      },
+      dn:{
+        fontFamily: 'Helvetica,Arial,sans-serif',
+        fontStretch: 'ultra-condensed',
+        float:'right',
+        fontSize: '8px'
+      }
+    }
+    return(
+    <header style={styles.header}>
+      <div className='container'>
+        <div className='item-img'>
+          <img src={ima} alt={ima} width="70" height="70"/>
+        </div>
+        <div className='item-temp'>
+          {temp} &deg;F
+        </div>
+        <div className='item-name'>
+          {zinfo[0].name}
+        </div> 
+        <div className='item-setpt'>
+          <div style={rt.up}>
+            <span>{set} &deg;F</span><br/>
+          </div><br/>
+          <span style={rt.dn}>{mess}</span>
+        </div> 
+        <div className='item-til'>
+          <div style={rt.dn}>
+            <Icon>{ico}</Icon> <a href="./"><Icon>arrow_back</Icon><Icon>house</Icon></a>
+          </div>
+        </div>                       
+      </div>
+    </header>   
+    )
+  }
+
   const renderZone=()=>{
     if (zinfo[0].id == 'nada' ){
       window.history.back()
@@ -181,46 +244,42 @@ const Zone = (props) =>{
         <div>duclsad nada</div>
       )
     }else{
-      const da = state[zid].darr
       const pro = state[zid].pro
-      const temp =da[0]
-      const set = (da[2]+da[3])/2
-      const onoff = da[1]
-      const ima = `./img/${zinfo[0].img}`
       return (
         <div style={styles.content}>
-          <header style={styles.header}>
-            <img src={ima} alt={ima} width="70"/>
-            <span>{zinfo[0].name}</span>
-            {status} <a href="./">goback</a>
-            <div>outside temperature: {state.temp_out.darr[0]}</div>
-            <div>temp:{temp}</div>
-            <div>onoff: {onoff}</div>
-            
-          </header>
-          <div>
-            setpoint: {set}  <span style={styles.schedstr}>{mess}</span> 
-          </div>
-            <CondensedSched sch={pro}/><br/>
+          {renderHeader()}
+            <CondensedSched sch={pro} fontsz="12"/><br/>
           <fieldset style={styles.boost}>
             <legend>BOOST temp temporarily</legend>
-
-            <button onClick={cmdOverride}>override thermostat setting</button><br/>
-            <input type="range" min="50" max="75" value={over} onChange={handleOver}/><span>{over}</span><br/>
+            <BigButton
+              onoff={true}
+              toggleOnoff={cmdOverride}
+              image={boost2}
+              btext={over}
+              styles={bt_boost}
+            ></BigButton>
+            <input type="range" min="50" max="75" value={over} onChange={handleOver}/><br/>
           </fieldset>
                     <div style={styles.today} >
           <fieldset>
             <legend>Change todays schedule</legend>
-            <button onClick={schedChange(pro)}>change todays schedule</button><br/>
+            <button classsname='but' style={bt_rel} onClick={schedChange(pro)}>change todays schedule</button><br/>
           </fieldset>
           </div>
           <div style={styles.hold}>
           <fieldset>
             <legend>HOLD temperature until</legend>
-            <input onChange={upDate} value={holddate}type="date"/><br/>
-            <input type="range" min="50" max="75" value={holdval} onChange={handleHoldVal}/><span>{holdval}</span><br/>
-            <button onClick={setHold}>set hold</button>
-            <button onClick={releaseHold}>release</button><br/>
+            <input onChange={upDate} value={holddate}type="date"/><br/><br/>
+            <BigButton
+              onoff={true}
+              toggleOnoff={setHold}
+              image={hold}
+              btext={holdval}
+              styles={bt_boost}
+            ></BigButton>
+            {/* <button onClick={setHold}>set hold</button> */}
+            <button classsname='but' style={bt_rel} onClick={releaseHold}>release</button><br/>
+            <input type="range" min="50" max="75" value={holdval} onChange={handleHoldVal}/><br/>
             <fieldset>
               <legend>Apply Hold to</legend>
               <input name='rhold' type="radio" value="1" 
@@ -237,14 +296,12 @@ const Zone = (props) =>{
           <div style={styles.weekly}>
           <fieldset>
             <legend>Modify weekly schedule</legend>
-            <button onClick={handleWeekly}>change weekly schedule</button><br/>
+            <button classsname='but' style={bt_rel} onClick={handleWeekly}>change weekly schedule</button><br/>
+
+            {/* <button onClick={handleWeekly}>change weekly schedule</button><br/> */}
           </fieldset>
           </div>
           <div style={styles.hold}>
-          <fieldset>
-            <legend>Show Data</legend>
-            <button onClick={handleWeekly}>show data</button><br/>
-          </fieldset>
           </div>
           
         </div>

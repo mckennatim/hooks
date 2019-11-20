@@ -139,7 +139,6 @@ const Zones=(props)=>{
           temp:{
             // float:'left'
           }
-
         }
         return(
         <li style={styles.li.li} key={i} onClick={gotoZone(k)}>

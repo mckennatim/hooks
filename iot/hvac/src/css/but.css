@@ -1,0 +1,24 @@
+.but {
+    cursor: pointer;
+    border-radius: 10px;
+    height: 30px;
+    width: 30px;
+    background-color: white;
+    background-size: 30px 30px;
+    background-repeat: no-repeat;
+    box-shadow: rgb(62, 156, 191) 0px 1px 0px inset, rgb(32, 92, 115) 0px 5px 0px 0px, rgb(153, 153, 153) 0px 10px 5px;
+    color: yellow;
+    margin-left: 40px;
+    margin-bottom: 20px;
+  }
+  
+  .but:hover {
+    border-top-color: #28597a;
+    opacity:0.9;
+  }
+  
+  .but:active{
+      position: relative; 
+     top: -3px;
+     right:3px;
+  }
