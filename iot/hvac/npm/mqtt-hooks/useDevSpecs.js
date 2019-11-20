@@ -44,7 +44,7 @@ export function useDevSpecs(ls,cfg, client,cb ){
             setDevs(data.devs)
             setBinfo(data.binfo)
             setSpecs(data.specs)
-            cb(data.devs)
+            cb(data.devs, data.zones)
             // if (!client.isConnected()){
             //   connect(client, lsh, ()=>cb(client,data.devs)) 
             // }

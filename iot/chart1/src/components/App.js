@@ -11,26 +11,7 @@ import {
 } from "react-timeseries-charts";
 import data from "./data";
 
-//Index example
-let index = new Index("1d-12345");
-console.log(index.asTimerange().humanize());
 
-//Timeseries example
-const data = {
-    "name": "traffic",
-    "columns": ["time", "value", "status"],
-    "points": [
-        [1400425947000, 52, "ok"],
-        [1400425948000, 18, "ok"],
-        [1400425949000, 26, "fail"],
-        [1400425950000, 93, "offline"],
-    ]
-};
-
-let series = new TimeSeries(data);
-for (let i=0; i < series.size(); i++) {
-    console.log(series.at(i).toString());
-}
 
 // const da = [
 //   [1418274060000, 61.2],

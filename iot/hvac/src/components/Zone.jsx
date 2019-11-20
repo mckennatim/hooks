@@ -99,7 +99,7 @@ const Zone = (props) =>{
     const topic = `${di.dev}/cmd`
     const payload = `{"id":${di.sr},"sra":[${newdarr}]}`
     console.log('topic, payload: ', topic, payload)
-    //publish(client, topic, payload)
+    publish(client, topic, payload)
   }
 
   const handleOver=(e)=>{

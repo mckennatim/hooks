@@ -2,7 +2,9 @@ import React, {useContext, useState, useReducer} from 'react'// eslint-disable-l
 import {cfg, ls, makeHref} from '../utilities/getCfg'
 // import {nav2} from '../app'
 import {Zones} from './Zones.jsx'
-import {nav2} from '../app'
+import Icon from '@material-ui/core/Icon';
+import outdoors from '../img/outdoors.png'
+
 
 import {
   connect,
@@ -47,7 +49,10 @@ const Control = () => {
     music: {pro:[[]], darr:[0,0,0,0]},
     peri: {pro:[[]], darr:[0,0,0,0]},
     temp_out: {darr:[0,0,0,0]},
-    timer: {pro:[[]], timeleft:0, darr:[0,0,0,0]}
+    timer: {pro:[[]], timeleft:0, darr:[0,0,0,0]},
+    tv: {pro:[[]], darr:[0,0,0,0]},
+    mb: {pro:[[]], darr:[0,0,0,0]},
+    martha: {pro:[[]], darr:[0,0,0,0]}
   }
   const[status, setStatus] = useState('focused')
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -92,20 +97,27 @@ const Control = () => {
     window.location.assign(href)
   }
 
-  const gotoBigData=()=>{
-    nav2('BigData', {zones, devs, locdata:binfo, from:'Control'}, "")
-  }
 
   const rrender=()=>{
     if (!error){
       const {locdata} = binfo
+      const ico = status=='blur-disconnected' ? 'block' : 'signal_cellular_alt'
       return(
         <div>
         <header style={styles.header}>
-          {status}
-          <div>hvac </div>
-          <div>outside temp: {state.temp_out.darr[0]}</div>
-          <button onClick={gotoBigData}>timeseries</button>
+          <div style={styles.container}>
+            <div style={styles.ul}><div><Icon>house</Icon> {locdata && locdata.loc} </div></div>
+            <div style={styles.ur}><Icon>{ico}</Icon> </div>
+            
+            <div style={styles.ll}>
+              <div style={styles.txt}><span style={styles.otxt}>outside: </span> {state.temp_out.darr[0]} &deg;F</div>
+            </div>
+            <div style={styles.lr}>
+              <div style={styles.bigd}>
+                <a href="./#/bigdata"><span><Icon style={styles.tline}>timeline</Icon></span></a>
+              </div>
+            </div>
+          </div>
         </header>
         <Zones zones={zones} state={state} devs={devs} locdata={locdata}/>
         </div>
@@ -140,5 +152,57 @@ const styles ={
     backgroundImage: 'linear-gradient(#3c3c3c,#111 )',
     color:'white'
   },
+  out:{
+    // background: 'white',
+    backgroundImage: `url(${outdoors})`,
+    filter:'hue-rotate(180deg)',
+    backgroundSize: 'cover',
+    width:"40px",
+    height:"40px",
+    textAlign:'center',
+
+  },
+  txt:{
+    color:'white'
+  },
+  otxt:{
+    fontSize: '10px'
+  },
+  tline:{
+    color:'white',
+    fontSize:'30px'
+  },
+  bigd:{
+    background:'grey',
+    width:'30px',
+    height:'30px',
+    border: '1px solid white',
+    borderRadius: '4px'
+  },
+  container:{
+    display: 'grid',
+    gridTemplateColumns: 'auto 50px',
+    gridTemplateRows: '25px 35px',
+  },
+  ul:{
+    gridColumnStart: 1,
+    gridRowStart: 1,
+    margin: '6px'
+  },
+  ur:{
+    gridColumnStart: 2,
+    gridRowStart: 1,
+  },
+  ll:{
+    gridColumnStart: 1,
+    gridRowStart: 2,
+    margin: '10px'
+  },
+  lr:{
+    gridColumnStart: 2,
+    gridRowStart: 2,
+  },
+
+
 }
 

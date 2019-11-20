@@ -1,5 +1,7 @@
 
 # hooks
+## ref
+https://material.io/resources/icons/?style=baseline
 ## questions
 Why does double control no longer work
 
@@ -31,6 +33,10 @@ Where is app name kept?
 - in denv.json
 
 ## log
+## 31-hvac-stylin
+btw when flashing board check ports
+## 30-hvac-bigdata
+
 ## 29-hvac-holds
 ## 26-hvac-img
 cannot get webpack loader to work for shit
