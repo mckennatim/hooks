@@ -18,6 +18,15 @@ const styles={
     fill: 'green',
     fontSize: "12",
     pointerEvents: "none"
+  },
+  wrapper:{
+    position: 'absolute',
+    top: '0px',
+    width: '100%',
+    height: '100%',
+    margin: 0,
+    overflowY: 'hidden',
+    overscrollBehaviorY: 'contain'
   }
 }
 

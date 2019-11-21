@@ -1,2 +1,2 @@
 #!/bin/sh
-scp -r ./greenhouse root@sitebuilt.net:/home/iot/public_html/v3
+scp -r ./hvac root@sitebuilt.net:/home/iot/public_html/v3

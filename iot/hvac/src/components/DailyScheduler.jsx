@@ -1,6 +1,6 @@
 import React from 'react'
-import {ZoneTimer} from '../../npm/zone-timer'
-// import{ZoneTimer}from '@mckennatim/react-zonetimer'
+// import {ZoneTimer} from '../../npm/zone-timer'
+import{ZoneTimer}from '@mckennatim/react-zonetimer'
 import {nav2 } from '../app'
 
 const DailyScheduler=(props)=>{

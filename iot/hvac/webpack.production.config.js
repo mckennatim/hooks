@@ -7,6 +7,11 @@ require("@babel/polyfill");
 const outdir = 'hvac'
 
 module.exports={
+  stats: {
+    assetsSort: '!size',
+    cached: true,
+    chunks:true
+  },
   mode:'production',
   entry: [
     '@babel/polyfill',
@@ -24,7 +29,26 @@ module.exports={
           loader: "babel-loader" 
         }]
       },
-      { test: /\.html$/, loader: "html-loader" }
+      { test: /\.html$/, loader: "html-loader" },
+      {
+        test: /\.css$/,
+        use: [
+          {loader: 'style-loader'}, 
+          {loader: 'css-loader'} 
+        ]
+      },
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192,
+              fallback: 'file-loader'
+            }
+          }
+        ]
+      }
     ],
   },
   optimization: {
@@ -38,19 +62,19 @@ module.exports={
        }
       }
     },
-    minimizer: [
-      // we specify a custom UglifyJsPlugin here to get source maps in production
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        uglifyOptions: {
-          compress: false,
-          ecma: 6,
-          mangle: true
-        },
-        sourceMap: true
-      })
-    ]
+    // minimizer: [
+    //   // we specify a custom UglifyJsPlugin here to get source maps in production
+    //   new UglifyJsPlugin({
+    //     cache: true,
+    //     parallel: true,
+    //     uglifyOptions: {
+    //       compress: false,
+    //       ecma: 6,
+    //       mangle: true
+    //     },
+    //     sourceMap: true
+    //   })
+    // ]
   },
   plugins: [
     new webpack.DefinePlugin({

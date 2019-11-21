@@ -4,8 +4,8 @@ import {
   getZinfo,
   whereInSched,
   hma2time
-// } from '@mckennatim/mqtt-hooks'
-} from '../../npm/mqtt-hooks'
+} from '@mckennatim/mqtt-hooks'
+// } from '../../npm/mqtt-hooks'
 import '../css/zones.css'
 
 const Zones=(props)=>{
@@ -13,7 +13,7 @@ const Zones=(props)=>{
   const tzadj=locdata ? locdata.tzadj : "0"
   const keys = Object.keys(state)
   const tkeys = keys.filter((k)=>k!='temp_out'&&k!='timer')
-  console.log('locdata: ', locdata)
+  // console.log('locdata: ', locdata)
 
   const gotoZone=(k)=>()=>{
     const zinfo = [getZinfo(k, zones)]
@@ -108,9 +108,9 @@ const Zones=(props)=>{
 
   const renderZones=()=>{
     if(zones.length>0){
-      console.log(zones)
-      console.log(devs)
-      console.log('devs: ', devs)
+      // console.log(zones)
+      // console.log(devs)
+      // console.log('devs: ', devs)
       const tli = tkeys.map((k,i)=>{
         const sk = state[k]
         const set = (sk.darr[2]+sk.darr[3])/2

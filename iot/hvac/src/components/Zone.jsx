@@ -10,8 +10,8 @@ import {
   fetchSched,
   deleteHolds,
   replaceHold
-// } from '@mckennatim/mqtt-hooks'
-} from '../../npm/mqtt-hooks'
+} from '@mckennatim/mqtt-hooks'
+// } from '../../npm/mqtt-hooks'
 import{nav2} from '../app'
 import {CondensedSched} from './CondensedSched.jsx'
 import '../css/zones.css'
@@ -19,7 +19,7 @@ import Icon from '@material-ui/core/Icon';
 import {BigButton} from './BigButton.jsx'
 import boost2 from '../img/boost2.png'
 import hold from '../img/hold.png'
-import {bt_boost, bt_rel} from '../css/but.js'
+import {bt_boost, bt_rel, inp_dt} from '../css/but.js'
 
 const lsh = ls.getItem()
 
@@ -94,7 +94,7 @@ const Zone = (props) =>{
   })
   const schedChange=(asched)=>()=>{
     client.disconnect()
-    console.log('asched: ', asched, locdata, zid)
+    // console.log('asched: ', asched, locdata, zid)
     nav2('DailyScheduler', {...prups, zinfo, asched, from:'Zone'}, zid)
   }
 
@@ -105,7 +105,7 @@ const Zone = (props) =>{
     const di = getDinfo(zid,devs)
     const topic = `${di.dev}/cmd`
     const payload = `{"id":${di.sr},"sra":[${newdarr}]}`
-    console.log('topic, payload: ', topic, payload)
+    // console.log('topic, payload: ', topic, payload)
     publish(client, topic, payload)
   }
 
@@ -125,17 +125,17 @@ const Zone = (props) =>{
   }
 
   const setHold = () =>{
-    console.log('state[zid].darr: ', state[zid].darr)
+    // console.log('state[zid].darr: ', state[zid].darr)
     const da =state[zid].darr
     const dif = da[2]*1-da[3]*1
     const ssched = JSON.stringify([[0,0,holdval*1+dif/2,holdval*1-dif/2]])
     const dinf = getDinfo(params.query, devs)
     const topic = `${dinf.dev}/prg`
     const payload = `{"id":${dinf.sr},"pro":${ssched}}`
-    console.log('topic, payload: ', topic, payload)
-    console.log('holdradio: ', holdradio)
+    // console.log('topic, payload: ', topic, payload)
+    // console.log('holdradio: ', holdradio)
     const srarr= findHeatZonesIn(devs)
-    console.log('srarr: ', srarr)
+    // console.log('srarr: ', srarr)
     let dbs =[]
     if(holdradio==99){
       dbs = srarr.map((s)=>{
@@ -147,7 +147,7 @@ const Zone = (props) =>{
     }else{
       dbs = [{devid:dinf.dev, senrel:dinf.sr, dow:128, sched:ssched, until:holddate}]
     }
-    console.log('dbs: ', dbs)
+    // console.log('dbs: ', dbs)
     publish(client, topic, payload)
     replaceHold(ls,cfg, dbs)
 
@@ -157,11 +157,11 @@ const Zone = (props) =>{
     const dinf = getDinfo(params.query, devs)
     fetchSched(ls, cfg, dinf.dev, dinf.sr, locdata.dow).then((data)=>{
       const newsched = data.results[0].sched
-      console.log('newsched: ', newsched)
+      // console.log('newsched: ', newsched)
       const dinf = getDinfo(params.query, devs)
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${newsched}}`
-      console.log('topic, payload: ', topic, payload)
+      // console.log('topic, payload: ', topic, payload)
       publish(client, topic, payload)
     })
     let dels = []
@@ -257,10 +257,11 @@ const Zone = (props) =>{
               image={boost2}
               btext={over}
               styles={bt_boost}
-            ></BigButton>
+            ></BigButton><br/>
+            {over}
             <input type="range" min="50" max="75" value={over} onChange={handleOver}/><br/>
           </fieldset>
-                    <div style={styles.today} >
+            <div style={styles.today} >
           <fieldset>
             <legend>Change todays schedule</legend>
             <button classsname='but' style={bt_rel} onClick={schedChange(pro)}>change todays schedule</button><br/>
@@ -269,14 +270,15 @@ const Zone = (props) =>{
           <div style={styles.hold}>
           <fieldset>
             <legend>HOLD temperature until</legend>
-            <input onChange={upDate} value={holddate}type="date"/><br/><br/>
+            <input style={inp_dt} onChange={upDate} value={holddate}type="date"/><br/><br/>
             <BigButton
               onoff={true}
               toggleOnoff={setHold}
               image={hold}
               btext={holdval}
               styles={bt_boost}
-            ></BigButton>
+            ></BigButton><br/>
+            {holdval}
             {/* <button onClick={setHold}>set hold</button> */}
             <button classsname='but' style={bt_rel} onClick={releaseHold}>release</button><br/>
             <input type="range" min="50" max="75" value={holdval} onChange={handleHoldVal}/><br/>

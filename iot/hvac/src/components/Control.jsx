@@ -13,8 +13,8 @@ import {
   processMessage, 
   setupSocket,
   monitorFocus
-// } from '@mckennatim/mqtt-hooks'
-} from '../../npm/mqtt-hooks'
+} from '@mckennatim/mqtt-hooks'
+// } from '../../npm/mqtt-hooks'
 
 const lsh = ls.getItem()
 

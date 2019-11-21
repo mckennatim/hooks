@@ -331,7 +331,7 @@ const ZoneTimer = (props)=>{
   }
 
   return (
-    <div ref={ref}>
+    <div ref={ref} styles={styles.wrapper} >
       {renderSVG()}
       <div style={styles.rngdiv}>
         set value

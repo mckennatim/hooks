@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react'
-import {fetchWeekSched, getDinfo, replaceWeekSched, replaceZoneScheds} from '../../npm/mqtt-hooks'
+// import {fetchWeekSched, getDinfo, replaceWeekSched, replaceZoneScheds} from '../../npm/mqtt-hooks'
+import {fetchWeekSched, getDinfo, replaceWeekSched, replaceZoneScheds} from '@mckennatim/mqtt-hooks'
 import {cfg, ls} from '../utilities/getCfg'
 import {nav2} from '../app'
 import {CondensedSched} from './CondensedSched.jsx'
+import Icon from '@material-ui/core/Icon';
 
 const dat = new Date().toISOString().split('T')[0]
-console.log('dat: ', dat)
 
 // const CondensedSched = ({sch})=>{
 //   const asched = sch.map((s,i)=>{
@@ -21,8 +22,9 @@ console.log('dat: ', dat)
 // }
 
 const WeeklyScheduler=(props)=>{
+  console.log('props: ', props)
   const{prups}=props.cambio.page
-  const {sched, state, zinfo, temp_out, devs, from, zones }=prups
+  const {sched, state, zinfo, temp_out, devs, from, zones, mess }=prups
   const query = props.cambio.page.params.query
   const zinf = zinfo[0]
   console.log('zinf: ', zinf)
@@ -175,21 +177,64 @@ const WeeklyScheduler=(props)=>{
   const renderHeader=()=>{
     if(state){
       const ima = `./img/${zinf.img}`
-
       const zst = state[zinf.id]
+      const da = zst.darr
+      const temp = da[0]
+      const set = (da[2]+da[3])/2
+      const onoff = da[1]
+      const rt = {
+        outer:{
+          float:"right",
+          margin: '6px',
+        },
+        up:{
+          fontSize:'12px',
+          fontFamily: 'Helvetica,Arial,sans-serif',
+          float:'right',
+          width: '42px',
+          padding: '2px',
+          borderRadius: '3px',
+          background: onoff ? 'red' : 'rgba(38, 162, 43, 0.75)'
+        },
+        dn:{
+          fontFamily: 'Helvetica,Arial,sans-serif',
+          fontStretch: 'ultra-condensed',
+          float:'right',
+          fontSize: '8px'
+        }
+      }
       return(
         <header style={styles.header}>
-          <img src={ima} width="60" alt="a kid"/>
-          <span>  {zinf.name}</span>
-          <span> {zst.darr[0]}</span><a href="./">goback</a>
-          <div>outside:{temp_out}</div>
-          <div>set@{(zst.darr[2]+zst.darr[3])/2}</div>
-          
-        </header>
-      )
+          <div className='container'>
+            <div className='item-img'>
+              <img src={ima} alt={ima} width="70" height="70"/>
+            </div>
+            <div className='item-temp'>
+              {temp} &deg;F
+            </div>
+            <div className='item-name'>
+              {zinfo[0].name}
+            </div> 
+            <div className='item-setpt'>
+              <div style={rt.up}>
+                <span>{set} &deg;F</span><br/>
+              </div><br/>
+              <span style={rt.dn}>{mess}</span>
+            </div> 
+            <div className='item-til'>
+              <div style={rt.dn}>
+                {temp_out} &deg;F<a href="./"><Icon>arrow_back</Icon><Icon>house</Icon></a>
+              </div>
+            </div>                       
+          </div>
+        </header>   
+        )
     }
       return(
-        <header><a href="./">goback</a></header>
+        <header>
+          no data: 
+          <a href="./"><Icon>arrow_back</Icon><Icon>house</Icon></a>
+        </header>
       )
 
   }
@@ -198,7 +243,7 @@ const WeeklyScheduler=(props)=>{
     return(
       <div>
         {/* {renderSchedStr(sch)} */}
-        <CondensedSched sch={sch}/>
+        <CondensedSched sch={sch} fontsz="9"/>
         <input name="radiosch" value={JSON.stringify(sch)} type="radio" 
           onChange={changeRadio(idx)} 
           checked={idx==radiock}

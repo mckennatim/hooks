@@ -33,6 +33,8 @@ Where is app name kept?
 - in denv.json
 
 ## log
+## 33-hvac-npm
+## 32-hvac-bigbutton
 ## 31-hvac-stylin
 btw when flashing board check ports
 ## 30-hvac-bigdata

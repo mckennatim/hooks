@@ -24,5 +24,12 @@ const bt_rel={
   margin:'24px',
 }
 
-export{bt_boost, bt_rel}
+const inp_dt={
+  borderRadius:'8px',
+  background:'#396b9e',
+  color:'white',
+  borderColor: 'rgba(255,255,255,.3)',
+}
+
+export{bt_boost, bt_rel, inp_dt}
   

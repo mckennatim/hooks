@@ -1,5 +1,6 @@
 import React,{useState,useContext, useEffect} from 'react'
-import {fetchBigData,useDevSpecs, Context, getDinfo} from'../../npm/mqtt-hooks'
+// import {fetchBigData,useDevSpecs, Context, getDinfo} from'../../npm/mqtt-hooks'
+import {fetchBigData,useDevSpecs, Context, getDinfo} from'@mckennatim/mqtt-hooks'
 import {cfg, ls} from '../utilities/getCfg'
 import { TimeSeries} from "pondjs";
 import { Charts, ChartContainer, ChartRow, YAxis, LineChart, styler } from "react-timeseries-charts";
