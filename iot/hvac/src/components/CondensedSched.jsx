@@ -4,6 +4,7 @@ import {hma2time} from '@mckennatim/mqtt-hooks'
 
 const CondensedSched = (props)=>{
   const {sch,fontsz} = props
+  console.log('sch: ', sch)
   const styles={
     schedstr:{
       fontSize: fontsz*1,
@@ -11,7 +12,6 @@ const CondensedSched = (props)=>{
   }
   const asched = sch.slice().map((s,i)=>{
     const ti = hma2time(s)
-    // console.log('s: ', s)
     return (
       <span key={i} style={styles.schedstr}>
         <span> {ti} </span>

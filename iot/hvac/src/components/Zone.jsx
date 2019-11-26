@@ -55,15 +55,12 @@ const Zone = (props) =>{
 
   const topics  = ['srstate', 'sched', 'flags', 'timr']
   const doOtherShit=()=>{
-    //console.log('other shit but not connected doesnt work yet')
     publish(client, "presence", "hello form do other shit")
     if(doupd){
-      console.log('props: ', props)
       const ssched = JSON.stringify(sched)
       const dinf = getDinfo(params.query, devs)
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${ssched}}`
-      console.log('topic, payload: ', topic, payload)
       publish(client, topic, payload)
     }
   }
@@ -76,10 +73,8 @@ const Zone = (props) =>{
 
   function onMessageArrived(message){
     const nsarr = processMessage(message, devs, state)
-    // console.log('nsarr: ', JSON.stringify(nsarr))
     const zarr = nsarr.filter((n)=>Object.keys(n)[0]==zinfo[0].id||Object.keys(n)[0]==zinfo[1].id)
     if(zarr.length>0){
-      // console.log('zarr[0]: ', JSON.stringify(zarr[0]))
       const key =Object.keys(zarr[0])[0]
       const action = {type:key, payload:zarr[0][key]}
       dispatch(action)
@@ -94,7 +89,6 @@ const Zone = (props) =>{
   })
   const schedChange=(asched)=>()=>{
     client.disconnect()
-    // console.log('asched: ', asched, locdata, zid)
     nav2('DailyScheduler', {...prups, zinfo, asched, from:'Zone'}, zid)
   }
 
@@ -105,7 +99,6 @@ const Zone = (props) =>{
     const di = getDinfo(zid,devs)
     const topic = `${di.dev}/cmd`
     const payload = `{"id":${di.sr},"sra":[${newdarr}]}`
-    // console.log('topic, payload: ', topic, payload)
     publish(client, topic, payload)
   }
 
@@ -125,17 +118,13 @@ const Zone = (props) =>{
   }
 
   const setHold = () =>{
-    // console.log('state[zid].darr: ', state[zid].darr)
     const da =state[zid].darr
     const dif = da[2]*1-da[3]*1
     const ssched = JSON.stringify([[0,0,holdval*1+dif/2,holdval*1-dif/2]])
     const dinf = getDinfo(params.query, devs)
     const topic = `${dinf.dev}/prg`
     const payload = `{"id":${dinf.sr},"pro":${ssched}}`
-    // console.log('topic, payload: ', topic, payload)
-    // console.log('holdradio: ', holdradio)
     const srarr= findHeatZonesIn(devs)
-    // console.log('srarr: ', srarr)
     let dbs =[]
     if(holdradio==99){
       dbs = srarr.map((s)=>{
@@ -147,7 +136,6 @@ const Zone = (props) =>{
     }else{
       dbs = [{devid:dinf.dev, senrel:dinf.sr, dow:128, sched:ssched, until:holddate}]
     }
-    // console.log('dbs: ', dbs)
     publish(client, topic, payload)
     replaceHold(ls,cfg, dbs)
 
@@ -157,11 +145,9 @@ const Zone = (props) =>{
     const dinf = getDinfo(params.query, devs)
     fetchSched(ls, cfg, dinf.dev, dinf.sr, locdata.dow).then((data)=>{
       const newsched = data.results[0].sched
-      // console.log('newsched: ', newsched)
       const dinf = getDinfo(params.query, devs)
       const topic = `${dinf.dev}/prg`
       const payload = `{"id":${dinf.sr},"pro":${newsched}}`
-      // console.log('topic, payload: ', topic, payload)
       publish(client, topic, payload)
     })
     let dels = []
